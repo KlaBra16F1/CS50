@@ -1,6 +1,110 @@
 # CS50-final-project
 
+[TOC]
+- `#F00`
+- `#F00A`
+- `#FF0000`
+- `#FF0000AA`
+- `RGB(0,255,0)`
+- `RGB(0%,100%,0%)`
+- `RGBA(0,255,0,0.3)`
+- `HSL(540,70%,50%)`
+- `HSLA(540,70%,50%,0.3)`
 
+The color [^1] `#F00`  
+
+[^1]: Footnote
+
+Our script contains:
+
+```python
+::include{file=./app/app.py}
+```
+{!./app/app.py!}
+
+Fruits
+: apple
+: orange
+
+```json:table
+{
+    "fields" : [
+        {"key": "a", "label": "AA", "sortable": true},
+        {"key": "b", "label": "BB"},
+        {"key": "c", "label": "CC"}
+    ],
+    "items" : [
+      {"a": "11", "b": "22", "c": "33"},
+      {"a": "**211**", "b": "~222~", "c": "*233*"}
+    ],
+    "filter" : true,
+    "markdown" : true,
+    "caption" : "Custom caption"
+}
+```
+
+```javascript
+var s = "JavaScript syntax highlighting";
+alert(s);
+```
+
+```python
+def function():
+    #indenting works just fine in the fenced code block
+    s = "Python {} highlighting".format('syntax')
+    print s
+```
+
+```ruby
+require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html
+```
+
+```
+No language indicated, so no syntax highlighting.
+s = "No highlighting is shown for this line."
+But let's throw in a <b>tag</b>.
+```
+```mermaid
+graph TB
+  SubGraph1 --> SubGraph1Flow
+
+  subgraph "SubGraph 1 Flow"
+    SubGraph1Flow(SubNode 1)
+    SubGraph1Flow -- Choice1 --> DoChoice1
+    SubGraph1Flow -- Choice2 --> DoChoice2
+  end
+
+  subgraph "Main Graph"
+    Node1[Node 1] --> Node2[Node 2]
+    Node2 --> SubGraph1[Jump to SubGraph1]
+    SubGraph1 --> FinalThing[Final Thing]
+  end
+```
+```plantuml
+Bob -> Alice : hello
+Alice -> Bob : hi
+```
+This math is inline: $`a^2+b^2=c^2`$.
+
+This math is on a separate line using a ```` ```math ```` block:
+
+```math
+a^2+b^2=c^2 \times \alpha  
+```
+
+This math is on a separate line using inline `$$`: $$a^2+b^2=c^2$$
+
+This math is on a separate line using a `$$...$$` block:
+
+$$
+a^2+b^2=c^2
+$$
+Vegetables
+: broccoli
+: kale
+: spinach
 
 ## Getting started
 
