@@ -1,6 +1,7 @@
 import sqlite3
 from cs50 import SQL
 
+db = SQL("sqlite:///database.db.bak")
 
 def sql_get(statement):
     with sqlite3.connect("database.db.bak") as db:
@@ -29,10 +30,16 @@ for r in res:
 print(users)
 
 def get_users2():
-    db = SQL("sqlite:///database.db.bak")
-        users = db.execute("SELECT u_id,name,role FROM users;")
+    users = db.execute("SELECT u_id,name,role FROM users;")
         
     return users
+
+def add_user(name, hash, role):
+    db.execute("INSERT INTO users (name, hash, role) VALUES (?, ?, ?);", name, hash, role)
+
+def delete_user(u_id):
+    db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
+
 
 
 
