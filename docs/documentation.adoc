@@ -1,0 +1,80 @@
+:source-highlighter: highlight.js
+= Title
+
+== Database
+
+[source,sql]
+----
+-- static tables
+CREATE TABLE users (u_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, name TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user');
+
+CREATE TABLE topics (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, topic TEXT NOT NULL);
+
+CREATE TABLE subtopics (s_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, t_id INTEGER, subtopic TEXT NOT NULL, FOREIGN KEY (t_id) REFERENCES topics(t_id));
+
+CREATE TABLE questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id INTEGER NOT NULL, question TEXT NOT NULL, difficulty INTEGER, FOREIGN KEY (s_id) REFERENCES subtopics(s_id));
+
+CREATE TABLE answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC, FOREIGN KEY (q_id) REFERENCES questions(q_id));
+
+-- generated tables
+
+----
+
+[mermaid]
+----
+erDiagram
+
+topics {
+    int t_id
+    text topic
+}
+subtopics {
+    int s_id
+    int t_id
+    text subtopic
+}
+questions {
+    int q_id
+    int s_id
+    text question
+    int difficulty
+}
+answers {
+    int a_id
+    int q_id
+    text answer
+    text comment
+    int true
+}
+users {
+    int u_id
+    text name
+    text role
+}
+userQuestions {
+    int u_id
+    int q_id
+    int timesDone
+    int timesRight
+    text lastDate
+}
+tests {
+    int tst_id
+    int u_id
+}
+testQuestions {
+    int tst_id
+    int q_id
+}
+
+topics ||--o{ subtopics : has
+subtopics ||--o{ questions : has
+questions ||--o{ answers : has
+users ||--o{ userQuestions : n
+questions ||--o{ userQuestions : n
+users ||--o{ tests : n
+tests ||--o{ testQuestions : n
+questions ||--o{ testQuestions :n
+
+----
+
