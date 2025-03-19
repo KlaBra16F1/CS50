@@ -78,3 +78,7 @@ questions ||--o{ testQuestions :n
 
 ----
 
+Simple syntax for selecting question and answers in random order.  
+
+`select s.subtopic,q.question from questions q inner join subtopics s using (s_id) where s.t_id=1 union all select row_number() over (order by random()) , a.answer from answers a inner join questions on (a.q_id) ;`
+

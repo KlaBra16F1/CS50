@@ -1,3 +1,5 @@
 **/app/.venv
 **/app/__pycache__
 *.bak
+**/app/test
+
