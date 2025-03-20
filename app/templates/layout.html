@@ -6,20 +6,37 @@
     <title>Document</title>
     <link href="/static/bootstrap5.3.3.css" rel="stylesheet">
     <script src="/static/bootstrap.bundle5.3.3.js"></script>
+    <!-- Temp Css for NAV-->
+     <style>
+        .navigation li {
+            display: inline-block;
+        }
+     </style>
 </head>
 <body>
-    <nav>
-        
+    <nav class="navigation">
+        <ul>
+            <li><a href="/users">Manage Users</a></li>
+            <li><a href="/add-questions">Add questions</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/logout">Log out</a></li>
+        </ul>
     </nav>
     <header>
         
         {% for message in get_flashed_messages() %}
-        
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
-            <strong>Success!</strong> {{ message }}
-          </div>
-            {%endfor%}
+            {% if error %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+                <strong>Error!</strong> {{ error }}
+            </div>
+            {% else %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+                <strong>Success!</strong> {{ message }}
+            </div>
+            {% endif %}
+        {%endfor%}
         
         
     </header>

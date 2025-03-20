@@ -1,37 +1,17 @@
-import sqlite3
 from cs50 import SQL
+from flask import redirect, render_template, session
+from functools import wraps
+import sqlite3
+from werkzeug.security import check_password_hash
 
+# Variables
 db = SQL("sqlite:///database.db.bak")
+ROLES = ["admin","maintainer"]
 
-def sql_get(statement):
-    with sqlite3.connect("database.db.bak") as db:
-        db.row_factory = sqlite3.Row
-        cursor = db.cursor()
-        cursor.execute(statement)
-        res = cursor.fetchall()
-    return res
-
-def get_topics():
-    statement = "SELECT t_id,topic FROM topics;"
-    res = sql_get(statement)
-    return res
+# SQL Functions
 
 def get_users():
-    statement = "SELECT u_id,name,role FROM users;"
-    res = sql_get(statement)
-    return res
-
-res = get_users()
-users = []
-user = {}
-for r in res:
-    user = {r.keys()[0]: r["u_id"],r.keys()[1]: r["name"],r.keys()[2]: r["role"]}
-    users.append(user)
-print(users)
-
-def get_users2():
     users = db.execute("SELECT u_id,name,role FROM users;")
-        
     return users
 
 def add_user(name, hash, role):
@@ -39,6 +19,77 @@ def add_user(name, hash, role):
 
 def delete_user(u_id):
     db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
+
+def login_user(username, password):
+    user = db.execute("SELECT u_id, name, hash, role FROM users WHERE name = ?", username)
+    if user == None or len(user) != 1:
+        return None, None, "User not found."
+    elif check_password_hash(user[0]["hash"], password) == False:
+            return None, None, "Invalid password."
+    else:
+        return user[0]["u_id"], user[0]["role"], None
+
+def get_topics():
+    topics = db.execute("SELECT t_id, topic FROM topics;")
+    return topics
+
+def add_topic(new_topic):
+    db.execute("INSERT INTO topics (topic) values (?);", new_topic)
+
+def get_subtopics(t_id):
+    subtopics =  db.execute("SELECT s_id, subtopic FROM subtopics WHERE t_id = ? ORDER BY subtopic", t_id)
+    return subtopics
+def add_subtopic(t_id, new_subtopic):
+    db.execute("INSERT INTO subtopics (t_id, subtopic) VALUES (?, ?);", t_id, new_subtopic)
+
+def get_questions(s_id):
+    questions = db.execute("select t.topic, s.subtopic,q.question from questions q inner join subtopics s using (s_id) inner join topics t using (t_id) where s_id= ?;", s_id)
+    return questions
+
+# Website Functions
+
+def login_required(f):
+    """
+    Decorate routes to require login.
+    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def admin_required(f):
+    """
+    Decorate routes to require login.
+    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None or session["role"] != ROLES[0]:
+            return ("",401)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+def maintainer_required(f):
+    """
+    Decorate routes to require login.
+    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None or session["role"] not in ROLES:
+            return ("",401)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 
 
 
