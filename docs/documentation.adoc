@@ -12,9 +12,11 @@ CREATE TABLE topics (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, topic TEXT
 
 CREATE TABLE subtopics (s_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, t_id INTEGER, subtopic TEXT NOT NULL, FOREIGN KEY (t_id) REFERENCES topics(t_id));
 
-CREATE TABLE questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id INTEGER NOT NULL, question TEXT NOT NULL, difficulty INTEGER, FOREIGN KEY (s_id) REFERENCES subtopics(s_id));
+CREATE TABLE questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id INTEGER NOT NULL, question TEXT NOT NULL, difficulty INTEGER, isMultipleChoice NUMERIC DEFAULT 0, FOREIGN KEY (s_id) REFERENCES subtopics(s_id));
 
-CREATE TABLE answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL, FOREIGN KEY (q_id) REFERENCES questions(q_id));
+CREATE TABLE answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL DEFAULT 0, FOREIGN KEY (q_id) REFERENCES questions(q_id));
+
+CREATE TABLE user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, lastDate TEXT);
 
 -- generated tables
 
