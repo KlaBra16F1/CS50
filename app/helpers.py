@@ -30,7 +30,7 @@ def login_user(username, password):
         return user[0]["u_id"], user[0]["role"], None
 
 def get_topics():
-    topics = db.execute("SELECT t_id, topic FROM topics;")
+    topics = db.execute("SELECT t_id, topic FROM topics ORDER BY topic;")
     return topics
 
 def add_topic(new_topic):

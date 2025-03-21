@@ -17,7 +17,7 @@
                 {% if q.q_id == a.q_id %}
                     <tr>
                         <td></td>
-                        <td>{{ a.is_true }}</td>
+                        <td>{% if a.is_true == 1 %} ✅ {% else %} ❌ {% endif %}</td>
                         <td>{{ a.answer }}</td>
                     </tr>
                 {% endif %}
