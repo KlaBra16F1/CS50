@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block main %}
+    {{ question }} {{ q_id }}
+    <form  action="/add-answers" method="post">
+        <div id="answer-container">
+            <h3>Answer 1:</h3>
+            <input type="hidden" name="answer[1][q_id]" value="{{ q_id }}">
+            <p>
+                <label>Answer</label><br>
+                <input name="answer[1][answer]">
+            </p>
+    
+            <p>
+                <label>Comment</label><br>
+                <input name="answer[1][comment]">
+            </p>
+    
+            
+            <p>
+                <label>True</label><br>
+                <select name="answer[1][true]">
+                    <option value="0">False</option>
+                    <option value="1">True</option>
+                </select>
+            </p>
+
+        </div>
+    
+        <a href="javascript:;" id="add-new-answer">Add new Answer</a>
+    
+        <p>
+            <input type="submit">
+        </p>
+    </form>
+    
+    <script>
+    let i = 2;
+    document.getElementById('add-new-answer').onclick = function () {
+        let template = `
+            <h3>Answer ${i}:</h3>
+            <input type="hidden" name="answer[${i}][q_id]" value="{{ q_id }}">
+            <p>
+                <label>Answer</label><br>
+                <input name="answer[${i}][answer]">
+            </p>
+    
+            <p>
+                <label>Comment</label><br>
+                <input name="answer[${i}][comment]">
+            </p>
+    
+            <p>
+                <label>True</label><br>
+                <select name="answer[${i}][true]">
+                    <option value="0">False</option>
+                    <option value="1">True</option>
+                </select>
+            </p>`;
+    
+        let container = document.getElementById('answer-container');
+        let div = document.createElement('div');
+        div.innerHTML = template;
+        container.appendChild(div);
+    
+        i++;
+    }
+    </script>
+
+{% endblock %}

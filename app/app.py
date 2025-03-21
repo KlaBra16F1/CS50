@@ -29,9 +29,46 @@ def add_questions():
             h.add_subtopic(t_id, new_subtopic)
             flash("New subtopic {} created.".format(new_subtopic))
             return redirect("/add-questions")
+        s_id = request.form.get("subtopic")    
+        question = request.form.get("question")
+        difficulty = request.form.get("difficulty", None)
+        isMultipleChoice = request.form.get("isMultipleChoice",0)
+        q_id = h.add_question(s_id, question, difficulty, isMultipleChoice)
+        flash("Question successully added. Enter Answers now.")
+        return render_template("add-answers.html", q_id = q_id["q_id"], question = question)
     topics = h.get_topics()
     return render_template("add-questions.html", rows_topics=topics)
 
+@app.route("/add-answers", methods=["GET","POST"])
+def add_answers():
+    if request.method == "POST":
+        form = request.form
+        answers = []
+        
+        print(len(form)//4+1)
+        for i in range (1,len(form)//4+1):
+            answer = {}
+            answer["q_id"] =  form[f"answer[{i}][q_id]"]
+            answer["answer"] = form[f"answer[{i}][answer]"]
+            answer["comment"] = form[f"answer[{i}][comment]"]
+            answer["true"] = form[f"answer[{i}][true]"]
+            answers.append(answer)
+
+        for a in answers:
+            print(a["answer"])
+        h.add_answers(answers)
+        return 'ok'
+        
+        
+
+    return render_template("add-answers.html")
+
+@app.route("/edit-questions")
+def edit_questions():
+    topics = h.get_topics()
+    return render_template("edit-questions.html", rows_topics=topics)
+
+# Inforoutes
 @app.route("/get-subtopics")
 def get_subtopics():
     t_id = request.args.get("t_id")

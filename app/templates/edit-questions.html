@@ -2,35 +2,19 @@
 {% block main %}
 
     <div>
-        <form action="/add-questions" method="post">
+        <form action="/add-questions" method="post" onchange="getQuestions();">
             <select name="topic" id="topic">
                 <option value="">Please Select</option>
                 {% for r in rows_topics %}
                     <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }}</option>
                 {% endfor %}
             </select>
-            <input name="new-topic" type="text" placeholder="New topic">
             <select name="subtopic" id="subtopic">
                 <option value="">Please Select</option>
             </select>
-            <input name="new-subtopic" type="text" placeholder="New subtopic">
-            <textarea name="question" placeholeder="Question">
-                
-            </textarea>
-            <label for="question">Your question</label>
-            <input type="number" min="0" max="5" placeholder="difficulty">
-            <label for="difficulty">Difficulty (optional)</label>
-            <input type="checkbox" name="isMultipleChoice" value="1">
-            <label for="isMultipleChoice">Multiple Choice</label>
-
-            <!-- Answers -->
-            <div id="answers">
-
-            </div>
-            <button type="submit">Submit</button>
+            <button type="submit">Submit</button>  
         </form>
-        
-
+        <p id="table"></p>
     </div>
     </form>
     <!-- externes js -->
@@ -46,5 +30,21 @@
             document.querySelector('#subtopic').innerHTML = html;
         });
 
+        function getQuestions() {
+            t_id = document.querySelector('#topic').value;
+            s_id = document.querySelector('#subtopic').value;
+            console.log(topic, subtopic);
+            if (t_id == '' && s_id == '') {
+                return;
+            }
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function() {
+                if (req.readyState == 4 && req.status == 200) {
+                    document.querySelector('#table').innerHTML = req.responseText;
+                }
+            };
+            req.open('GET', '/get-questions?t_id='+ t_id +'&s_id=' + s_id, true);
+            req.send();
+        }
     </script>
 {% endblock %}

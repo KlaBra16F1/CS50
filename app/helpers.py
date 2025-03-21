@@ -50,6 +50,19 @@ def get_questions(t_id, s_id):
     questions = db.execute("SELECT t.topic, s.subtopic,q.question FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
     return questions
 
+def add_question(s_id, question, difficulty, isMultipleChoice):
+    db.execute("INSERT INTO questions (s_id, question, difficulty, isMultipleChoice) values (?, ?, ?, ?)", s_id, question, difficulty, isMultipleChoice)
+    q_id = db.execute("SELECT q_id FROM questions WHERE question = ? AND s_id = ?;", question, s_id)
+    return q_id[0]
+
+def add_answers(answers):
+    db.execute("BEGIN TRANSACTION;")
+    for answer in answers:
+        db.execute("INSERT INTO answers (q_id, answer, comment, is_true) values (?, ?, ?, ?);", int(answer["q_id"]), answer["answer"], answer["comment"], int(answer["true"]))
+    db.execute("COMMIT;")
+
+
+
 # Website Functions
 
 def login_required(f):
