@@ -108,7 +108,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/users", methods=["GET","POST"])
-@h.maintainer_required
+@h.admin_required
 def users():
     if request.method == "POST":
         print(request.form.get("delete"))
