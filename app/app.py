@@ -59,7 +59,7 @@ def add_answers():
         for a in answers:
             print(a["answer"])
         h.add_answers(answers)
-        return 'ok'
+        return redirect("/edit-questions")
         
         
 
@@ -83,7 +83,11 @@ def get_questions():
     s_id = request.args.get("s_id")
     print(f"topic: {t_id} subtopic {s_id}")
     questions = h.get_questions(t_id, s_id)
-    return render_template("questions.html", rows = questions)
+    q_ids = [q_id["q_id"] for q_id in questions]
+
+    answers = h.get_answers(q_ids)
+    print(q_ids)
+    return render_template("questions.html", questions = questions, answers = answers)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

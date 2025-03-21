@@ -7,12 +7,21 @@
         </tr>
     </thead>
     <tbody>
-        {% for r in rows %}
+        {% for q in questions %}
         <tr>
-            <td>{{ r.topic }}</td>
-            <td>{{ r.subtopic }}</td>
-            <td>{{ r.question }}</td>
+            <td>{{ q.topic }}</td>
+            <td>{{ q.subtopic }}</td>
+            <td>{{ q.question }}</td>
         </tr>
+            {% for a in answers %}
+                {% if q.q_id == a.q_id %}
+                    <tr>
+                        <td></td>
+                        <td>{{ a.is_true }}</td>
+                        <td>{{ a.answer }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
         {% endfor %}
     </tbody>
 </table>

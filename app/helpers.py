@@ -44,16 +44,20 @@ def add_subtopic(t_id, new_subtopic):
 
 def get_questions(t_id, s_id):
     if s_id == None or s_id == "":
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
         return questions
     
-    questions = db.execute("SELECT t.topic, s.subtopic,q.question FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
+    questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
     return questions
 
 def add_question(s_id, question, difficulty, isMultipleChoice):
     db.execute("INSERT INTO questions (s_id, question, difficulty, isMultipleChoice) values (?, ?, ?, ?)", s_id, question, difficulty, isMultipleChoice)
     q_id = db.execute("SELECT q_id FROM questions WHERE question = ? AND s_id = ?;", question, s_id)
     return q_id[0]
+
+def get_answers(q_ids):
+    answers = db.execute("SELECT q_id, a_id, answer, comment, is_true FROM answers WHERE q_id IN (?);", q_ids)
+    return answers
 
 def add_answers(answers):
     db.execute("BEGIN TRANSACTION;")
