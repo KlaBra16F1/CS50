@@ -16,6 +16,7 @@ def index():
     return render_template("index.html")
 
 @app.route("/add-questions", methods=["GET","POST"])
+@h.maintainer_required
 def add_questions():
     if request.method == "POST":
         if request.form.get("new-topic") != "":
@@ -40,6 +41,7 @@ def add_questions():
     return render_template("add-questions.html", rows_topics=topics)
 
 @app.route("/add-answers", methods=["GET","POST"])
+@h.maintainer_required
 def add_answers():
     if request.method == "POST":
         form = request.form
@@ -79,6 +81,7 @@ def get_subtopics():
 def get_questions():
     t_id = request.args.get("t_id")
     s_id = request.args.get("s_id")
+    print(f"topic: {t_id} subtopic {s_id}")
     questions = h.get_questions(t_id, s_id)
     return render_template("questions.html", rows = questions)
 

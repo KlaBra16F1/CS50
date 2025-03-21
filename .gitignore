@@ -1,5 +1,6 @@
 **/app/.venv
 **/app/__pycache__
-*.bak
+**/app/flask_session
 **/app/test
+*.bak
 
