@@ -40,9 +40,9 @@ def get_subtopics():
 
 @app.route("/get-questions")
 def get_questions():
+    t_id = request.args.get("t_id")
     s_id = request.args.get("s_id")
-    questions = h.get_questions(s_id)
-    print(questions)
+    questions = h.get_questions(t_id, s_id)
     return render_template("questions.html", rows = questions)
 
 @app.route("/login", methods=["GET", "POST"])

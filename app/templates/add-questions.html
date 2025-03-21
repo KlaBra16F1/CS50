@@ -34,9 +34,10 @@
         });
 
         function getQuestions() {
-                        subtopic = document.querySelector('#subtopic').value;
+            t_id = document.querySelector('#topic').value;
+            s_id = document.querySelector('#subtopic').value;
             console.log(topic, subtopic);
-            if (subtopic == '') {
+            if (t_id == '' && s_id == '') {
                 return;
             }
             var req = new XMLHttpRequest();
@@ -45,7 +46,7 @@
                     document.querySelector('#table').innerHTML = req.responseText;
                 }
             };
-            req.open('GET', '/get-questions?s_id='+ subtopic, true);
+            req.open('GET', '/get-questions?t_id='+ t_id +'&s_id=' + s_id, true);
             req.send();
         }
     </script>

@@ -42,8 +42,12 @@ def get_subtopics(t_id):
 def add_subtopic(t_id, new_subtopic):
     db.execute("INSERT INTO subtopics (t_id, subtopic) VALUES (?, ?);", t_id, new_subtopic)
 
-def get_questions(s_id):
-    questions = db.execute("select t.topic, s.subtopic,q.question from questions q inner join subtopics s using (s_id) inner join topics t using (t_id) where s_id= ?;", s_id)
+def get_questions(t_id, s_id):
+    if s_id == None or s_id == "":
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+        return questions
+    
+    questions = db.execute("SELECT t.topic, s.subtopic,q.question FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
     return questions
 
 # Website Functions
