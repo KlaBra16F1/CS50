@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block main %}
-
     <div>
         <form action="/add-questions" method="post" >
             <select name="topic" id="topic">
@@ -17,6 +16,7 @@
         <p id="table"></p>
     </div>
     </form>
+    <span class="mif-security mif-10x fg-red"></span>
     <!-- externes js -->
     <script>
         let topic = document.querySelector('#topic');

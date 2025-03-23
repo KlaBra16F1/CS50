@@ -1,9 +1,11 @@
-<table width=80%>
+{% extends "layout.html" %}
+{% block main %}
+<table class="table" rownum="true" data-role="table" width=80%>
     <thead>
         <tr>
             <th>Topic</th>
-            <th>Subtopic</th>
-            <th>Question</th>
+            <th class="sortable-column">Subtopic</th>
+            <th class="sortable-column">Question</th>
         </tr>
     </thead>
     <tbody>
@@ -25,3 +27,6 @@
         {% endfor %}
     </tbody>
 </table>
+
+
+{% endblock %}
