@@ -80,6 +80,7 @@ questions {
     int s_id
     text question
     int difficulty
+    int isMultipleChoice
 }
 answers {
     int a_id
