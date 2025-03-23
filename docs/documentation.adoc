@@ -1,5 +1,7 @@
 :source-highlighter: highlight.js
+:toc: auto
 = Title
+
 
 == Use Cases
 
@@ -128,4 +130,28 @@ Simple syntax for selecting question and answers in random order.
 ## HTML
 
 Bootstrap 5.3.3 (Css und JS) lokal in `/static`
+
+## CSS
+
+Test mit https://metroui.org.ua[Metro_UI]
+
+
+[source,html]
+----
+<head>
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <!-- Icons -->                    
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/icons.css">
+</head>
+----
+
+[source,html]
+----
+<body>
+    ...
+    <!-- JavaScript -->
+    <script src="https://cdn.metroui.org.ua/current/metro.js"></script>
+</body>
+----
 
