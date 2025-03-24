@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block main %}
-    <div>
+{% include "modules/topic-selector.html" %}
+    <!-- <div>
         <form action="/add-questions" method="post" >
             <select name="topic" id="topic">
                 <option value="">Please Select</option>
@@ -13,28 +14,19 @@
             </select>
             <button type="submit">Submit</button>  
         </form>
-        <p id="table"></p>
     </div>
-    </form>
-    <span class="mif-security mif-10x fg-red"></span>
-    <!-- externes js -->
+</form> -->
+{% include "modules/selector-script.html" %}
+<!-- externes js -->
+    <p id="table"></p>
     <script>
-        let topic = document.querySelector('#topic');
-        topic.addEventListener('change', async function() {
-            let res = await fetch('/get-subtopics?t_id=' + topic.value);
-            document.querySelector('#subtopic').innerHTML = '';
-            let subtopics = await res.json();
-            let html = '<option value="">Please Select</option>';
-            for (s of subtopics) {
-                html += '<option value="' + s.s_id + '">' + s.subtopic + '</option>'
-            }
-            document.querySelector('#subtopic').innerHTML = html;
-            getQuestions();
-        });
-
-        function getQuestions() {
+        let selector = document.querySelector("#topic-selector");
+        selector.addEventListener('change', function(){
             let t_id = document.querySelector('#topic').value;
             let s_id = document.querySelector('#subtopic').value;
+            if (subtopics_loaded == false) {
+                s_id = '';
+            }
             console.log(t_id, s_id);
             if (t_id == '') {
                 return;
@@ -47,6 +39,6 @@
             };
             req.open('GET', '/get-questions?t_id='+ t_id +'&s_id=' + s_id, true);
             req.send();
-        }
+        });
     </script>
 {% endblock %}

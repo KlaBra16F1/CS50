@@ -3,16 +3,17 @@
 
     <div>
         <form action="/add-questions" method="post">
-            <select name="topic" id="topic">
+            {% include "modules/topic-selector.html" %}
+            <!-- <select name="topic" id="topic">
                 <option value="">Please Select</option>
                 {% for r in rows_topics %}
                     <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }}</option>
                 {% endfor %}
-            </select>
+            </select> -->
             <input name="new-topic" type="text" placeholder="New topic">
-            <select name="subtopic" id="subtopic">
+            <!-- <select name="subtopic" id="subtopic">
                 <option value="">Please Select</option>
-            </select>
+            </select> -->
             <input name="new-subtopic" type="text" placeholder="New subtopic">
             <textarea name="question" placeholeder="Question">
                 
@@ -23,18 +24,15 @@
             <input type="checkbox" name="isMultipleChoice" value="1">
             <label for="isMultipleChoice">Multiple Choice</label>
 
-            <!-- Answers -->
-            <div id="answers">
-
-            </div>
             <button type="submit">Submit</button>
         </form>
+        {% include "modules/selector-script.html" %}
         
 
     </div>
     </form>
     <!-- externes js -->
-    <script>
+    <!-- <script>
         let topic = document.querySelector('#topic');
         topic.addEventListener('change', async function() {
             let res = await fetch('/get-subtopics?t_id=' + topic.value);
@@ -46,5 +44,5 @@
             document.querySelector('#subtopic').innerHTML = html;
         });
 
-    </script>
+    </script> -->
 {% endblock %}

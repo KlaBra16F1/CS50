@@ -123,6 +123,7 @@ def users():
         hash = generate_password_hash(request.form.get("password"))
         role = request.form.get("role")
         h.add_user(name, hash, role)
+        flash("User {} created successfully as {}.".format(name, role))
         return redirect("/users")
 
     users = h.get_users()
