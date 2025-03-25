@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block main %}
+<form action="/get-results" method="post">
+    {% for q in questions %}
+    <div>
+        
+        <h3>{{ q.question }}</h3>
+        <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
+        <div>
+            {% for a in answers %}
+                {% if a.q_id == q.q_id %}
+                <p>
+
+                    <label for="answer">{{ a.answer }}</label>
+                    {% if q.isMultipleChoice %}
+                        <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}">
+                    {% else %}
+                        <input type="radio" name="{{ q.q_id }}" value= "{{ a.a_id }}">
+                    {% endif %}
+                </p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

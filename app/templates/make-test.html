@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+    {% block main %}
+    <form action="/make-test" method="post">
+        {%include "modules/topic-selector.html" %}
+        <input type="number" name="count" placeholder="Number of questions">
+        <button type="submit">Create test</button>
+    </form>
+
+    {% include "/modules/selector-script.html" %}
+
+{% endblock %}

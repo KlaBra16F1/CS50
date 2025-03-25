@@ -15,6 +15,7 @@ Session(app)
 def index():
     return render_template("index.html")
 
+# Questions
 @app.route("/add-questions", methods=["GET","POST"])
 @h.maintainer_required
 def add_questions():
@@ -44,7 +45,8 @@ def add_questions():
 @h.maintainer_required
 def add_answers():
     if request.method == "POST":
-        form = request.form
+        form = request.form.get("topic")
+
         answers = []
         
         print(len(form)//4+1)
@@ -70,6 +72,59 @@ def edit_questions():
     topics = h.get_topics()
     return render_template("edit-questions.html", rows_topics=topics)
 
+# Tests
+
+@app.route("/make-test", methods=["GET","POST"])
+def make_test():
+    
+    session["q_order"] = ""
+    session["a_order"] = ""
+    #print(session["q_order"], session["a_order"])
+    if request.method == "POST":
+        t_id = request.form.get("topic")
+        s_id = request.form.get("subtopic")
+        count = request.form.get("count")
+        questions, answers = h.create_test(t_id, s_id, count)
+        session["q_order"] = [q["q_id"] for q in questions]
+        session["a_order"] = [a["a_id"] for a in answers]
+        print(session["q_order"], session["a_order"])
+        return render_template("test.html", questions=questions, answers=answers)
+    topics = h.get_topics()
+    return render_template("make-test.html", rows_topics=topics)
+
+@app.route("/get-results", methods=["POST"])
+def get_results():
+    test = {}
+    # extract questions/answers dict
+    print(request.form)
+    
+    for r in request.form:
+        if r.__contains__("."):
+            rs = r.split(".")
+            if rs[0] == "question":
+                test[rs[1]] = []
+            else:
+                test[rs[0]].append(int(rs[1]))
+        else:
+            test[r[0]].append(int(request.form.get(r)))
+        # print(test)
+
+    
+    # send answers to users table
+    u_id = None if session is None else session.get("user_id")
+    h.verify_test(u_id,test)
+    questions = h.get_questions_result(session["q_order"])
+    answers = h.get_answers(session["q_order"])
+    
+    # Send answers in same random order like make_test
+    answers_ordered = []
+    for a in session["a_order"]:
+        for answer in answers:
+            if answer["a_id"] == int(a):
+                answers_ordered.append(answer)
+    return render_template("results.html", questions=questions, answers=answers_ordered, test=test)
+    # return 'hello'
+
 # Inforoutes
 @app.route("/get-subtopics")
 def get_subtopics():
@@ -89,6 +144,7 @@ def get_questions():
     print(q_ids)
     return render_template("questions.html", questions = questions, answers = answers)
 
+# Users
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
