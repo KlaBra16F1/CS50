@@ -31,7 +31,11 @@ def add_user(name, hash, role):
     db.execute("INSERT INTO users (name, hash, role) VALUES (?, ?, ?);", name, hash, role)
 
 def delete_user(u_id):
+    db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
+    db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
+    db.execute("COMMIT;")
+    
 
 def login_user(username, password):
     user = db.execute("SELECT u_id, name, hash, role FROM users WHERE name = ?", username)
