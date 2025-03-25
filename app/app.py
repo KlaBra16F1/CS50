@@ -45,11 +45,12 @@ def add_questions():
 @h.maintainer_required
 def add_answers():
     if request.method == "POST":
-        form = request.form.get("topic")
+        form = request.form
+        print(form)
 
         answers = []
         
-        print(len(form)//4+1)
+        
         for i in range (1,len(form)//4+1):
             answer = {}
             answer["q_id"] =  form[f"answer[{i}][q_id]"]
@@ -106,7 +107,8 @@ def get_results():
             else:
                 test[rs[0]].append(int(rs[1]))
         else:
-            test[r[0]].append(int(request.form.get(r)))
+            print('cp')
+            test[r].append(int(request.form.get(r)))
         # print(test)
 
     
@@ -160,7 +162,7 @@ def login():
             flash('')
             return render_template("login.html", error=error)
         flash("User {} successfully logged in as {}".format(username, session["role"]))
-        return redirect("/users")
+        return redirect("/")
     return render_template("login.html")
 
 @app.route("/users", methods=["GET","POST"])
