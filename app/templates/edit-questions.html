@@ -1,21 +1,13 @@
 {% extends "layout.html" %}
+{% block header %}
+    <h1>
+        Edit Questions
+    </h1>
+{% endblock %}
 {% block main %}
+
 {% include "modules/topic-selector.html" %}
-    <!-- <div>
-        <form action="/add-questions" method="post" >
-            <select name="topic" id="topic">
-                <option value="">Please Select</option>
-                {% for r in rows_topics %}
-                    <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }}</option>
-                {% endfor %}
-            </select>
-            <select name="subtopic" id="subtopic" onchange="getQuestions();">
-                <option value="">Please Select</option>
-            </select>
-            <button type="submit">Submit</button>  
-        </form>
-    </div>
-</form> -->
+
 {% include "modules/selector-script.html" %}
 <!-- externes js -->
     <p id="table"></p>
@@ -27,10 +19,9 @@
             if (subtopics_loaded == false) {
                 s_id = '';
             }
-            console.log(t_id, s_id);
-            if (t_id == '') {
-                return;
-            }
+            // if (t_id == '') {
+            //     return;
+            // }
             var req = new XMLHttpRequest();
             req.onreadystatechange = function() {
                 if (req.readyState == 4 && req.status == 200) {
@@ -40,5 +31,6 @@
             req.open('GET', '/get-questions?t_id='+ t_id +'&s_id=' + s_id, true);
             req.send();
         });
+
     </script>
 {% endblock %}

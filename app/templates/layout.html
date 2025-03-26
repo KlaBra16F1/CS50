@@ -1,18 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- <link href="/static/bootstrap5.3.3.css" rel="stylesheet">
-    <script src="/static/bootstrap.bundle5.3.3.js"></script> -->
-    <!-- Styles -->
-    <link rel="stylesheet" href="./static/metro.css">
-    <!-- Icons -->                    
-    <link rel="stylesheet" href="./static/icons.css">
-    <!-- Temp Css for NAV-->
-    <script src="./static/metro.js"></script>
-</head>
+{% include "./modules/head.html" %}
 <body>
     <!-- Menu -->
     <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
@@ -21,50 +9,64 @@
             </a>
             {% if session["user_id"] %}
             <ul class="app-bar-menu">
-                {% if session["role"] == "admin" %}
-                    <li><a href="/users">Manage Users</a></li>
-                {% endif %}
                 <li><a href="/make-test">Make Test</a></li>
                 {% if session["role"] in ["admin","maintainer"] %}
-                <li><a href="/add-questions">Add questions</a></li>
-                <li><a href="/edit-questions">Edit questions</a></li>
+                    <li><a href="/add-questions">Add questions</a></li>
+                    <li><a href="/edit-questions">Edit questions</a></li>
+                {% endif %}
+                {% if session["role"] == "admin" %}
+                    <li><a href="/users">Manage Users</a></li>
                 {% endif %}
             </ul>
             {% endif %}
             <ul class="app-bar-menu pos-fixed pos-top-right">
-                <li><a href="/login">Login</a></li>
-                <li><a href="/logout">Log out</a></li>
+                {% if not session["user_id"] %}
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+                {% if session["user_id"] %}
+                <li>
+                    <a href="#" class="dropdown-toggle"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a>
+                    <ul class="d-menu drop-down-right" data-role="dropdown">
+                        <li><a href="#">Statistics</a></li>
+                        <li><a href="#">Change Password</a></li>
+                        <li><a href="/logout">Log out</a></li>
+                        <li><a href="#" class="bg-red fg-white">Delete Account</a></li>
+                    </ul>
+                </li>
+                {% endif %}
             </ul>
     </div>
-    <header>
-        
-        {% for message in get_flashed_messages() %}
-            {% if error %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
-                <strong>Error!</strong> {{ error }}
-            </div>
-            {% else %}
-            <script type="text/javascript">
-                Metro.notify.create('{{ message }}', 'Success', {cls: "success", animation: 'none'});
-            </script>
-            <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
-                <strong>Success!</strong> {{ message }}
-            </div> -->
-            {% endif %}
-        {%endfor%}
+    <!-- End Menu -->
+    
+    <div class="container mt-20" style="margin-left: 10%">
+        <header>
+            <!-- Status Messages -->
+            {% for message in get_flashed_messages() %}
+                {% if error %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
+                    <strong>Error!</strong> {{ error }}
+                </div>
+                {% else %}
+                <script type="text/javascript">
+                    Metro.notify.create('{{ message }}', 'Success', {cls: "success", animation: 'none'});
+                </script>
+                {% endif %}
+            {%endfor%}
 
-        <img onload="console.log('success');">
-        
-    </header>
-    <main>
-        <div class="container" style="margin: 50px 10%">
-            {% block main %}
+                {% block header %}
+                
+                {% endblock %}
             
-            {% endblock %}
-        </div>
-    </main>
+        </header>
+        <main>
+            
+                {% block main %}
+                
+                {% endblock %}
+            </main>
+    </div>
     <footer>
 
     </footer>

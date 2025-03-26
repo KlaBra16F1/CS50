@@ -16,8 +16,19 @@
         <li>{{ u.u_id }} {{ u.name }} {{ u.role }} <form action="/users" method="post">
             <input name="delete" type="hidden" value="{{ u.u_id }}">
             <input name="name" type="hidden" value="{{ u.name }}">
-            <button type="submit">Delete</button>
+            <button class="del-btn" type="submit">Delete</button>
         </form></li>
         {% endfor %}
     </ul>
+    <!-- Nur testweise drin -->
+    <script>
+        $(".del-btn").on('mouseover', function(){
+            $(this).css("background-color","red")
+            $(this).css("color","white")
+        });
+        $(".del-btn").on('mouseout', function(){
+            $(this).css("background-color","#F0F0F0")
+            $(this).css("color","black")
+        });
+    </script>
 {% endblock %}

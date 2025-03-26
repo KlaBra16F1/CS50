@@ -12,7 +12,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 # Cookies
 Session(app)
-# Markdown
+
 
 @app.route("/")
 def index():
@@ -74,7 +74,16 @@ def add_answers():
     return render_template("add-answers.html")
 
 @app.route("/edit-questions")
+@h.maintainer_required
 def edit_questions():
+    if request.args.get("delete"):
+        q_id = request.args.get("delete")
+        questions, answers = h.delete_question(q_id)
+        print(questions, answers)
+        flash("Deleted {} questions and {} answers.".format(questions, answers))
+        return redirect("/edit-questions")
+
+        
     topics = h.get_topics()
     return render_template("edit-questions.html", rows_topics=topics)
 
@@ -168,7 +177,8 @@ def login():
             error = "Field empty"
             flash('')
             return render_template("login.html", error=error)
-        session["user_id"], session["role"], error_msg = h.login_user(username, password)
+        session["user_name"], session["user_id"], session["role"], error_msg = h.login_user(username, password)
+        
         if not session["user_id"] or not session["role"]:
             error = error_msg
             flash('')

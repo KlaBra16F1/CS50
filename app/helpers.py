@@ -41,11 +41,11 @@ def delete_user(u_id):
 def login_user(username, password):
     user = db.execute("SELECT u_id, name, hash, role FROM users WHERE name = ?", username)
     if user == None or len(user) != 1:
-        return None, None, "User not found."
+        return None, None, None, "User not found."
     elif check_password_hash(user[0]["hash"], password) == False:
-            return None, None, "Invalid password."
+            return None, None, None, "Invalid password."
     else:
-        return user[0]["u_id"], user[0]["role"], None
+        return user[0]["name"], user[0]["u_id"], user[0]["role"], None
     
 # TOPICS
 
@@ -65,17 +65,29 @@ def add_subtopic(t_id, new_subtopic):
 # QUESTIONS
 
 def get_questions(t_id, s_id):
-    if s_id == None or s_id == "":
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
-        return questions
-    
-    questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
-    return questions
+    if t_id is None or t_id =="":
+        return db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id);")
+    elif s_id is None or s_id == "":
+        return db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+    else:
+        return db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
+   
 
 def add_question(s_id, question, difficulty, isMultipleChoice):
     db.execute("INSERT INTO questions (s_id, question, difficulty, isMultipleChoice) values (?, ?, ?, ?)", s_id, question, difficulty, isMultipleChoice)
     q_id = db.execute("SELECT q_id FROM questions WHERE question = ? AND s_id = ?;", question, s_id)
     return q_id[0]
+
+def delete_question(q_id):
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("DELETE FROM answers WHERE q_id = ?;", q_id)
+    answers = db.execute("SELECT changes();")
+    db.execute("DELETE FROM questions WHERE q_id = ?;", q_id)
+    questions = db.execute("SELECT changes();")
+    db.execute("COMMIT;")
+    
+
+    return questions[0]["changes()"], answers[0]["changes()"]
 
 # ANSWERS
 

@@ -1,11 +1,13 @@
-{% extends "layout.html" %}
+{% include "./modules/head.html" %}
 {% block main %}
-<table class="table" rownum="true" data-role="table" width=80%>
+
+<table class="table" data-rows="10" rownum="true" data-role="table" width=80%>
     <thead>
         <tr>
-            <th>Topic</th>
+            <th class="sortable-column" data-sort-dir="asc">Topic</th>
             <th class="sortable-column">Subtopic</th>
             <th class="sortable-column">Question</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
@@ -14,8 +16,12 @@
             <td>{{ q.topic }}</td>
             <td>{{ q.subtopic }}</td>
             <td>{{ q.question | safe }}</td>
+            <td>
+                <form action="/edit-questions" method="get">
+                    <button type="submit" name="delete" value="{{q.q_id}}" class="button alert rounded"><span class="mif-bin fg-white"></span></button></td>
+                </form>
         </tr>
-            {% for a in answers %}
+            <!-- {% for a in answers %}
                 {% if q.q_id == a.q_id %}
                     <tr>
                         <td></td>
@@ -23,15 +29,10 @@
                         <td>{{ a.answer | safe }}</td>
                     </tr>
                 {% endif %}
-            {% endfor %}
+            {% endfor %} -->
         {% endfor %}
     </tbody>
 </table>
 <p></p>
-
-
-    
-    
-
 
 {% endblock %}

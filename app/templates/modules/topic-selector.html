@@ -1,13 +1,21 @@
-<div id="topic-selector">
-    <select name="topic" id="topic">
-        <option value="">Please Select</option>
-        {% for r in rows_topics %}
-            <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }}</option>
-        {% endfor %}
-    </select>
-    <select name="subtopic" id="subtopic">
-        <option value="">Please Select</option>
-    </select>
+<div id="topic-selector" class="row">
+    <div class="cell-md-third">
+        <select name="topic" id="topic" data-role="select" data-prepend="Topic">
+            <option value="">Please Select</option>
+            {% for r in rows_topics %}
+                <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="cell-md-third">
+        <select name="subtopic" id="subtopic" data-role="select" data-prepend="Subtopic">
+            <option value="">Please Select</option>
+        </select>
+    </div>
 </div>
+
+
+
+
 
 
