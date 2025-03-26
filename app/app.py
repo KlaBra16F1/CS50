@@ -58,6 +58,8 @@ def add_answers():
             answer = {}
             answer["q_id"] =  form[f"answer[{i}][q_id]"]
             answer["answer"] = form[f"answer[{i}][answer]"]
+            if answer["answer"] == "":
+                continue
             answer["comment"] = form[f"answer[{i}][comment]"]
             answer["true"] = form[f"answer[{i}][true]"]
             answers.append(answer)
@@ -143,18 +145,18 @@ def get_questions():
     s_id = request.args.get("s_id")
     print(f"topic: {t_id} subtopic {s_id}")
     questions = h.get_questions(t_id, s_id)
+    questions = h.add_markdown(questions,"question")
     q_ids = [q_id["q_id"] for q_id in questions]
     # Markdown
     answers = h.get_answers(q_ids)
-    answers_md = []
-    for m in answers:
-        m = dict(m)
-        m["answer"] = markdown(m["answer"])
-        answers_md.append(m)
+    # answers_md = []
+    # for m in answers:
+    #     m = dict(m)
+    #     m["answer"] = markdown(m["answer"])
+    #     answers_md.append(m)
+    answers = h.add_markdown(answers,"answer","comment")
     
-
-    print(answers_md)
-    return render_template("questions.html", questions = questions, answers = answers, a=answers_md)
+    return render_template("questions.html", questions = questions, answers = answers)
 
 # Users
 @app.route("/login", methods=["GET", "POST"])

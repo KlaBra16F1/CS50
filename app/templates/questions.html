@@ -13,14 +13,14 @@
         <tr>
             <td>{{ q.topic }}</td>
             <td>{{ q.subtopic }}</td>
-            <td>{{ q.question }}</td>
+            <td>{{ q.question | safe }}</td>
         </tr>
             {% for a in answers %}
                 {% if q.q_id == a.q_id %}
                     <tr>
                         <td></td>
                         <td>{% if a.is_true == 1 %} ✅ {% else %} ❌ {% endif %}</td>
-                        <td>{{ a.answer }}</td>
+                        <td>{{ a.answer | safe }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -28,9 +28,7 @@
     </tbody>
 </table>
 <p></p>
-{% for aa in a %}
-    <p>{{aa.answer | safe}}</p>
-{% endfor %}
+
 
     
     

@@ -4,6 +4,7 @@ from functools import wraps
 import sqlite3
 from werkzeug.security import check_password_hash
 import datetime as dt
+from markdown import markdown
 
 # Variables
 db = SQL("sqlite:///database.db.bak")
@@ -146,6 +147,20 @@ def verify_test(u_id,test):
                 db.execute("UPDATE user_questions SET timesDone = timesDone + 1, timesRight = timesRight + ?, lastDate = ? WHERE u_id = ? AND q_id = ?;", passed, now, u_id, int(q))
             else:
                 db.execute("INSERT INTO user_questions (u_id, q_id, timesDone, timesRight, lastDate) VALUES (?, ?, ?, ?, ?);", u_id, int(q), 1, passed, now)
+
+# Tools
+
+def add_markdown(data, *args):
+    output = []
+    for d in data:
+        d = dict(d)
+        #d["answer"] = markdown(d["answer"])
+        for a in args:
+            print(d[a])
+            d[a] = markdown(d[a]) if d[a] is not None else ''
+        output.append(d)
+    return output
+
 
 # Website Functions
 
