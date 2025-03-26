@@ -12,23 +12,30 @@
     <link rel="stylesheet" href="./static/icons.css">
     <!-- Temp Css for NAV-->
     <script src="./static/metro.js"></script>
-     <style>
-        .navigation li {
-            display: inline-block;
-        }
-     </style>
 </head>
 <body>
-    <nav class="navigation">
-        <ul>
-            <li><a href="/users">Manage Users</a></li>
-            <li><a href="/make-test">Make Test</a></li>
-            <li><a href="/add-questions">Add questions</a></li>
-            <li><a href="/edit-questions">Edit questions</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/logout">Log out</a></li>
-        </ul>
-    </nav>
+    <!-- Menu -->
+    <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
+            <a href="#" class="brand no-hover">
+                <h4><em>Test</em><strong>Forge</strong></h4>
+            </a>
+            {% if session["user_id"] %}
+            <ul class="app-bar-menu">
+                {% if session["role"] == "admin" %}
+                    <li><a href="/users">Manage Users</a></li>
+                {% endif %}
+                <li><a href="/make-test">Make Test</a></li>
+                {% if session["role"] in ["admin","maintainer"] %}
+                <li><a href="/add-questions">Add questions</a></li>
+                <li><a href="/edit-questions">Edit questions</a></li>
+                {% endif %}
+            </ul>
+            {% endif %}
+            <ul class="app-bar-menu pos-fixed pos-top-right">
+                <li><a href="/login">Login</a></li>
+                <li><a href="/logout">Log out</a></li>
+            </ul>
+    </div>
     <header>
         
         {% for message in get_flashed_messages() %}
@@ -52,11 +59,11 @@
         
     </header>
     <main>
-        
-        {% block main %}
-        
-        {% endblock %}
-
+        <div class="container" style="margin: 50px 10%">
+            {% block main %}
+            
+            {% endblock %}
+        </div>
     </main>
     <footer>
 
