@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify, request, redirect, flash, session
 from flask_session import Session
+from markdown import markdown
 from werkzeug.security import generate_password_hash
+
 import helpers as h
 
 # App Setting
@@ -10,6 +12,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 # Cookies
 Session(app)
+# Markdown
 
 @app.route("/")
 def index():
@@ -141,10 +144,17 @@ def get_questions():
     print(f"topic: {t_id} subtopic {s_id}")
     questions = h.get_questions(t_id, s_id)
     q_ids = [q_id["q_id"] for q_id in questions]
-
+    # Markdown
     answers = h.get_answers(q_ids)
-    print(q_ids)
-    return render_template("questions.html", questions = questions, answers = answers)
+    answers_md = []
+    for m in answers:
+        m = dict(m)
+        m["answer"] = markdown(m["answer"])
+        answers_md.append(m)
+    
+
+    print(answers_md)
+    return render_template("questions.html", questions = questions, answers = answers, a=answers_md)
 
 # Users
 @app.route("/login", methods=["GET", "POST"])

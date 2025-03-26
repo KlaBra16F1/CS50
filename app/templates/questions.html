@@ -27,6 +27,13 @@
         {% endfor %}
     </tbody>
 </table>
+<p></p>
+{% for aa in a %}
+    <p>{{aa.answer | safe}}</p>
+{% endfor %}
+
+    
+    
 
 
 {% endblock %}
