@@ -102,10 +102,13 @@ def make_test():
         s_id = request.form.get("subtopic")
         count = request.form.get("count")
         questions, answers = h.create_test(t_id, s_id, count)
+        questions = h.add_markdown(questions,"question")
+        answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
         return render_template("test.html", questions=questions, answers=answers)
     topics = h.get_topics()
+
     return render_template("make-test.html", rows_topics=topics)
 
 @app.route("/get-results", methods=["POST"])
@@ -129,7 +132,9 @@ def get_results():
     u_id = None if session is None else session.get("user_id")
     h.verify_test(u_id,test)
     questions = h.get_questions_result(session["q_order"])
+    questions = h.add_markdown(questions, "question")
     answers = h.get_answers(session["q_order"])
+    answers = h.add_markdown(answers, "answer", "comment")
     
     # Send answers in same random order like make_test
     answers_ordered = []

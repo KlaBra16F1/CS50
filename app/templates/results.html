@@ -4,7 +4,7 @@
     {% for q in questions %}
     <div>
         
-        <h3>{{ q.question }}</h3>
+        <h3>{{ q.question | safe }}</h3>
         <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
         <div>
             {% for a in answers %}
@@ -14,7 +14,7 @@
                     {% for t in test %}
                         {% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) %} 📝 {% endif %}
                     {% endfor %}
-                        <label for="answer">{{ a.answer }} </label>
+                        <label for="answer">{{ a.answer |safe }} </label>
                             {% if q.isMultipleChoice %}
                                 <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id}}" value="{{ a.a_id}}">
                                 

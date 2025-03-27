@@ -7,9 +7,9 @@
             <a href="#" class="brand no-hover">
                 <h4><em>Test</em><strong>Forge</strong></h4>
             </a>
-            {% if session["user_id"] %}
             <ul class="app-bar-menu">
                 <li><a href="/make-test">Make Test</a></li>
+                {% if session["user_id"] %}
                 {% if session["role"] in ["admin","maintainer"] %}
                     <li><a href="/add-questions">Add questions</a></li>
                     <li><a href="/edit-questions">Edit questions</a></li>

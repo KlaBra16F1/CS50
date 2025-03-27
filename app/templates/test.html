@@ -4,14 +4,14 @@
     {% for q in questions %}
     <div>
         
-        <h3>{{ q.question }}</h3>
+        <h3>{{ q.question | safe }}</h3>
         <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
         <div>
             {% for a in answers %}
                 {% if a.q_id == q.q_id %}
                 <p>
 
-                    <label for="answer">{{ a.answer }}</label>
+                    <label for="answer">{{ a.answer | safe }}</label>
                     {% if q.isMultipleChoice %}
                         <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}">
                     {% else %}
