@@ -1,20 +1,24 @@
 {% include "./modules/head.html" %}
 {% block main %}
-<table class="table" data-show-search="false" data-rows="10" rownum="true" data-role="table" width=80%>
+<table class="table" data-show-search="false" data-cell-wrapper="true" data-rows="10" rownum="true" data-role="table" width="80%" style="table-layout: fixed!important;">
     <thead>
         <tr>
-            <th class="sortable-column" data-sort-dir="asc">Topic</th>
-            <th class="sortable-column">Subtopic</th>
-            <th class="sortable-column">Question</th>
-            <th>Options</th>
+            <th class="sortable-column colM" data-sort-dir="asc">Topic</th>
+            <th class="sortable-column colM">Subtopic</th>
+            <th class="sortable-column colL">Question</th>
+            <th class="colS">Difficulty</th>
+            <th class="colS">Multiple Choice</th>
+            <th class="colM">Options</th>
         </tr>
     </thead>
     <tbody>
         {% for q in questions %}
         <tr>
-            <td>{{ q.topic }}</td>
-            <td>{{ q.subtopic }}</td>
-            <td><div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div></td>
+            <td class="colM">{{ q.topic }}</td>
+            <td class="colM">{{ q.subtopic }}</td>
+            <td class="colL"><div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div></td>
+            <td>{{ q.difficulty }}</td>
+            <td>{{ q.isMultipleChoice }}</td>
             <td>
                 <button type="button" name="edit" value="{{q.q_id}}" class="button success rounded" onclick="editQuestion(event);" title="Edit"><span class="mif-quickedit fg-white"></span></button>
                 <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded" onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>

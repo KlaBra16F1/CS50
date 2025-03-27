@@ -1,0 +1,13 @@
+.colS {
+    width: 10%!important;
+    
+}
+.colM {
+    width: 15%!important;
+}
+.colL {
+    width: 50%!important;
+}
+td {
+    vertical-align:text-top!important;
+}
