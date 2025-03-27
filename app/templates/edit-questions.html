@@ -14,14 +14,15 @@
     <script>
         let selector = document.querySelector("#topic-selector");
         selector.addEventListener('change', function(){
+            getQuestions();
+        });
+
+        function getQuestions(){
             let t_id = document.querySelector('#topic').value;
             let s_id = document.querySelector('#subtopic').value;
             if (subtopics_loaded == false) {
                 s_id = '';
             }
-            // if (t_id == '') {
-            //     return;
-            // }
             var req = new XMLHttpRequest();
             req.onreadystatechange = function() {
                 if (req.readyState == 4 && req.status == 200) {
@@ -30,7 +31,41 @@
             };
             req.open('GET', '/get-questions?t_id='+ t_id +'&s_id=' + s_id, true);
             req.send();
-        });
+        };
+
+        async function deleteQuestion(event) {
+            let del = event.currentTarget.value;
+            let req = await fetch('/edit-questions?delete=' + del);
+            let res = await req.json();
+            Metro.notify.create("Success",`Deleted ${res["questions"]} questions and ${res["answers"]} answers.`,{cls: 'success'});
+            getQuestions();
+        };
+
+        function editQuestion(event) {
+            let edit = event.currentTarget.value;
+            let question = document.querySelector(`#q${edit}`);
+            if (question.children[0] == undefined) {
+                question.appendChild(document.createElement("p"));
+            }
+            let questionOld = question.children[0].innerHTML;
+            let html = `
+                    <form onsubmit="updateQuestion(${edit}, event)">
+                        <input name="new_question" type=text data-role="input" data-prepend="Update" value="${questionOld}">
+                    </form>`;
+            question.innerHTML = html;
+
+        };
+
+        async function updateQuestion(q_id, event){
+            let question = event.srcElement[0].value;
+            event.preventDefault();
+            
+            let req = await fetch('/edit-questions?update=' + q_id +"&question=" + question);
+            let res = await req.json();
+            Metro.notify.create("Success",`Updated ${res["changes()"]} question.`,{cls: 'success'});
+            getQuestions();
+
+        };
 
     </script>
 {% endblock %}

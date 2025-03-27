@@ -78,6 +78,14 @@ def add_question(s_id, question, difficulty, isMultipleChoice):
     q_id = db.execute("SELECT q_id FROM questions WHERE question = ? AND s_id = ?;", question, s_id)
     return q_id[0]
 
+def update_question(q_id, question):
+    print("update", question)
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("UPDATE questions SET question = ? WHERE q_id = ?;", question, q_id)
+    changes = db.execute("SELECT changes();")
+    db.execute("COMMIT;")
+    return changes[0]
+
 def delete_question(q_id):
     db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM answers WHERE q_id = ?;", q_id)

@@ -1,13 +1,12 @@
 {% include "./modules/head.html" %}
 {% block main %}
-
 <table class="table" data-rows="10" rownum="true" data-role="table" width=80%>
     <thead>
         <tr>
             <th class="sortable-column" data-sort-dir="asc">Topic</th>
             <th class="sortable-column">Subtopic</th>
             <th class="sortable-column">Question</th>
-            <th>Delete</th>
+            <th>Options</th>
         </tr>
     </thead>
     <tbody>
@@ -15,11 +14,12 @@
         <tr>
             <td>{{ q.topic }}</td>
             <td>{{ q.subtopic }}</td>
-            <td>{{ q.question | safe }}</td>
+            <td><div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div></td>
             <td>
-                <form action="/edit-questions" method="get">
-                    <button type="submit" name="delete" value="{{q.q_id}}" class="button alert rounded"><span class="mif-bin fg-white"></span></button></td>
-                </form>
+                <button type="button" name="edit" value="{{q.q_id}}" class="button success rounded" onclick="editQuestion(event);" title="Edit"><span class="mif-quickedit fg-white"></span></button>
+                <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded" onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
+            </td>
+
         </tr>
             <!-- {% for a in answers %}
                 {% if q.q_id == a.q_id %}
@@ -33,6 +33,6 @@
         {% endfor %}
     </tbody>
 </table>
-<p></p>
+
 
 {% endblock %}

@@ -1,6 +1,5 @@
 from flask import Flask, render_template, jsonify, request, redirect, flash, session
 from flask_session import Session
-from markdown import markdown
 from werkzeug.security import generate_password_hash
 
 import helpers as h
@@ -78,10 +77,16 @@ def add_answers():
 def edit_questions():
     if request.args.get("delete"):
         q_id = request.args.get("delete")
+        print("delete", q_id)
         questions, answers = h.delete_question(q_id)
-        print(questions, answers)
-        flash("Deleted {} questions and {} answers.".format(questions, answers))
-        return redirect("/edit-questions")
+        return {"questions": questions, "answers": answers}
+    if request.args.get("update"):
+        q_id = request.args.get("update")
+        question = request.args.get("question")
+        msg = h.update_question(q_id, question)
+        print(q_id, question)
+        return jsonify(msg)
+        
 
         
     topics = h.get_topics()
@@ -156,13 +161,9 @@ def get_questions():
     questions = h.get_questions(t_id, s_id)
     questions = h.add_markdown(questions,"question")
     q_ids = [q_id["q_id"] for q_id in questions]
-    # Markdown
     answers = h.get_answers(q_ids)
-    # answers_md = []
-    # for m in answers:
-    #     m = dict(m)
-    #     m["answer"] = markdown(m["answer"])
-    #     answers_md.append(m)
+
+    # Markdown
     answers = h.add_markdown(answers,"answer","comment")
     
     return render_template("questions.html", questions = questions, answers = answers)
