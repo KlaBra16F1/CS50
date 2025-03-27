@@ -50,29 +50,47 @@
             editable = true;
             let edit = event.currentTarget.value;
             let question = document.querySelector(`#q${edit}`);
+            let multiple = document.querySelector(`#m${edit}`);
             if (question.children[0] == undefined) {
                 question.appendChild(document.createElement("p"));
             }
             let questionOld = question.children[0].innerHTML;
-            let html = `
-                    <form onsubmit="updateQuestion(${edit}, event)">
-                        <input name="new_question" type=text data-role="input" data-prepend="Update" value="${questionOld}">
+            let multipleOld = multiple.innerHTML;
+            let htmlM = `
+                    <form onsubmit="updateMultiple(${edit}, event); return false;">
+                        <input name="new_multiple" type="number" class="input-small"data-role="input" data-clear-button="false"  value="${multipleOld}">
                     </form>`;
-            question.innerHTML = html;
+            let htmlQ = `
+                    <form onsubmit="updateQuestion(${edit}, event); return false;">
+                        <input name="new_question" type="text" data-role="input" data-prepend="Update" value="${questionOld}">
+                    </form>`;
+
+            question.innerHTML = htmlQ;
+            multiple.innerHTML = htmlM;
             
         };
 
         async function updateQuestion(q_id, event){
+            
             let question = event.srcElement[0].value;
             event.preventDefault();
-            
+            console.log(question)
             let req = await fetch('/edit-questions?update=' + q_id +"&question=" + question);
             let res = await req.json();
             Metro.notify.create("Success",`Updated ${res["changes()"]} question.`,{cls: 'success'});
             getQuestions();
             editable = undefined;
-
-
+        };
+        async function updateMultiple(q_id, event){
+            
+            let multiple = event.srcElement[0].value;
+            event.preventDefault();
+            console.log(multiple)
+            let req = await fetch('/edit-questions?update=' + q_id +"&multiple=" + multiple);
+            let res = await req.json();
+            Metro.notify.create("Success",`Updated ${res["changes()"]} question.`,{cls: 'success'});
+            getQuestions();
+            editable = undefined;
         };
 
     </script>

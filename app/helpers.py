@@ -76,15 +76,15 @@ def add_subtopic(t_id, new_subtopic):
 
 def get_questions(t_id, s_id):
     if t_id is None or t_id =="":
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id);")
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id);")
         db._disconnect()
         return questions
     elif s_id is None or s_id == "":
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
         db._disconnect()
         return questions
     else:
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
         db._disconnect()
         return questions
    
@@ -95,13 +95,19 @@ def add_question(s_id, question, difficulty, isMultipleChoice):
     db._disconnect()
     return q_id[0]
 
-def update_question(q_id, question):
+def update_question(q_id, question, multiple):
     db.execute("BEGIN TRANSACTION;")
-    db.execute("UPDATE questions SET question = ? WHERE q_id = ?;", question, q_id)
+    if multiple is None:
+        print('question')
+        db.execute("UPDATE questions SET question = ? WHERE q_id = ?;", question, q_id)
+    else:
+        print('multiple')
+        db.execute("UPDATE questions SET isMultipleChoice = ? WHERE q_id = ?;", multiple, q_id)
     changes = db.execute("SELECT changes();")
     db.execute("COMMIT;")
     db._disconnect()
     return changes[0]
+
 
 def delete_question(q_id):
     db.execute("BEGIN TRANSACTION;")

@@ -80,8 +80,9 @@ def edit_questions():
         return {"questions": questions, "answers": answers}
     if request.args.get("update"):
         q_id = request.args.get("update")
-        question = request.args.get("question")
-        msg = h.update_question(q_id, question)
+        question = request.args.get("question", None)
+        multiple = request.args.get("multiple", None)
+        msg = h.update_question(q_id, question, multiple)
         return jsonify(msg)
         
 

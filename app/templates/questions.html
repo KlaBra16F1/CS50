@@ -6,8 +6,7 @@
             <th class="sortable-column colM" data-sort-dir="asc">Topic</th>
             <th class="sortable-column colM">Subtopic</th>
             <th class="sortable-column colL">Question</th>
-            <th class="colS">Difficulty</th>
-            <th class="colS">Multiple Choice</th>
+            <th class="colS">M</th>
             <th class="colM">Options</th>
         </tr>
     </thead>
@@ -17,10 +16,9 @@
             <td class="colM">{{ q.topic }}</td>
             <td class="colM">{{ q.subtopic }}</td>
             <td class="colL"><div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div></td>
-            <td>{{ q.difficulty }}</td>
-            <td>{{ q.isMultipleChoice }}</td>
+            <td><div id="m{{ q.q_id | int }}">{{ q.isMultipleChoice }}</div></td>
             <td>
-                <button type="button" name="edit" value="{{q.q_id}}" class="button success rounded" onclick="editQuestion(event);" title="Edit"><span class="mif-quickedit fg-white"></span></button>
+                <button type="button" name="edit" id="b{{ q.q_id }}" value="{{q.q_id}}" class="button success rounded" onclick="editQuestion(event);" title="Edit"><span class="mif-pencil fg-white"></span></button>
                 <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded" onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
             </td>
 
