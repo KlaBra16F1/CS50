@@ -48,7 +48,7 @@ def add_questions():
 def add_answers():
     if request.method == "POST":
         form = request.form
-        print(form)
+
 
         answers = []
         
@@ -63,9 +63,8 @@ def add_answers():
             answer["true"] = form[f"answer[{i}][true]"]
             answers.append(answer)
 
-        for a in answers:
-            print(a["answer"])
-        h.add_answers(answers)
+        changes = h.add_answers(answers)
+        flash(f"Added {changes} questions.")
         return redirect("/edit-questions")
         
         
@@ -77,14 +76,12 @@ def add_answers():
 def edit_questions():
     if request.args.get("delete"):
         q_id = request.args.get("delete")
-        print("delete", q_id)
         questions, answers = h.delete_question(q_id)
         return {"questions": questions, "answers": answers}
     if request.args.get("update"):
         q_id = request.args.get("update")
         question = request.args.get("question")
         msg = h.update_question(q_id, question)
-        print(q_id, question)
         return jsonify(msg)
         
 
@@ -99,7 +96,6 @@ def make_test():
     
     session["q_order"] = ""
     session["a_order"] = ""
-    #print(session["q_order"], session["a_order"])
     if request.method == "POST":
         t_id = request.form.get("topic")
         s_id = request.form.get("subtopic")
@@ -107,7 +103,6 @@ def make_test():
         questions, answers = h.create_test(t_id, s_id, count)
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
-        print(session["q_order"], session["a_order"])
         return render_template("test.html", questions=questions, answers=answers)
     topics = h.get_topics()
     return render_template("make-test.html", rows_topics=topics)
@@ -116,7 +111,6 @@ def make_test():
 def get_results():
     test = {}
     # extract questions/answers dict
-    print(request.form)
     
     for r in request.form:
         if r.__contains__("."):
@@ -126,9 +120,8 @@ def get_results():
             else:
                 test[rs[0]].append(int(rs[1]))
         else:
-            print('cp')
             test[r].append(int(request.form.get(r)))
-        # print(test)
+
 
     
     # send answers to users table
@@ -157,7 +150,6 @@ def get_subtopics():
 def get_questions():
     t_id = request.args.get("t_id")
     s_id = request.args.get("s_id")
-    print(f"topic: {t_id} subtopic {s_id}")
     questions = h.get_questions(t_id, s_id)
     questions = h.add_markdown(questions,"question")
     q_ids = [q_id["q_id"] for q_id in questions]
@@ -192,7 +184,6 @@ def login():
 @h.admin_required
 def users():
     if request.method == "POST":
-        print(request.form.get("delete"))
         if request.form.get("delete") != None:
             u_id = request.form.get("delete")
             name = request.form.get("name")

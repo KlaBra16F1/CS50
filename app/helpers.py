@@ -20,26 +20,31 @@ DAY = dt.timedelta(days=1)
 
 def get_users():
     users = db.execute("SELECT u_id,name,role FROM users;")
+    db._disconnect()
     return users
 
 def get_user(u_id):
     user = db.execute("SELECT COUNT(u_id) AS count FROM users WHERE u_id = ?;", u_id)
+    db._disconnect()
     if int(user[0]["count"]) == 1:
         return True
     return False
 
 def add_user(name, hash, role):
     db.execute("INSERT INTO users (name, hash, role) VALUES (?, ?, ?);", name, hash, role)
+    db._disconnect()
 
 def delete_user(u_id):
     db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
     db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
     db.execute("COMMIT;")
+    db._disconnect()
     
 
 def login_user(username, password):
     user = db.execute("SELECT u_id, name, hash, role FROM users WHERE name = ?", username)
+    db._disconnect()
     if user == None or len(user) != 1:
         return None, None, None, "User not found."
     elif check_password_hash(user[0]["hash"], password) == False:
@@ -51,39 +56,51 @@ def login_user(username, password):
 
 def get_topics():
     topics = db.execute("SELECT t_id, topic FROM topics ORDER BY topic;")
+    db._disconnect()
     return topics
 
 def add_topic(new_topic):
     db.execute("INSERT INTO topics (topic) values (?);", new_topic)
+    db._disconnect()
 
 def get_subtopics(t_id):
     subtopics =  db.execute("SELECT s_id, subtopic FROM subtopics WHERE t_id = ? ORDER BY subtopic", t_id)
+    db._disconnect()
     return subtopics
+
 def add_subtopic(t_id, new_subtopic):
     db.execute("INSERT INTO subtopics (t_id, subtopic) VALUES (?, ?);", t_id, new_subtopic)
+    db._disconnect()
 
 # QUESTIONS
 
 def get_questions(t_id, s_id):
     if t_id is None or t_id =="":
-        return db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id);")
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id);")
+        db._disconnect()
+        return questions
     elif s_id is None or s_id == "":
-        return db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+        db._disconnect()
+        return questions
     else:
-        return db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
+        db._disconnect()
+        return questions
    
 
 def add_question(s_id, question, difficulty, isMultipleChoice):
     db.execute("INSERT INTO questions (s_id, question, difficulty, isMultipleChoice) values (?, ?, ?, ?)", s_id, question, difficulty, isMultipleChoice)
     q_id = db.execute("SELECT q_id FROM questions WHERE question = ? AND s_id = ?;", question, s_id)
+    db._disconnect()
     return q_id[0]
 
 def update_question(q_id, question):
-    print("update", question)
     db.execute("BEGIN TRANSACTION;")
     db.execute("UPDATE questions SET question = ? WHERE q_id = ?;", question, q_id)
     changes = db.execute("SELECT changes();")
     db.execute("COMMIT;")
+    db._disconnect()
     return changes[0]
 
 def delete_question(q_id):
@@ -93,6 +110,7 @@ def delete_question(q_id):
     db.execute("DELETE FROM questions WHERE q_id = ?;", q_id)
     questions = db.execute("SELECT changes();")
     db.execute("COMMIT;")
+    db._disconnect()
     
 
     return questions[0]["changes()"], answers[0]["changes()"]
@@ -101,13 +119,19 @@ def delete_question(q_id):
 
 def get_answers(q_ids):
     answers = db.execute("SELECT row_number() OVER (order by random()) AS random, q_id, a_id, answer, comment, is_true FROM answers WHERE q_id IN (?) ORDER BY q_id, random;", q_ids)
+    db._disconnect()
     return answers
 
 def add_answers(answers):
+    changes = 0
     db.execute("BEGIN TRANSACTION;")
     for answer in answers:
         db.execute("INSERT INTO answers (q_id, answer, comment, is_true) values (?, ?, ?, ?);", int(answer["q_id"]), answer["answer"], answer["comment"], int(answer["true"]))
+        change = db.execute("SELECT changes();")
+        changes += change[0]["changes()"]
     db.execute("COMMIT;")
+    db._disconnect()
+    return changes
 
 
 
@@ -116,7 +140,6 @@ def add_answers(answers):
 # TESTS
 
 def create_test(t_id, s_id, count):
-    print(count, type(count))
     
     if count == "":
         count = None
@@ -138,7 +161,6 @@ def verify_test(u_id,test):
     # Check user
     if not (u_id is None or u_id == ""):
         update_db = True if get_user(int(u_id)) == True else None
-        print("user found",update_db)
 
     now = dt.datetime.today().strftime("%Y-%m-%d")
 
@@ -176,7 +198,6 @@ def add_markdown(data, *args):
         d = dict(d)
         #d["answer"] = markdown(d["answer"])
         for a in args:
-            print(d[a])
             d[a] = markdown(d[a]) if d[a] is not None else ''
         output.append(d)
     return output
