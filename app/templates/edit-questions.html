@@ -42,6 +42,12 @@
         };
 
         function editQuestion(event) {
+            // prevent multiple call for update
+            if (typeof(editable) !== 'undefined') {
+                    Metro.notify.create('Error','You can only edit one question at a time. Press ENTER to submit first.',{ cls: 'alert'})
+                    return;
+                }
+            editable = true;
             let edit = event.currentTarget.value;
             let question = document.querySelector(`#q${edit}`);
             if (question.children[0] == undefined) {
@@ -53,7 +59,7 @@
                         <input name="new_question" type=text data-role="input" data-prepend="Update" value="${questionOld}">
                     </form>`;
             question.innerHTML = html;
-
+            
         };
 
         async function updateQuestion(q_id, event){
@@ -64,6 +70,8 @@
             let res = await req.json();
             Metro.notify.create("Success",`Updated ${res["changes()"]} question.`,{cls: 'success'});
             getQuestions();
+            editable = undefined;
+
 
         };
 
