@@ -24,16 +24,9 @@
                     <li><a href="/register">Register</a></li>
                     <li><a href="/login">Login</a></li>
                 {% endif %}
-                {% if session["user_id"] %}
-                <li>
-                    <a href="#" class="dropdown-toggle"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a>
-                    <ul class="d-menu drop-down-right" data-role="dropdown">
-                        <li><a href="#">Statistics</a></li>
-                        <li><a href="#">Change Password</a></li>
-                        <li><a href="/logout">Log out</a></li>
-                        <li><a href="#" class="bg-red fg-white">Delete Account</a></li>
-                    </ul>
-                </li>
+                {% if session["user_id"] %}                
+                    <li><a href="#"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a></li>
+                    <li><a href="/logout">Log out</a></li>
                 {% endif %}
             </ul>
     </div>
