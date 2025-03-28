@@ -1,6 +1,6 @@
 {% include "./modules/head.html" %}
 {% block main %}
-<table class="table" data-show-search="false" data-cell-wrapper="true" data-rows="10" rownum="true" data-role="table" width="80%" style="table-layout: fixed!important;">
+<table class="table" data-show-search="true" data-cell-wrapper="false" data-rows="10" rownum="true" data-role="table" width="80%" style="table-layout: fixed!important;">
     <thead>
         <tr>
             <th class="sortable-column colM" data-sort-dir="asc">Topic</th>
@@ -13,14 +13,14 @@
     <tbody>
         {% for q in questions %}
         <tr>
-            <td class="colM">{{ q.topic }}</td>
-            <td class="colM">{{ q.subtopic }}</td>
-            <td class="colL"><div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div></td>
-            <td><div id="m{{ q.q_id | int }}">{{ q.isMultipleChoice }}</div></td>
-            <td>
-                <button type="button" name="edit" id="b{{ q.q_id }}" value="{{q.q_id}}" class="button success rounded" onclick="editQuestion(event);" title="Edit"><span class="mif-pencil fg-white"></span></button>
-                <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded" onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
-            </td>
+                <td class="colM">{{ q.topic }}</td>
+                <td class="colM">{{ q.subtopic }}</td>
+                <td class="colL"><div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div></td>
+                <td><div id="m{{ q.q_id | int }}">{{ q.isMultipleChoice }}</div></td>
+                <td>
+                    <button type="button" name="edit" id="b{{ q.q_id }}" value="{{q.q_id}}" class="button success rounded" onclick="update('{{ q.q_id }}');" title="Edit"><span class="mif-pencil fg-white"></span></button>
+                    <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded" onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
+                </td>
 
         </tr>
             <!-- {% for a in answers %}
