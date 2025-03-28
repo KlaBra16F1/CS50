@@ -70,59 +70,68 @@
             
         };
 
-        async function updateQuestion(q_id, event){
-            
+        async function sendUpdate(q_id, event){
+            console.log(event)
             let question = event.srcElement[0].value;
+            let multiple = event.srcElement[2].value;
+            console.log('q:',question, 'm:', multiple);
             event.preventDefault();
-            console.log(question)
-            let req = await fetch('/edit-questions?update=' + q_id +"&question=" + question);
+            let req = await fetch('/edit-questions?update=' + q_id +"&question=" + question + "&multiple=" + multiple);
             let res = await req.json();
             Metro.notify.create("Success",`Updated ${res["changes()"]} question.`,{cls: 'success'});
             getQuestions();
             editable = undefined;
         };
-        async function updateMultiple(q_id, event){
-            
-            let multiple = event.srcElement[0].value;
-            event.preventDefault();
-            console.log(multiple)
-            let req = await fetch('/edit-questions?update=' + q_id +"&multiple=" + multiple);
-            let res = await req.json();
-            Metro.notify.create("Success",`Updated ${res["changes()"]} question.`,{cls: 'success'});
-            getQuestions();
-            editable = undefined;
-        };
+
         function update(id) {
             // prevent multiple call for update
             if (typeof(editable) !== 'undefined') {
-                Metro.notify.create('Error','You can only edit one question at a time. Press ENTER to submit first.',{ cls: 'alert'})
-                return;
+                    Metro.notify.create('Error','You can only edit one question at a time. Press ENTER to submit first.',{ cls: 'alert'})
+                    return;
             }
             editable = true;
-            let tb = document.getElementsByClassName['tbody'][0]
-            let tr = document.querySelector(`#q${id}`).parentElement.parentElement;
-            let td = tr.getElementsByTagName('td')
-            let html = `
-            <td>${td[2].innerHTML}</td>
-            <td>${td[3].innerHTML}</td>
-            <td colspan="2">
-                <form>
-                    <div class="row">
-                    <div class="cell-md-fifth">
-                    <button>Update</button>
-                    </div>
-                    <div class="cell-md-half">
-                    <input name="question" value="${td[4].querySelector('p').innerHTML}" type="text" data-role="input" >
-                    </div>
-                    <div class="cell-md-fifth">
-                    <input name="multiple" value="${td[5].querySelector('div').innerHTML}" type="number" data-role="input" class="input-small"data-role="input" data-clear-button="false">
-                    </div>
-                    </div>
-                </form>
-            </td>
-            <td>${td[6].innerHTML}</td>`
-            tr.innerHTML = html;
+            
+            setTimeout(function(){
+                let tr = document.querySelector(`#q${id}`).parentElement.parentElement;
+                let td = tr.getElementsByTagName('td')
+                
+                if (td[4].querySelector('p') == undefined) {
+                    td[4].querySelector('div').appendChild(document.createElement("p"));
+                }
+                let question = td[4].querySelector('p').innerHTML;
+                let multiple = parseInt(td[5].querySelector('div').innerHTML);
+                
+                let checked = '';
+                if (multiple == 1) {
+                    checked = 'checked';
+                } else {
+                    multiple = 0;
+                }
+
+                let html = `
+                <td>${td[2].innerHTML}</td>
+                <td>${td[3].innerHTML}</td>
+                <td colspan="2">
+                    <form onsubmit="sendUpdate(${id}, event);return false;">
+
+                        <label>Question</label>
+                        <input name="question" value="${question}" type="text" data-role="input" >
+                        <label>Multiple Choice</label>
+                        <select name="multiple" data-role="select" class="input-small w-25" data-filter="false">
+                            <option value=0>No</option>
+                            <option value=1>Yes</option>
+                        </select>
+                    <button class="button">Update</button>
+
+                    </form>
+                </td>
+                <td>${td[6].innerHTML}</td>`
+                tr.innerHTML = html;
+            }, 500);
         };
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
     </script>
 {% endblock %}

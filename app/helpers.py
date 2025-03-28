@@ -97,12 +97,7 @@ def add_question(s_id, question, difficulty, isMultipleChoice):
 
 def update_question(q_id, question, multiple):
     db.execute("BEGIN TRANSACTION;")
-    if multiple is None:
-        print('question')
-        db.execute("UPDATE questions SET question = ? WHERE q_id = ?;", question, q_id)
-    else:
-        print('multiple')
-        db.execute("UPDATE questions SET isMultipleChoice = ? WHERE q_id = ?;", multiple, q_id)
+    db.execute("UPDATE questions SET question = ?, isMultipleChoice = ? WHERE q_id = ?;", question, multiple, q_id)
     changes = db.execute("SELECT changes();")
     db.execute("COMMIT;")
     db._disconnect()
