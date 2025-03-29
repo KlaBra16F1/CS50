@@ -164,8 +164,12 @@ def get_questions():
 
     # Markdown
     answers = h.add_markdown(answers,"answer","comment")
-    
     return render_template("questions.html", questions = questions, answers = answers)
+
+# Dev
+@app.route("/dev")
+def dev():
+    return render_template("dev.html")
 
 # Users
 @app.route("/login", methods=["GET", "POST"])

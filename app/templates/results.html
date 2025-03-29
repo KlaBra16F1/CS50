@@ -1,34 +1,55 @@
 {% extends "layout.html" %}
+{% block header %}
+<h1>
+    Your Results
+</h1>
+{% endblock %}
 {% block main %}
-<form action="/get-results" method="post">
-    {% for q in questions %}
-    <div>
-        
-        <h3>{{ q.question | safe }}</h3>
-        <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
-        <div>
-            {% for a in answers %}
-                {% if a.q_id == q.q_id %}
-                <p>
+<p class="mt-20"></p>
 
-                    {% for t in test %}
-                        {% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) %} 📝 {% endif %}
-                    {% endfor %}
-                        <label for="answer">{{ a.answer |safe }} </label>
-                            {% if q.isMultipleChoice %}
-                                <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id}}" value="{{ a.a_id}}">
-                                
-                            {% else %}
-                                <input type="radio" name="{{ q.q_id }}.{{ a.a_id}}" value="{{ a.a_id}}">
-                                
+    {% for q in questions %}
+    <div class="card w-75" >
+        <div class="card-header bg-blue fg-white">
+            <h5>{{ q.question | safe }}</h5>
+        </div>
+        <div class="card-content p-2">
+            <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
+                <div>
+                    {% for a in answers %}
+                        {% if a.q_id == q.q_id %}
+                        <div class="row {% if a.is_true == 1 %} bg-green {% endif %}" id="{{a.a_id}}" >
+                            <div class="cell-md-1">
+                                {% if q.isMultipleChoice %}
+                                <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}" {% for t in test %}{% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) %} checked {% endif %}{% endfor %}>
+                                {% else %}
+                                <input type="radio" name="{{ q.q_id }}" value= "{{ a.a_id }}"  {% for t in test %}{% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) %} checked {% endif %}{% endfor %}>
+                                {% endif %}
+                            </div>
+                            <div class="cell-md-6">
+                                <label>{{ a.answer | safe }}</label>
+                            </div>
+                            {% for t in test %}
+                            {% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) and ( a.is_true != 1) %}  
+                            <div data-role="accordion" data-one-frame="true" data-show-active="false">
+                                <div class="frame">
+                                    <div class="heading">Comment</div>
+                                    <div class="content">
+                                        <div class="p-2">{{ a.comment | safe}}</div>
+                                    </div>
+                                </div>
+                            </div>
                             {% endif %}
-                            {% if a.is_true == 1 %} ✅ {% endif %}
-                        </p>
-                {% endif %}
-            {% endfor %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                </div>
+        </div>
+        
+        <div class="footer">
         </div>
     </div>
     {% endfor %}
-    <button type="submit">Submit</button>
-</form>
+
 {% endblock %}
+

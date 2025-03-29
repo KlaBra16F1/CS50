@@ -1,28 +1,51 @@
 {% extends "layout.html" %}
+{% block header %}
+<h1>
+    Test
+</h1>
+{% endblock %}
 {% block main %}
+<p class="mt-20"></p>
 <form action="/get-results" method="post">
     {% for q in questions %}
-    <div>
-        
-        <h3>{{ q.question | safe }}</h3>
-        <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
-        <div>
-            {% for a in answers %}
-                {% if a.q_id == q.q_id %}
-                <p>
+    <div class="card w-75 " >
+        <div class="card-header bg-blue fg-white">
+            <h5>{{ q.question | safe }}</h5>
+            {% if q.isMultipleChoice %}
+                <lable>Multiple answers possible</lable>
+            {% else %}
+                <label>Only one answer</label>
+            {% endif %}
+        </div>
+        <div class="card-content p-2">
+            <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
+            <div>
+                {% for a in answers %}
+                    {% if a.q_id == q.q_id %}
+                    <div class="row">
+                        <div class="cell-md-1">
 
-                    <label for="answer">{{ a.answer | safe }}</label>
-                    {% if q.isMultipleChoice %}
-                        <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}">
-                    {% else %}
-                        <input type="radio" name="{{ q.q_id }}" value= "{{ a.a_id }}">
+                            {% if q.isMultipleChoice %}
+                            <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}">
+                            {% else %}
+                            <input type="radio" name="{{ q.q_id }}" value= "{{ a.a_id }}">
+                            {% endif %}
+                        </div>
+                        <div class="cell-md-6">
+                            <label>{{ a.answer | safe }}</label>
+                        </div>
+                    </div>
                     {% endif %}
-                </p>
-                {% endif %}
-            {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="footer">
+
         </div>
     </div>
     {% endfor %}
-    <button type="submit">Submit</button>
+    <div>
+        <button class="button primary success pos-bottom-center mb-20" type="submit">Submit</button>
+    </div>
 </form>
 {% endblock %}
