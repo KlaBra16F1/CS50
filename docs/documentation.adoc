@@ -155,3 +155,31 @@ Test mit https://metroui.org.ua[Metro_UI]
 </body>
 ----
 
+== AI Questions
+
+Please generate a multiple choice test about web developement.
+The test should contain 50 questions comming from 5 subtopics.
+Subtopics should be 'html', 'css', 'http status messages' and two more. Whatever seems appropiate to you.
+Each questions needs to have 3 to 5 answers. About 20% of the questions should have multiple right answers.
+Wrong answers might have an additional short comment, explaining why they are not right. But only in cases, where the wrong answer might seem right in the first place.
+
+Please output questions and answers in csv format with a unique id for each question and following schema:
+questions:
+subtopic-name, question-id, question-text, difficulty ( 0 for all rows ) , isMultipleChoice ( 0 for single, 1 for multiple choice)
+answers:
+question-id, answer, comment (optional), isTrue (0 for wrong, 1 for right)
+
+Import Flow
+
+.mode csv
+.import ./path/to/csv
+Topics Anlegen
+Subtopics:
+insert into subtopics (subtopic, t_id) select distinct [subtopic-name] , <t_id> from <csv>;
+Fragen anlegen:
+insert into questions (question, isMultipleChoice, s_id) select [question-text] , isMultipleChoice, <s_id> from <csv> where [subtopic-name] = 'CSS';
+
+q_ids ggf. in CSS austauschen oder in sqlite ändern
+Antworten importieren
+
+insert into answers (answer, comment, q_id, is_true) select answer, comment, [question-id], isTrue from web_a;
