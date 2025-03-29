@@ -126,6 +126,7 @@ def get_results():
                 test[rs[0]].append(int(rs[1]))
         else:
             test[r].append(int(request.form.get(r)))
+    print(test)
 
 
     

@@ -5,9 +5,37 @@
 </h1>
 {% endblock %}
 {% block main %}
+{% set c = namespace(checked=False) %}
+{% set cc = namespace(count=0) %}
+{% set r = namespace(count=0) %}
+{% set qr = namespace(right=True) %}
 <p class="mt-20"></p>
+<div class="card icon-box bg-orange fg-white w-75 mb-20">
+    <div class="icon"><span class="mif-trophy fg-yellow"></span></div>
+    <div class="content">
+        <div class="p-2">
+            <div>YOUR SCORE</div>
+            <div id="percent" class="text-bold text-leader"></div>
+        </div>
+        <div id="score" data-role="progress"
+            data-type="buffer"
+            data-value="0"
+            data-buffer="0"
+            data-small="true"
+            data-cls-bar="bg-white"
+            data-cls-back="bg-darkOrange"></div>
+        <div class="pl-2 pr-2">
+            <span id="info" class="text-small">
+                
+            </span>
+        </div>
+    </div>
+</div>
 
     {% for q in questions %}
+        {% set cc.count = cc.count + 1 %}
+        {% set qr.right = True %}
+
     <div class="card w-75" >
         <div class="card-header bg-blue fg-white">
             <h5>{{ q.question | safe }}</h5>
@@ -17,39 +45,73 @@
                 <div>
                     {% for a in answers %}
                         {% if a.q_id == q.q_id %}
-                        <div class="row {% if a.is_true == 1 %} bg-green {% endif %}" id="{{a.a_id}}" >
-                            <div class="cell-md-1">
-                                {% if q.isMultipleChoice %}
-                                <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}" {% for t in test %}{% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) %} checked {% endif %}{% endfor %}>
-                                {% else %}
-                                <input type="radio" name="{{ q.q_id }}" value= "{{ a.a_id }}"  {% for t in test %}{% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) %} checked {% endif %}{% endfor %}>
-                                {% endif %}
-                            </div>
-                            <div class="cell-md-6">
-                                <label>{{ a.answer | safe }}</label>
-                            </div>
                             {% for t in test %}
-                            {% if (( t | int ) == q.q_id) and ( a.a_id in test[t]) and ( a.is_true != 1) %}  
-                            <div data-role="accordion" data-one-frame="true" data-show-active="false">
-                                <div class="frame">
-                                    <div class="heading">Comment</div>
-                                    <div class="content">
-                                        <div class="p-2">{{ a.comment | safe}}</div>
+                                {% if (( t |int  ) == q.q_id) %}
+                                    {% if a.a_id in test[t] %} 
+                                        {% set c.checked = True %}
+                                    {% else %}
+                                    {% set c.checked = False %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <div class="row {% if a.is_true == 1 %} bg-emerald fg-white {% elif (a.is_true == 0) and (c.checked == True) %} bg-crimson fg-white {% endif %}" id="{{a.a_id}}" >
+                                <div class="cell-md-1">
+                                    {% if q.isMultipleChoice %}
+                                    <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}" {% if c.checked == True %} checked {% endif %}>
+                                    {% else %}
+                                    <input type="radio" name="{{ q.q_id }}" value= "{{ a.a_id }}"  {% if c.checked == True %} checked {% endif %}>
+                                    {% endif %}
+                                </div>
+                                <div class="cell-md-6">
+                                    <label>{{ a.answer | safe }}</label>
+                                </div>
+                            
+                                {% if ((c.checked == True) and ( a.is_true != 1)) or ((c.checked == False) and (a.is_true == 1)) %}
+                                {% set qr.right = False %}
+                                <div class="bg-white fg-black" data-role="accordion" data-one-frame="true" data-show-active="false">
+                                    <div class="frame">
+                                        <div class="heading ">Comment</div>
+                                        <div class="content bg-grey">
+                                            <div class="p-2">{{ a.comment | safe}}</div>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {% endif %}
                             </div>
-                            {% endif %}
-                            {% endfor %}
-                        </div>
                         {% endif %}
-                        {% endfor %}
+                    {% endfor %}
                 </div>
         </div>
         
         <div class="footer">
+            {% if qr.right == True %}
+                {% set r.count = r.count + 1 %}
+                <span class="mif-checkmark mif-2x fg-emerald pos-bottom-center" title="Correct"></span>
+            {% else %}
+                <span class="mif-cross mif-2x fg-crimson pos-bottom-center" title="Incorrect"></span>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
+    <input type ="hidden" id="questionCount" value="{{ cc.count }}">
+    <input type="hidden" id="rightCount" value="{{ r.count }}">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let questions = document.querySelector('#questionCount').value;
+            let rightAnswers = document.querySelector('#rightCount').value;
+            let percent = document.querySelector('#percent');
+            let info = document.querySelector('#info');
+            let score = rightAnswers / questions * 100;
+            percent.innerHTML = `${score} %`;
+            let controller = Metro.getPlugin('#score','progress');
+            controller.val(score);
+            info.innerHTML = `You mastered ${rightAnswers} out of ${questions} questions.`;
+
+        });
+    </script>
+    
 
 {% endblock %}
 
