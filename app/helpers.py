@@ -7,7 +7,7 @@ import datetime as dt
 from markdown import markdown
 
 # Variables
-db = SQL("sqlite:///database.db.bak")
+db = SQL("sqlite:///database2.db.bak")
 ROLES = ["admin","maintainer"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
