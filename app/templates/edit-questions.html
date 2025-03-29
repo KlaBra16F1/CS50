@@ -41,36 +41,7 @@
             getQuestions();
         };
 
-        function editQuestion(event) {
-            // prevent multiple call for update
-            if (typeof(editable) !== 'undefined') {
-                    Metro.notify.create('Error','You can only edit one question at a time. Press ENTER to submit first.',{ cls: 'alert'})
-                    return;
-                }
-            editable = true;
-            let edit = event.currentTarget.value;
-            let question = document.querySelector(`#q${edit}`);
-            let multiple = document.querySelector(`#m${edit}`);
-            if (question.children[0] == undefined) {
-                question.appendChild(document.createElement("p"));
-            }
-            let questionOld = question.children[0].innerHTML;
-            let multipleOld = multiple.innerHTML;
-            let htmlM = `
-                    <form onsubmit="updateMultiple(${edit}, event); return false;">
-                        <input name="new_multiple" type="number" class="input-small"data-role="input" data-clear-button="false"  value="${multipleOld}">
-                    </form>`;
-            let htmlQ = `
-                    <form onsubmit="updateQuestion(${edit}, event); return false;">
-                        <input name="new_question" type="text" data-role="input" data-prepend="Update" value="${questionOld}">
-                    </form>`;
-
-            question.innerHTML = htmlQ;
-            multiple.innerHTML = htmlM;
-            
-        };
-
-        async function sendUpdate(q_id, event){
+            async function sendUpdate(q_id, event){
             console.log(event)
             let question = event.srcElement[0].value;
             let multiple = event.srcElement[2].value;
@@ -90,7 +61,7 @@
                     return;
             }
             editable = true;
-            
+            // Setting delay of 500 ms to compensate for lag in table-search
             setTimeout(function(){
                 let tr = document.querySelector(`#q${id}`).parentElement.parentElement;
                 let td = tr.getElementsByTagName('td')
@@ -99,15 +70,16 @@
                     td[4].querySelector('div').appendChild(document.createElement("p"));
                 }
                 let question = td[4].querySelector('p').innerHTML;
-                let multiple = parseInt(td[5].querySelector('div').innerHTML);
-                
-                let checked = '';
+                let multiple = td[5].querySelector('input').value;
+                // Make pre-selection based on previous entry
+                let selected0 = '';
+                let selectet1 = '';
                 if (multiple == 1) {
-                    checked = 'checked';
+                    
+                    selectet1 = 'selected';
                 } else {
-                    multiple = 0;
+                    selected0 = 'selected';
                 }
-
                 let html = `
                 <td>${td[2].innerHTML}</td>
                 <td>${td[3].innerHTML}</td>
@@ -118,10 +90,11 @@
                         <input name="question" value="${question}" type="text" data-role="input" >
                         <label>Multiple Choice</label>
                         <select name="multiple" data-role="select" class="input-small w-25" data-filter="false">
-                            <option value=0>No</option>
-                            <option value=1>Yes</option>
+                            <option value=0 ${selected0}>No</option>
+                            <option value=1 ${selectet1}>Yes</option>
                         </select>
-                    <button class="button">Update</button>
+                    <button class="button success">Update</button>
+                    <button type="button" class="button" onclick="getQuestions();">Abort</button>
 
                     </form>
                 </td>
