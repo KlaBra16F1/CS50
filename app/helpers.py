@@ -179,18 +179,12 @@ def verify_test(u_id,test):
         right_answers = [a["a_id"] for a in answers if a["q_id"] == int(q)]
         right_answers = set(right_answers)
         right_count = len(right_answers)
-
         user_answers = set(test[q])
         user_right = user_answers & right_answers
         user_right_count = len(user_right)
         wrong_answers = user_answers - right_answers
         wrong_answers = len(wrong_answers)
         passed = 0 if wrong_answers > 0 or user_right_count < right_count else 1
-        print(f"Auswertung\n \
-              Antworten {user_answers}\n \
-              Richtig: {user_right}\n \
-              Falsch: {wrong_answers}\n \
-              Bestanden: {passed}")
         # Using fail for an update counter in db
         if update_db is True:
             exists = db.execute("SELECT count(*) AS count FROM user_questions WHERE u_id = ? AND q_id = ?;", u_id, int(q))

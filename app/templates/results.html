@@ -54,6 +54,9 @@
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
+                            {% if ((a.is_true == 1) and (c.checked == False)) or ((a.is_true == 0) and c.checked == True) %}
+                                {% set qr.right = False %}
+                            {% endif %}
                             <div class="row {% if a.is_true == 1 %} bg-emerald fg-white {% elif (a.is_true == 0) and (c.checked == True) %} bg-crimson fg-white {% endif %}" id="{{a.a_id}}" >
                                 <div class="cell-md-1">
                                     {% if q.isMultipleChoice %}
@@ -68,7 +71,7 @@
                                 <!-- Only show comment if available and needed -->
                                 {%if a.comment != '' %}
                                     {% if ((c.checked == True) and ( a.is_true != 1) ) or ((c.checked == False) and (a.is_true == 1)) %}
-                                    {% set qr.right = False %}
+                                    
                                     <div class="bg-white fg-black" data-role="accordion" data-one-frame="true" data-show-active="false">
                                         <div class="frame">
                                             <div class="heading ">Comment</div>
