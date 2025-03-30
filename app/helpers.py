@@ -56,7 +56,7 @@ def login_user(username, password):
 # TOPICS
 
 def get_topics():
-    topics = db.execute("SELECT t_id, topic FROM topics ORDER BY topic;")
+    topics = db.execute("SELECT t.t_id, topic, (SELECT COUNT(q.q_id) FROM questions q, subtopics s WHERE q.s_id = s.s_id AND s.t_id = t.t_id) AS count FROM topics t ORDER BY topic;")
     db._disconnect()
     return topics
 
@@ -65,7 +65,7 @@ def add_topic(new_topic):
     db._disconnect()
 
 def get_subtopics(t_id):
-    subtopics =  db.execute("SELECT s_id, subtopic FROM subtopics WHERE t_id = ? ORDER BY subtopic", t_id)
+    subtopics =  db.execute("SELECT s_id, subtopic, (SELECT COUNT(q.q_id) FROM questions q, subtopics sc WHERE q.s_id = sc.s_id AND sc.s_id = s.s_id) AS count FROM subtopics s WHERE t_id = ? ORDER BY subtopic;", t_id)
     db._disconnect()
     return subtopics
 
