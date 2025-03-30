@@ -65,18 +65,19 @@
                                 <div class="cell-md-6">
                                     <label>{{ a.answer | safe }}</label>
                                 </div>
-                            
-                                {% if ((c.checked == True) and ( a.is_true != 1)) or ((c.checked == False) and (a.is_true == 1)) %}
-                                {% set qr.right = False %}
-                                <div class="bg-white fg-black" data-role="accordion" data-one-frame="true" data-show-active="false">
-                                    <div class="frame">
-                                        <div class="heading ">Comment</div>
-                                        <div class="content bg-grey">
-                                            <div class="p-2">{{ a.comment | safe}}</div>
+                                <!-- Only show comment if available and needed -->
+                                {%if a.comment != '' %}
+                                    {% if ((c.checked == True) and ( a.is_true != 1) ) or ((c.checked == False) and (a.is_true == 1)) %}
+                                    {% set qr.right = False %}
+                                    <div class="bg-white fg-black" data-role="accordion" data-one-frame="true" data-show-active="false">
+                                        <div class="frame">
+                                            <div class="heading ">Comment</div>
+                                            <div class="content bg-grey">
+                                                <div class="p-2">{{ a.comment | safe}}</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         {% endif %}
@@ -104,7 +105,7 @@
             let percent = document.querySelector('#percent');
             let info = document.querySelector('#info');
             let score = rightAnswers / questions * 100;
-            percent.innerHTML = `${score} %`;
+            percent.innerHTML = `${score.toFixed(2)} %`;
             let controller = Metro.getPlugin('#score','progress');
             controller.val(score);
             info.innerHTML = `You mastered ${rightAnswers} out of ${questions} questions.`;

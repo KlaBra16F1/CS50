@@ -82,7 +82,6 @@ def edit_questions():
         q_id = request.args.get("update")
         question = request.args.get("question", None)
         multiple = request.args.get("multiple", None)
-        print("mult=", multiple)
         msg = h.update_question(q_id, question, multiple)
         return jsonify(msg)
         
@@ -107,6 +106,7 @@ def make_test():
         answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
+        print(session["q_order"])
         return render_template("test.html", questions=questions, answers=answers)
     topics = h.get_topics()
 
@@ -126,7 +126,7 @@ def get_results():
                 test[rs[0]].append(int(rs[1]))
         else:
             test[r].append(int(request.form.get(r)))
-    print(test)
+
 
 
     
@@ -137,14 +137,19 @@ def get_results():
     questions = h.add_markdown(questions, "question")
     answers = h.get_answers(session["q_order"])
     answers = h.add_markdown(answers, "answer", "comment")
-    
+    # Send questions in same random order like make_test
+    questions_ordered = []
+    for q in session["q_order"]:
+        for question in questions:
+            if question["q_id"] == int(q):
+                questions_ordered.append(question)
     # Send answers in same random order like make_test
     answers_ordered = []
     for a in session["a_order"]:
         for answer in answers:
             if answer["a_id"] == int(a):
                 answers_ordered.append(answer)
-    return render_template("results.html", questions=questions, answers=answers_ordered, test=test)
+    return render_template("results.html", questions=questions_ordered, answers=answers_ordered, test=test)
     # return 'hello'
 
 # Inforoutes

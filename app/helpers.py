@@ -1,6 +1,7 @@
 from cs50 import SQL
 from flask import redirect, render_template, session
 from functools import wraps
+import random
 import sqlite3
 from werkzeug.security import check_password_hash
 import datetime as dt
@@ -148,6 +149,8 @@ def create_test(t_id, s_id, count):
         count = int(count)
 
     questions = get_questions(t_id, s_id)
+    questions = list(questions)
+    random.shuffle(questions)
     questions = questions[0:count]
     q_ids = [q_id["q_id"] for q_id in questions]
     answers = get_answers(q_ids)
@@ -182,8 +185,13 @@ def verify_test(u_id,test):
         user_right_count = len(user_right)
         wrong_answers = user_answers - right_answers
         wrong_answers = len(wrong_answers)
-        # Using fail for an update counter in db
         passed = 0 if wrong_answers > 0 or user_right_count < right_count else 1
+        print(f"Auswertung\n \
+              Antworten {user_answers}\n \
+              Richtig: {user_right}\n \
+              Falsch: {wrong_answers}\n \
+              Bestanden: {passed}")
+        # Using fail for an update counter in db
         if update_db is True:
             exists = db.execute("SELECT count(*) AS count FROM user_questions WHERE u_id = ? AND q_id = ?;", u_id, int(q))
             if len(exists) == 1 and exists[0]["count"] == 1:
