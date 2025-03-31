@@ -60,6 +60,8 @@ CREATE TABLE answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTE
 
 CREATE TABLE user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, lastDate TEXT);
 
+CREATE TABLE user_tests (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));
+
 -- generated tables
 
 ----
@@ -94,32 +96,33 @@ answers {
 users {
     int u_id
     text name
+    text hash
     text role
 }
-userQuestions {
+user_questions {
     int u_id
     int q_id
     int timesDone
     int timesRight
     text lastDate
 }
-tests {
-    int tst_id
+user_tests {
+    int t_id
     int u_id
+    text test_name
+    text questions
 }
-testQuestions {
-    int tst_id
-    int q_id
-}
+
 
 topics ||--o{ subtopics : has
 subtopics ||--o{ questions : has
 questions ||--o{ answers : has
-users ||--o{ userQuestions : n
-questions ||--o{ userQuestions : n
-users ||--o{ tests : n
-tests ||--o{ testQuestions : n
-questions ||--o{ testQuestions :n
+users ||--o{ user_questions : n
+questions ||--o{ user_questions : n
+users ||--o{ user_tests : n
+user_tests ||--o{ questions : n
+
+
 
 ----
 
