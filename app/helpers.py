@@ -10,7 +10,7 @@ import re
 
 # Variables
 db = SQL("sqlite:///database2.db.bak")
-ROLES = ["admin","maintainer"]
+ROLES = ["admin","maintainer","user"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 DAY = dt.timedelta(days=1)
@@ -59,6 +59,11 @@ def check_username(user):
     db._disconnect() 
     return len(users)
 
+def check_user_id(u_id):
+    u_id = db.execute("SELECT u_id FROM users WHERE u_id = ?;", u_id)
+    db._disconnect() 
+    return len(u_id)
+
 def register_user(username, password, confirm):
     password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[@ # $ % ^ & + =]).{8,}$"
     if check_username(username) > 0:
@@ -81,6 +86,14 @@ def register_user(username, password, confirm):
     add_user(username, generate_password_hash(password),"user")
     return {"success": f"User {username} succesfully created. Please login."}
     
+def change_role(u_id, role):
+    if role not in ROLES:
+        return {"error": "role not available"}
+    if check_user_id(u_id) != 1:
+        return {"error": "unknown user_id"}
+    db.execute("UPDATE users set role = ? WHERE u_id = ?;", role, u_id )
+    db._disconnect() 
+    return {"success": "changed user role"}
 
 
 
@@ -263,7 +276,7 @@ def admin_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None or session["role"] != ROLES[0]:
+        if session.get("user_id") is None or session["role"] not in ROLES[0]:
             return ("",401)
         return f(*args, **kwargs)
 
@@ -277,7 +290,7 @@ def maintainer_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None or session["role"] not in ROLES:
+        if session.get("user_id") is None or session["role"] not in ROLES[:2]:
             return ("",401)
         return f(*args, **kwargs)
 

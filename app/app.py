@@ -193,7 +193,7 @@ def register():
             return msg
         else:
             flash(msg["success"])
-            redirect ("/login")
+            return redirect ("/login")
     
     if request.args.get("username"):
         username = request.args.get("username")
@@ -232,6 +232,14 @@ def users():
             h.delete_user(u_id)
             flash("User {} deleted successfully.".format(name))
             return redirect("/users")
+        if request.form.get("change-role") != None:
+            msg = h.change_role(request.form.get("change-role"), request.form.get("role"))
+        
+            if "error" in msg:
+                return msg
+            else:
+                flash(msg["success"])
+                return redirect ("/users")
         
         name = request.form.get("name")
         hash = generate_password_hash(request.form.get("password"))
@@ -241,7 +249,7 @@ def users():
         return redirect("/users")
 
     users = h.get_users()
-    return render_template("users.html", users = users)
+    return render_template("users.html", users = users, roles=h.ROLES)
 
 @app.route("/logout")
 def logout():
