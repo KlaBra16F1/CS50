@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block header %}
+<h1>
+    Register
+</h1>
+{% endblock %}
+{% block main %}
+<div class="mt-20 w-75">
+    <form action="/register"   method="post" data-role="validator" >
+        <div class="form-group">
+            <input type="text" name="username" id="username" placeholder="Username" autocomplete="off"  autofocus
+            data-validate="required minlength=4 maxlength=16"
+            data-role="input" data-prepend="Username" data-append="<div id='userNameAlert'><span class='mif-more-horiz mif-2x fg-gray'></span></div>">
+            <small id= "userNameInfo" class="fg-darkGrey">Must be 4-16 characters or numbers. Must not contain whitespaces and special characters.</small>
+        </div>
+        <div class="form-group">
+            
+            <input type="password" name="password" id="password" placeholder="Password" autocomplete="off"
+            data-validate=" required pattern=(?=.*\d)(?=.*[@#$%^&+=])(?=.*[a-z])(?=.*[A-Z]).{8,}"  
+            data-role="input" data-prepend="Password" data-append="">
+            <small id= "passwordInfo" class="fg-darkGrey">Must have 8+ characters (Upper-/lowercase), digits and symbols ( @ # $ % ^ & + =). </small>
+        </div>
+        <div class="form-group">
+            <input type="password" name="confirm" id="confirm" placeholder="Confirm your password" autocomplete="off" 
+            data-validate="required compare=password" data-role="input" data-prepend="Confirm" data-append="">
+            <small id= "confirmInfo" class="fg-darkGrey">&nbsp;</small>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="button success" >Register</button>
+
+        </div>
+
+    </form>
+</div>
+
+<script>
+    let username = document.querySelector('#username');
+    let password = document.querySelector('#password');
+    let confirm = document.querySelector('#confirm');
+    // get username
+    username.addEventListener('change', async function(){
+        let feedback1 = Metro.getPlugin('#username','append');
+        let req = await fetch('/register?username=' + username.value);
+        let res = '';
+        try {
+            res = await req.json();
+        } catch (SyntaxError) {
+            $('#userNameInfo').html('Must be 4-16 characters or numbers. Must not contain whitespaces and special characters.');
+        } finally {
+            if (res == 'error') {
+                console.log(res)
+                $('#userNameAlert').html("<span class='mif-priority_high mif-2x fg-red'></span>");
+                $('#userNameInfo').html('<span class="fg-red">Username is already taken</span>');
+            } else {
+                $('#userNameAlert').html("<span class='mif-more-horiz mif-2x fg-gray'></span>");
+                $('#userNameInfo').html('Must be 4-16 characters or numbers. Must not contain whitespaces and special characters.');
+            }   
+        }
+        
+    });
+    // password ok?
+    password.addEventListener('input', async function(){
+        if (password.value.length >= 8) {
+            console.log('OK');
+        }
+
+    });
+    // confirm match?
+    confirm.addEventListener('change', async function(){
+        let pw = document.querySelector('#password').value;
+        if (confirm.value != pw) {
+            console.log('cp');
+            $('#confirmInfo').html('<span class="fg-red">Passwords do not match!</span>');
+        } else {
+            $('#confirmInfo').html('&nbsp;');
+        }
+
+    });
+</script>
+
+{% endblock %}

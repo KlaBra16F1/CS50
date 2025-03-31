@@ -43,6 +43,8 @@ def add_questions():
     topics = h.get_topics()
     return render_template("add-questions.html", rows_topics=topics)
 
+# Questions
+
 @app.route("/add-answers", methods=["GET","POST"])
 @h.maintainer_required
 def add_answers():
@@ -106,7 +108,6 @@ def make_test():
         answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
-        print(session["q_order"])
         return render_template("test.html", questions=questions, answers=answers)
     topics = h.get_topics()
 
@@ -178,8 +179,32 @@ def dev():
     return render_template("dev.html")
 
 # Users
+
+@app.route("/register",methods=["GET","POST"])
+def register():
+    if session :
+        return redirect("/")
+    if request.method == "POST":
+        if not (request.form.get("username") and request.form.get("password") and request.form.get("confirm")):
+            return 'error'
+        else:
+            msg = h.register_user(request.form.get('username'),request.form.get("password"),request.form.get("confirm"))
+        if "error" in msg:
+            return msg
+        else:
+            flash(msg["success"])
+            redirect ("/login")
+    
+    if request.args.get("username"):
+        username = request.args.get("username")
+        ok = 'ok' if h.check_username(username) == 0 else 'error'
+        return jsonify(ok)
+    
+    return render_template("register.html")
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")

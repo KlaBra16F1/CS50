@@ -3,9 +3,10 @@ from flask import redirect, render_template, session
 from functools import wraps
 import random
 import sqlite3
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 import datetime as dt
 from markdown import markdown
+import re
 
 # Variables
 db = SQL("sqlite:///database2.db.bak")
@@ -52,6 +53,38 @@ def login_user(username, password):
             return None, None, None, "Invalid password."
     else:
         return user[0]["name"], user[0]["u_id"], user[0]["role"], None
+    
+def check_username(user):
+    users = db.execute("SELECT u_id FROM users WHERE name = ?;", user)
+    db._disconnect() 
+    return len(users)
+
+def register_user(username, password, confirm):
+    password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[@ # $ % ^ & + =]).{8,}$"
+    if check_username(username) > 0:
+        return {"error": "user exists"}
+    if len(username) not in range(4,16):
+        return {"error": "username is too short or too long"}
+    
+    if re.match(".*(?=[\\W])",username):
+        return {"error": "illegal characters in username"}
+    
+    if len(password) < 8:
+        return {"error": "password too short"}
+    
+    if not re.match(password_pattern,password):
+        return {"error": "password not secure"}
+    
+    if password != confirm:
+        return {"error": "passwords don't match"}
+    
+    add_user(username, generate_password_hash(password),"user")
+    return {"success": f"User {username} succesfully created. Please login."}
+    
+
+
+
+
     
 # TOPICS
 
