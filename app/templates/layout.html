@@ -25,7 +25,7 @@
                     <li><a href="/login">Login</a></li>
                 {% endif %}
                 {% if session["user_id"] %}                
-                    <li><a href="#"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a></li>
+                    <li><a href="/dev"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a></li>
                     <li><a href="/logout">Log out</a></li>
                 {% endif %}
             </ul>
