@@ -5,30 +5,10 @@
 </h1>
 {% endblock %}
 {% block main %}
+    {% for t in tests %}
+        <a href="/make-test?test={{ t.t_id }}"><button type="button" class="button" name="take-{{ t.t_id }}" value="{{ t.t_id }}">{{ t.test_name }}</button></a>
+    {% endfor %}
 
-<div id="progress-observe"
-    data-role="progress"
-    data-type="buffer" class="mb-4"></div>
-
-<div>
-    <input id="progress-observe-value"
-        class="w-100" type="range"
-        min="0" max="100" value="0">
-
-    <input id="progress-observe-buffer"
-        class="w-100"  type="range"
-        min="0" max="100" value="0">
-</div>
-
-<script>
-    $(function(){
-        $("#progress-observe-value").on("input change", function(){
-            $("#progress-observe").attr('data-value', this.value);
-        });
-        $("#progress-observe-buffer").on("input change", function(){
-            $("#progress-observe").attr('data-buffer', this.value);
-        });
-    })
-</script>
+    
 
 {% endblock %}

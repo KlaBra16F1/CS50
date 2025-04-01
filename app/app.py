@@ -111,6 +111,17 @@ def make_test():
         return render_template("test.html", questions=questions, answers=answers)
     topics = h.get_topics()
 
+    if request.args.get("test"):
+        t_id = request.args.get("test")
+        questions, answers = h.get_user_test(session["user_id"], t_id)
+        questions = h.add_markdown(questions,"question")
+        answers = h.add_markdown(answers,"answer","comment")
+        session["q_order"] = [q["q_id"] for q in questions]
+        session["a_order"] = [a["a_id"] for a in answers]
+        return render_template("test.html", questions=questions, answers=answers)
+        
+
+
     return render_template("make-test.html", rows_topics=topics)
 
 @app.route("/get-results", methods=["POST"])
@@ -153,6 +164,16 @@ def get_results():
     return render_template("results.html", questions=questions_ordered, answers=answers_ordered, test=test)
     # return 'hello'
 
+@app.route("/save-test")
+def save_test():
+    if request.args.get("save") and int(request.args.get("save")) == session["user_id"]:
+        
+        questions = session["q_order"]
+        msg = h.save_test(session["user_id"], str(request.args.get("name")), questions)
+        return msg
+    
+    return redirect("/")
+
 # Inforoutes
 @app.route("/get-subtopics")
 def get_subtopics():
@@ -176,7 +197,8 @@ def get_questions():
 # Dev
 @app.route("/dev")
 def dev():
-    return render_template("dev.html")
+    tests = h.get_saved_tests(session["user_id"])
+    return render_template("dev.html", tests=tests)
 
 # Users
 

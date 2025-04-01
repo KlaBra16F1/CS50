@@ -98,8 +98,19 @@
         </div>
     </div>
     {% endfor %}
+    <!-- VARS for JavaScript: Test-Results-->
     <input type ="hidden" id="questionCount" value="{{ cc.count }}">
     <input type="hidden" id="rightCount" value="{{ r.count }}">
+
+    <!-- Save Test-->
+    {% if session["user_id"] %}
+        <div class="w-75 mt-10 mb-20 pos-bottom-center">
+            <h4>Save Test</h4>
+            <input data-role="input" id="test-name" type="text" name="test-name" placeholder="Test-Name">
+            <button class="button success pos-bottom-center mt-10 mb-20" type="button" onclick="saveTest();">Save Test</button>
+        </div>
+        
+    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -114,6 +125,18 @@
             info.innerHTML = `You mastered ${rightAnswers} out of ${questions} questions.`;
 
         });
+        async function saveTest() {
+            if (typeof(sentTest) !== 'undefined') {
+                Metro.notify.create('Error','You already saved this test.',{ cls: 'alert'});
+                return;
+            }
+            sentTest = true;                                                                                                                                                                                                                                         
+            let testName = document.querySelector("#test-name");
+            let req = await fetch("/save-test?save=" + '{{ session["user_id"]}}&name=' + testName.value);
+            let res = await req.json();
+            console.log(res);
+
+        };
     </script>
     
 

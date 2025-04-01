@@ -134,6 +134,12 @@ def get_questions(t_id, s_id):
         questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
         db._disconnect()
         return questions
+
+def get_selected_questions(q_ids):
+    questions = db.execute("SELECT q_id, question, isMultipleChoice FROM questions WHERE q_id IN (?);", q_ids)
+    db._disconnect()
+    return questions
+
    
 
 def add_question(s_id, question, difficulty, isMultipleChoice):
@@ -203,7 +209,7 @@ def create_test(t_id, s_id, count):
     return questions, answers
 
 def get_questions_result(q_ids):
-    questions = db.execute("SELECT q_id, question, isMultipleChoice FROM questions WHERE q_id IN (?);", q_ids)
+    questions = get_selected_questions(q_ids)
     return questions
 
 def verify_test(u_id,test):
@@ -219,7 +225,7 @@ def verify_test(u_id,test):
         questions.append(q)
 
     answers = db.execute("SELECT q_id, (SELECT COUNT(*) FROM answers b WHERE a.q_id = b.q_id) as count,a_id , answer FROM answers a WHERE q_id IN (?) AND is_true = 1;", questions)
-    
+    db._disconnect()
      
     for q in test:
         right_answers = [a["a_id"] for a in answers if a["q_id"] == int(q)]
@@ -236,8 +242,35 @@ def verify_test(u_id,test):
             exists = db.execute("SELECT count(*) AS count FROM user_questions WHERE u_id = ? AND q_id = ?;", u_id, int(q))
             if len(exists) == 1 and exists[0]["count"] == 1:
                 db.execute("UPDATE user_questions SET timesDone = timesDone + 1, timesRight = timesRight + ?, lastDate = ? WHERE u_id = ? AND q_id = ?;", passed, now, u_id, int(q))
+                db._disconnect()
             else:
                 db.execute("INSERT INTO user_questions (u_id, q_id, timesDone, timesRight, lastDate) VALUES (?, ?, ?, ?, ?);", u_id, int(q), 1, passed, now)
+                db._disconnect()
+
+def save_test(u_id, test_name, questions):
+    questions = ','.join(str(q) for q in questions)
+    db.execute("INSERT INTO user_tests (u_id, test_name, questions) VALUES (?, ?, ?)", u_id, test_name, questions)
+    count = db.execute("SELECT changes()")
+    db._disconnect()
+    if count[0]["changes()"] != 1:
+        return {"error": "database error"}
+    
+    return {"success": "test saved"}
+
+def get_saved_tests(u_id):
+    tests = db.execute("SELECT t_id, test_name, questions FROM user_tests WHERE u_id = ?;", u_id)
+    db._disconnect()
+    return tests
+
+def get_user_test(u_id,t_id):
+    q_ids = db.execute("SELECT questions FROM user_tests WHERE t_id = ? AND u_id = ?;", t_id,u_id)
+    q_ids = q_ids[0]["questions"].split(',')
+    q_ids = list(int(q) for q in q_ids)
+    questions = get_selected_questions(q_ids)
+    answers = get_answers(q_ids)
+    db._disconnect()
+    return questions, answers
+    
 
 # Tools
 
