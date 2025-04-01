@@ -103,7 +103,11 @@ def make_test():
         t_id = request.form.get("topic")
         s_id = request.form.get("subtopic")
         count = request.form.get("count")
-        questions, answers = h.create_test(t_id, s_id, count)
+        if not session.get("user_id"):
+            u_id = None
+        else:
+            u_id = session["user_id"]
+        questions, answers = h.create_test(u_id,t_id, s_id, count)
         questions = h.add_markdown(questions,"question")
         answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]

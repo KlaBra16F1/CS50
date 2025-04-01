@@ -134,6 +134,39 @@ def get_questions(t_id, s_id):
         questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
         db._disconnect()
         return questions
+    
+def get_user_questions(u_id, t_id, s_id):
+    if t_id is None or t_id =="":
+        questions = db.execute("SELECT t.topic, s.subtopic, q.q_id, q.question, q.isMultipleChoice,"
+                                "(SELECT timesDONE FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS timesDone, "
+                                "(SELECT ROUND((CAST(timesRight AS REAL) / CAST(timesDone AS REAL)),2) AS score "
+                                "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
+                                "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
+                                "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
+                                "ORDER BY score, lastDate, timesDone;",u_id, u_id, u_id)
+        db._disconnect()
+        return questions
+    elif s_id is None or s_id == "":
+        questions = db.execute("SELECT t.topic, s.subtopic, q.q_id, q.question, q.isMultipleChoice,"
+                                "(SELECT timesDONE FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS timesDone, "
+                                "(SELECT ROUND((CAST(timesRight AS REAL) / CAST(timesDone AS REAL)),2) AS score "
+                                "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
+                                "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
+                                "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
+                                "WHERE t.t_id = ? ORDER BY score, lastDate, timesDone;",u_id, u_id, u_id, t_id)
+        db._disconnect()
+        return questions
+    else:
+        questions = db.execute("SELECT t.topic, s.subtopic, q.q_id, q.question, q.isMultipleChoice,"
+                                "(SELECT timesDONE FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS timesDone, "
+                                "(SELECT ROUND((CAST(timesRight AS REAL) / CAST(timesDone AS REAL)),2) AS score "
+                                "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
+                                "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
+                                "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
+                                "WHERE t.t_id = ? AND s.s_id = ? ORDER BY score, lastDate, timesDone;",u_id, u_id, u_id, t_id, s_id)
+
+        return questions
+
 
 def get_selected_questions(q_ids):
     questions = db.execute("SELECT q_id, question, isMultipleChoice FROM questions WHERE q_id IN (?);", q_ids)
@@ -193,17 +226,26 @@ def add_answers(answers):
 
 # TESTS
 
-def create_test(t_id, s_id, count):
+def create_test(u_id, t_id, s_id, count):
     
     if count == "":
         count = None
     else:
         count = int(count)
 
-    questions = get_questions(t_id, s_id)
-    questions = list(questions)
-    random.shuffle(questions)
-    questions = questions[0:count]
+    questions = []
+    if u_id is None or u_id == "":
+        questions = get_questions(t_id, s_id)
+        questions = list(questions)
+        random.shuffle(questions)
+        questions = questions[0:count]
+    else:
+        questions = get_user_questions(u_id, t_id, s_id)
+        questions = list(questions)
+        questions = questions[0:count]
+        random.shuffle(questions)
+    
+
     q_ids = [q_id["q_id"] for q_id in questions]
     answers = get_answers(q_ids)
     return questions, answers
