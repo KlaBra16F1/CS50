@@ -136,7 +136,7 @@ def get_questions(t_id, s_id):
         db._disconnect()
         return questions
     
-def get_user_questions(u_id, t_id, s_id, count):
+def get_user_questions(u_id, t_id, s_id):
     if t_id is None or t_id =="":
         questions = db.execute("SELECT row_number() OVER (order by random()) AS random, t.topic, s.subtopic, q.q_id, q.question, q.isMultipleChoice,"
                                 "(SELECT timesDONE FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS timesDone, "
@@ -144,7 +144,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "ORDER BY timesDone, lastDate, score, random LIMIT ?;",u_id, u_id, u_id, count)
+                                "ORDER BY timesDone, lastDate, score, random;",u_id, u_id, u_id)
         db._disconnect()
         return questions
     elif s_id is None or s_id == "":
@@ -154,7 +154,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "WHERE t.t_id = ? ORDER BY timesDone, lastDate, score, random LIMIT ?;",u_id, u_id, u_id, t_id, count)
+                                "WHERE t.t_id = ? ORDER BY timesDone, lastDate, score, random;",u_id, u_id, u_id, t_id)
         db._disconnect()
         return questions
     else:
@@ -164,7 +164,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "WHERE t.t_id = ? AND s.s_id IN (?) ORDER BY timesDone, lastDate, score, random LIMIT ?;",u_id, u_id, u_id, t_id, s_id, count)
+                                "WHERE t.t_id = ? AND s.s_id IN (?) ORDER BY timesDone, lastDate, score, random;",u_id, u_id, u_id, t_id, s_id)
 
         return questions
 
@@ -241,8 +241,9 @@ def create_test(u_id, t_id, s_id, count):
         random.shuffle(questions)
         questions = questions[0:count]
     else:
-        questions = get_user_questions(u_id, t_id, s_id, count)
+        questions = get_user_questions(u_id, t_id, s_id)
         questions = list(questions)
+        questions = questions[0:count]
         random.shuffle(questions)
     
 
