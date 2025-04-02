@@ -4,10 +4,11 @@
 <body>
     <!-- Menu -->
     <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
-            <a href="#" class="brand no-hover">
-                <h4><em>Test</em><strong>Forge</strong></h4>
-            </a>
-            <ul class="app-bar-menu">
+                <a href="#" class="brand no-hover">
+                    <h4><em>Test</em><strong>Forge</strong></h4>
+                </a>
+
+            <ul class="app-bar-menu ">
                 <li><a href="/make-test">Make Test</a></li>
                 {% if session["user_id"] %}
                 {% if session["role"] in ["admin","maintainer"] %}
@@ -17,9 +18,10 @@
                 {% if session["role"] == "admin" %}
                     <li><a href="/users">Manage Users</a></li>
                 {% endif %}
+                {% endif %}
             </ul>
-            {% endif %}
-            <ul class="app-bar-menu pos-fixed pos-top-right">
+
+            <ul class="app-bar-menu menu-right">
                 {% if not session["user_id"] %}
                     <li><a href="/register">Register</a></li>
                     <li><a href="/login">Login</a></li>
@@ -29,6 +31,7 @@
                     <li><a href="/logout">Log out</a></li>
                 {% endif %}
             </ul>
+
     </div>
     <!-- End Menu -->
     

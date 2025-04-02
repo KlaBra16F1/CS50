@@ -143,7 +143,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "ORDER BY timesDone, score, lastDate LIMIT ?;",u_id, u_id, u_id, count)
+                                "ORDER BY timesDone, lastDate, score LIMIT ?;",u_id, u_id, u_id, count)
         db._disconnect()
         return questions
     elif s_id is None or s_id == "":
@@ -153,7 +153,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "WHERE t.t_id = ? ORDER BY timesDone, score, lastDate LIMIT ?;",u_id, u_id, u_id, t_id, count)
+                                "WHERE t.t_id = ? ORDER BY timesDone, lastDate, score LIMIT ?;",u_id, u_id, u_id, t_id, count)
         db._disconnect()
         return questions
     else:
@@ -163,7 +163,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "WHERE t.t_id = ? AND s.s_id = ? ORDER BY timesDone, score, lastDate LIMIT ?;",u_id, u_id, u_id, t_id, s_id, count)
+                                "WHERE t.t_id = ? AND s.s_id = ? ORDER BY timesDone, lastDate, score LIMIT ?;",u_id, u_id, u_id, t_id, s_id, count)
 
         return questions
 

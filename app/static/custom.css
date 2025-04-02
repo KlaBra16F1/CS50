@@ -15,3 +15,7 @@ td {
 .bg-blue {
     background-color: #57686e!important;
 }
+
+.menu-right {
+    margin-left: auto!important;
+}
