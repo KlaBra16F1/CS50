@@ -6,46 +6,44 @@
 {% endblock %}
 {% block main %}
 
-    <div>
+    <div class="w-75">
+        <!--- Add new topics or subtopics -->
         <form action="/add-questions" method="post">
             {% include "modules/topic-selector.html" %}
-            <!-- <select name="topic" id="topic">
-                <option value="">Please Select</option>
-                {% for r in rows_topics %}
-                    <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }}</option>
-                {% endfor %}
-            </select> -->
-            <input name="new-topic" type="text" placeholder="New topic">
-            <!-- <select name="subtopic" id="subtopic">
-                <option value="">Please Select</option>
-            </select> -->
-            <input name="new-subtopic" type="text" placeholder="New subtopic">
-            <textarea name="question" placeholeder="Question"></textarea>
-            <label for="question">Your question</label>
-            <input type="number" min="0" max="5" placeholder="difficulty">
-            <label for="difficulty">Difficulty (optional)</label>
-            <input type="checkbox" name="isMultipleChoice" value="1">
-            <label for="isMultipleChoice">Multiple Choice</label>
+            <div class="row">
+                <div class="cell-md-third">
+                    <label>Create new topic</label>
+                    <input name="new-topic" type="text" placeholder="New topic" data-role="input">
+                    <small>Press [Enter] to send.</small>
+                </div>
+                <div class="cell-md-third">
+                    <label>Create new topic</label>
+                    <input name="new-subtopic" type="text" placeholder="Requires selected topic" data-role="input">
+                    <small>Press [Enter] to send.</small>
+                </div>
 
-            <button type="submit">Submit</button>
+            </div>
+            <div class="form-group">
+                <label>Question</label>
+                <textarea name="question" placeholeder="Question" data-role="textarea"></textarea>
+                <small>Markdown supported for <strong>__bold__</strong> <em>_italics_</em> and <code>`code`.</code> </small>
+                <label>Multiple Choice</label>
+                <input type="checkbox" name="isMultipleChoice" value="1">
+
+            </div>
+
+            <button type="submit" class="button primary mt-5">Submit</button>
         </form>
+        <form>
+
+        </form>
+
         {% include "modules/selector-script.html" %}
         
 
     </div>
     </form>
-    <!-- externes js -->
-    <!-- <script>
-        let topic = document.querySelector('#topic');
-        topic.addEventListener('change', async function() {
-            let res = await fetch('/get-subtopics?t_id=' + topic.value);
-            let subtopics = await res.json();
-            let html = '<option value="">Please Select</option>';
-            for (s of subtopics) {
-                html += '<option value="' + s.s_id + '">' + s.subtopic + '</option>'
-            }
-            document.querySelector('#subtopic').innerHTML = html;
-        });
+    <script>
 
-    </script> -->
+    </script>
 {% endblock %}

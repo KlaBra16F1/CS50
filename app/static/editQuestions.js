@@ -76,7 +76,7 @@ function update(id) {
                 <label>Question</label>
                 <input name="question" value="${question}" type="text" data-role="input" >
                 <label>Multiple Choice</label>
-                <select name="multiple" data-role="select" class="input-small w-25" data-filter="false">
+                <select name="multiple" class="input-small w-25" data-filter="false">
                     <option value=0 ${selected0}>No</option>
                     <option value=1 ${selectet1}>Yes</option>
                 </select>

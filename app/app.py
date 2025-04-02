@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request, redirect, flash, session
 from flask_session import Session
 from werkzeug.security import generate_password_hash
-
+from markdown import markdown
 import helpers as h
 
 # App Setting
@@ -28,6 +28,10 @@ def add_questions():
             flash("New topic {} created.".format(new_topic))
             return redirect("add-questions")
         if request.form.get("new-subtopic") != "":
+            if not request.form.get("topic"):
+                error = "Select a topic first to create a subtopic."
+                flash("")
+                return render_template("add-questions.html", error=error)
             t_id = int(request.form.get("topic"))
             new_subtopic = request.form.get("new-subtopic")
             h.add_subtopic(t_id, new_subtopic)
@@ -38,6 +42,7 @@ def add_questions():
         difficulty = request.form.get("difficulty", None)
         isMultipleChoice = request.form.get("isMultipleChoice",0)
         q_id = h.add_question(s_id, question, difficulty, isMultipleChoice)
+        question = markdown(question)
         flash("Question successully added. Enter Answers now.")
         return render_template("add-answers.html", q_id = q_id["q_id"], question = question)
     topics = h.get_topics()

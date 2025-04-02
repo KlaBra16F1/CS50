@@ -40,10 +40,9 @@
             <!-- Status Messages -->
             {% for message in get_flashed_messages() %}
                 {% if error %}
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <span type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></span>
-                    <strong>Error!</strong> {{ error }}
-                </div>
+                <script type="text/javascript">
+                    Metro.notify.create('{{ error }}', 'ERROR', {cls: "alert", animation: 'none'});
+                </script>
                 {% else %}
                 <script type="text/javascript">
                     Metro.notify.create('{{ message }}', 'Success', {cls: "success", animation: 'none'});
