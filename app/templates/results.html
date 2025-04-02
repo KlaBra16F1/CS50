@@ -106,8 +106,10 @@
     {% if session["user_id"] %}
         <div class="w-75 mt-10 mb-20 pos-bottom-center">
             <h4>Save Test</h4>
-            <input data-role="input" id="test-name" type="text" name="test-name" placeholder="Test-Name">
-            <button class="button success pos-bottom-center mt-10 mb-20" type="button" onclick="saveTest();">Save Test</button>
+            <form onsubmit="saveTest(); return false;">
+                <input data-role="input" id="test-name" type="text" name="test-name" placeholder="Test-Name">
+                <button class="button success pos-bottom-center mt-10 mb-20" type="submit">Save Test</button>
+            </form>
         </div>
         
     {% endif %}
@@ -139,6 +141,7 @@
             } else {
                 Metro.notify.create('Error',res['error'],{ cls: 'alert'});
             }
+            
             
 
         };
