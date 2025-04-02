@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
+{% block header %}
+<h1>
+    Login
+</h1>
+{% endblock %}
 {% block main %}
-<!-- {% if error %}
-    <p class=error><strong>Error:</strong> {{ error }}
-  {% endif %} -->
-<div>
+
+<div class="mt-20 w-75">
     <form action="/login" method="post">
-        <input name="username" placeholder="Username" type="text" autofocus>
-        <input name="password" placeholder="Password" type="password" autofocus>
-        <button type="submit">Log in</button>
+        <input name="username" placeholder="Username" type="text" autofocus data-role="input" class="w-50" data-prepend="Username">
+        <input name="password" placeholder="Password" type="password" autofocus data-role="input" class="w-50" data-prepend="Password">
+        <button type="submit" class="button success mt-5">Log in</button>
     </form>
 </div>
 {% endblock %}
