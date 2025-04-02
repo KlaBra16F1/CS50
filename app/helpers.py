@@ -131,7 +131,8 @@ def get_questions(t_id, s_id):
         db._disconnect()
         return questions
     else:
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id = ?", t_id, s_id)
+        print(s_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id IN (?);", t_id, s_id)
         db._disconnect()
         return questions
     
@@ -163,7 +164,7 @@ def get_user_questions(u_id, t_id, s_id, count):
                                 "FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS score, "
                                 "(SELECT lastDate FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) as lastDate "
                                 "FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
-                                "WHERE t.t_id = ? AND s.s_id = ? ORDER BY timesDone, lastDate, score, random LIMIT ?;",u_id, u_id, u_id, t_id, s_id, count)
+                                "WHERE t.t_id = ? AND s.s_id IN (?) ORDER BY timesDone, lastDate, score, random LIMIT ?;",u_id, u_id, u_id, t_id, s_id, count)
 
         return questions
 

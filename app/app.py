@@ -107,6 +107,11 @@ def make_test():
             u_id = None
         else:
             u_id = session["user_id"]
+        # Extract subtopics
+        s_id = s_id[1:-1]
+        s_id = s_id.split(',')
+        s_id = list(int(s) for s in s_id)
+        print(s_id)
         questions, answers = h.create_test(u_id,t_id, s_id, count)
         questions = h.add_markdown(questions,"question")
         answers = h.add_markdown(answers,"answer","comment")

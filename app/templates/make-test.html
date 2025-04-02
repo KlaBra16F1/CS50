@@ -6,12 +6,30 @@
 {% endblock %}
 
 {% block main %}
-<form action="/make-test" method="post">
-    {%include "modules/topic-selector.html" %}
+<form action="/make-test" method="post" id="make-test">
+    {%include "modules/test-topic-selector.html" %}
     <input type="number" name="count" placeholder="Number of questions">
     <button type="submit">Create test</button>
 </form>
 
 {% include "/modules/selector-script.html" %}
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        let form = document.querySelector('#make-test');
+        let subtopic = document.querySelector("#subtopic");
+        let sub = Metro.getPlugin(subtopic, 'select');
+        let = val = '';
+        subtopic.addEventListener('change', function() {
+            val = '[' + sub.val().toString() + ']';
+        });
+        form.addEventListener('submit', function() {
+            let opt = document.createElement('option');
+            opt.value = val;
+            subtopic.appendChild(opt)
+            subtopic.value = val;
+        });
+
+    });
+</script>
 
 {% endblock %}
