@@ -40,6 +40,7 @@ def delete_user(u_id):
     db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
     db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
+    db.execute("DELETE FROM user_tests WHERE u_id = ?;", u_id)
     db.execute("COMMIT;")
     db._disconnect()
     
