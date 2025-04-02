@@ -10,11 +10,12 @@
     {% for q in questions %}
     <div class="card w-75 " >
         <div class="card-header bg-blue fg-white">
+            <small><strong>{{ q.topic }}</strong> - {{ q.subtopic }}></small>
             <h5>{{ q.question | safe }}</h5>
             {% if q.isMultipleChoice %}
-                <lable>Multiple answers possible</lable>
+                <small>Multiple answers possible</small>
             {% else %}
-                <label>Only one answer</label>
+                <small>Only one answer</small>
             {% endif %}
         </div>
         <div class="card-content p-2">
