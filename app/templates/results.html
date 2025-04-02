@@ -134,7 +134,12 @@
             let testName = document.querySelector("#test-name");
             let req = await fetch("/save-test?save=" + '{{ session["user_id"]}}&name=' + testName.value);
             let res = await req.json();
-            console.log(res);
+            if (res['success']) {
+                Metro.notify.create('Success',res['success'],{ cls: 'success'});
+            } else {
+                Metro.notify.create('Error',res['error'],{ cls: 'alert'});
+            }
+            
 
         };
     </script>
