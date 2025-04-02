@@ -12,7 +12,7 @@
     <button type="submit">Create test</button>
 </form>
 
-{% include "/modules/selector-script.html" %}
+{% include "/modules/selector-script-test.html" %}
 <script>
     document.addEventListener('DOMContentLoaded', function(){
         let form = document.querySelector('#make-test');
@@ -21,6 +21,7 @@
         let = val = '';
         subtopic.addEventListener('change', function() {
             val = '[' + sub.val().toString() + ']';
+            console.log(val)
         });
         form.addEventListener('submit', function() {
             let opt = document.createElement('option');

@@ -10,7 +10,7 @@
     {% for q in questions %}
     <div class="card w-75 " >
         <div class="card-header bg-blue fg-white">
-            <small><strong>{{ q.topic }}</strong> - {{ q.subtopic }}></small>
+            <small><strong>{{ q.topic }}</strong> - {{ q.subtopic }}</small>
             <h5>{{ q.question | safe }}</h5>
             {% if q.isMultipleChoice %}
                 <small>Multiple answers possible</small>

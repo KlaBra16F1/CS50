@@ -107,13 +107,15 @@ def make_test():
     if request.method == "POST":
         t_id = request.form.get("topic")
         s_id = request.form.get("subtopic")
-        count = request.form.get("count")
+        count = request.form.get("count",0)
         if not session.get("user_id"):
             u_id = None
         else:
             u_id = session["user_id"]
         # Extract subtopics
+        print(s_id)
         if s_id != "":
+            print('multi',s_id)
             s_id = s_id[1:-1]
             s_id = s_id.split(',')
             s_id = list(int(s) for s in s_id)

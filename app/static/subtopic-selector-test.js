@@ -5,7 +5,7 @@ var subtopics_loaded;
         let res = await fetch('/get-subtopics?t_id=' + topic.value);
         document.querySelector('#subtopic').innerHTML = '';
         let subtopics = await res.json();
-        let html = '<option value="">Please Select</option>';
+        let html = '';
         for (s of subtopics) {
             html += '<option value="' +  s.s_id  + '">' + s.subtopic + ' (' + s.count + ')</option>'
         }

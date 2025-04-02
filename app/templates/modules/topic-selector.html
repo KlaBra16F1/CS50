@@ -2,7 +2,7 @@
     <div class="cell-md-third">
         <label>Topic</label>
         <select name="topic" id="topic" data-role="select">
-            <option value="">Please Select</option>
+            <option id="select" value="">Please Select</option>
             {% for r in rows_topics %}
                 <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }} ({{ r.count }})</option>
             {% endfor %}
