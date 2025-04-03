@@ -1,0 +1,26 @@
+{% include "./modules/head.html" %}
+{% block main %}
+{% set c = namespace(count=0) %}
+    {% for a in answers %}
+        {% set c.count = c.count + 1 %}
+    <div class="card">
+        <div class="card-header bg-blue fg-white">
+            Answer: {{ c.count }}
+        </div>
+        <div class="card-content p-4" id="a{{ a.a_id }}">
+            <form>
+                <label><strong>Answer</strong></label>
+                <div>{{ a.answer | safe }}</div>
+                <label><strong>Correct/Incorrect</strong></label>
+                <div><input type="hidden" value="{{a.is_true}}">{% if a.is_true == 1 %}Correct ✅{% else %}Incorrect ❌{% endif %}</div>
+                <label><strong>Comment</strong></label>
+                <div>{{ a.comment | safe }}</div>
+            </div>
+            <div class="card-footer">
+                <button class="button success" type="button" onclick="updateAnswer('{{a.a_id}}');">Edit</button>
+            </div>
+        </form>
+    </div>
+    {% endfor %}
+
+{% endblock %}

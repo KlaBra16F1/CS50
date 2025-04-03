@@ -109,10 +109,25 @@ def edit_questions():
         msg = h.update_question(q_id, question, multiple)
         return jsonify(msg)
         
-
-        
     topics = h.get_topics()
     return render_template("edit-questions.html", rows_topics=topics)
+
+@app.route("/edit-answers", methods=["POST","GET"])
+@h.maintainer_required
+def edit_answers():
+    if request.method == "POST":
+        # todo
+        return 'todo'
+    if request.args.get("q_id"):
+        q_id = []
+        q_id.append(int(request.args.get("q_id")))
+        question = h.get_selected_questions(q_id)
+        question = h.add_markdown(question,"question")
+        
+        return render_template("edit-answers.html", question=question[0])
+
+    return '200'
+
 
 # Tests
 
@@ -228,6 +243,15 @@ def get_questions():
     # Markdown
     answers = h.add_markdown(answers,"answer","comment")
     return render_template("questions.html", questions = questions, answers = answers)
+
+@app.route("/get-answers")
+@h.maintainer_required
+def get_answers():
+    q_id = request.args.get("q_id")
+    answers = h.get_answers(q_id)
+    answers = sorted(answers, key=lambda x: x["a_id"])
+    answers = h.add_markdown(answers, "answer","comment" )
+    return render_template("answers.html", answers=answers) 
 
 # Dev
 @app.route("/dev")

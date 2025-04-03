@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block header %}
+<h1>
+    Edit Answers
+</h1>
+<h3>{{ question["question"] | safe }}</h3>
+<input type="hidden" id="q_id" value="{{ question['q_id'] }}">
+
+{% endblock %}
+{% block main %}
+<p id="answers" class="mt-20"></p>
+<hr>
+<div class="card">
+    <div class="card-header bg-blue fg-white">
+        New answer
+    </div>
+    <div class="card-content p-4">
+        <form>
+            <label><strong>Answer</strong></label>
+            <div>
+                <input type="text" data-role="input">
+            </div>
+            <label><strong>Correct/Incorrect</strong></label>
+            <div>
+                <select data-role="select">
+                    <option>True</option>
+                    <option>False</option>
+                </select>
+            </div>
+            <label><strong>Comment</strong></label>
+            <div>
+                <input type="text" data-role="input">
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="button success" type="button">Edit</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let q_id = document.querySelector('#q_id').value;
+        console.log(q_id);
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function() {
+            if (req.readyState == 4 && req.status == 200) {
+                document.querySelector('#answers').innerHTML = req.responseText;
+            }
+        };
+        req.open('GET', '/get-answers?q_id='+ q_id, true);
+        req.send();
+    });
+    function updateAnswer(id) {
+        console.log(id)
+        let form = document.getElementById(`a${id}`);
+        let fields = form.getElementsByTagName('div')
+        const f = [];
+        for (let i = 0; i < 3; i++) {
+            f[i] = fields[i];
+        }
+        let selected0 = '';
+        let selectet1 = '';
+        if (f[1].children[0].value == 1) {
+            
+            selectet1 = 'selected';
+        } else {
+            selected0 = 'selected';
+        }
+        fields[0].innerHTML = `<input type="text" data-role="input" value="${f[0].children[0].innerHTML}">`;
+        fields[1].innerHTML = `<select data-role="select"><option ${selectet1}>True</option><option ${selected0}>False</option></select>`
+        fields[2].innerHTML = `<input type="text" data-role="input" value="${f[2].children[0].innerHTML}">`;
+    };
+</script>
+{% endblock %}
