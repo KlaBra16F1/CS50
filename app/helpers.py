@@ -120,6 +120,51 @@ def add_subtopic(t_id, new_subtopic):
     db.execute("INSERT INTO subtopics (t_id, subtopic) VALUES (?, ?);", t_id, new_subtopic)
     db._disconnect()
 
+def delete_topic(t_id):
+    deleted = {}
+    db.execute("BEGIN TRANSACTION;")
+    s_ids = db.execute("SELECT s.s_id FROM topics t, subtopics s WHERE t.t_id = s.t_id AND s.t_id = ?;", t_id)
+    s_ids = list(s["s_id"] for s in s_ids)
+    q_ids = db.execute("SELECT q_id FROM questions WHERE s_id in (?);", s_ids)
+    q_ids = list(q["q_id"] for q in q_ids)
+    db.execute("DELETE FROM answers WHERE q_id IN (?);", q_ids)
+    changes = db.execute("SELECT changes();")
+    deleted["answers"] = changes[0]["changes()"]
+    db.execute("DELETE FROM questions WHERE s_id IN (?);", s_ids)
+    changes = db.execute("SELECT changes();")
+    deleted["questions"] = changes[0]["changes()"]
+    db.execute("DELETE FROM subtopics WHERE s_id IN (?)", s_ids)
+    changes = db.execute("SELECT changes();")
+    deleted["subtopics"] = changes[0]["changes()"]
+    db.execute("DELETE FROM topics WHERE t_id = ?;", t_id)
+    changes = db.execute("SELECT changes();")
+    deleted["topics"] = changes[0]["changes()"]
+    db.execute("DELETE FROM user_questions WHERE q_id IN (?);", q_ids)
+    changes = db.execute("SELECT changes();")
+    deleted["user_stats"] = changes[0]["changes()"]
+    db.execute("COMMIT;")
+    return deleted
+
+def delete_subtopic(s_id):
+    deleted = {}
+    db.execute("BEGIN TRANSACTION;")
+    q_ids = db.execute("SELECT q_id FROM questions WHERE s_id = ?;", s_id)
+    q_ids = list(q["q_id"] for q in q_ids)
+    db.execute("DELETE FROM answers WHERE q_id IN (?);", q_ids)
+    changes = db.execute("SELECT changes();")
+    deleted["answers"] = changes[0]["changes()"]
+    db.execute("DELETE FROM questions WHERE s_id = ?;", s_id)
+    changes = db.execute("SELECT changes();")
+    deleted["questions"] = changes[0]["changes()"]
+    db.execute("DELETE FROM subtopics WHERE s_id = ?", s_id)
+    changes = db.execute("SELECT changes();")
+    deleted["subtopics"] = changes[0]["changes()"]
+    db.execute("DELETE FROM user_questions WHERE q_id IN (?);", q_ids)
+    changes = db.execute("SELECT changes();")
+    deleted["user_stats"] = changes[0]["changes()"]
+    db.execute("COMMIT;")
+    return deleted
+
 # QUESTIONS
 
 def get_questions(t_id, s_id):
@@ -171,7 +216,9 @@ def get_user_questions(u_id, t_id, s_id):
 
 
 def get_selected_questions(q_ids):
-    questions = db.execute("SELECT q_id, question, isMultipleChoice FROM questions WHERE q_id IN (?);", q_ids)
+    questions = db.execute("SELECT t.topic, s.subtopic, q_id, question, isMultipleChoice "
+                            "FROM questions INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) "
+                            "WHERE q_id IN (?);", q_ids)
     db._disconnect()
     return questions
 

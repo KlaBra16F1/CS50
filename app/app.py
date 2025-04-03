@@ -85,6 +85,23 @@ def edit_questions():
         q_id = request.args.get("delete")
         questions, answers = h.delete_question(q_id)
         return {"questions": questions, "answers": answers}
+    
+    if request.args.get("delTopicSubtopic"):
+        if request.args.get("delTopicSubtopic") == "t_id":
+            t_id = request.args.get("id")
+            print("topic:", t_id)
+            msg = h.delete_topic(t_id)
+            
+            return msg
+        
+        elif request.args.get("delTopicSubtopic") == "s_id":
+            s_id = request.args.get("id")
+            print("subtopic:", s_id)
+            msg = h.delete_subtopic(s_id)
+            return msg
+        else:
+            return {"error":"unknown option"}
+
     if request.args.get("update"):
         q_id = request.args.get("update")
         question = request.args.get("question", None)

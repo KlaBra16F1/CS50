@@ -1,0 +1,22 @@
+<div id="topic-selector" class="row">
+    <div class="cell-md-third">
+        <label>Topic</label>
+        <select name="topic" id="topic" data-role="select">
+            <option value="">Please Select</option>
+            {% for r in rows_topics %}
+                <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }} ({{ r.count }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="cell-md-third">
+        <label>Subtopic</label>
+        <select name="subtopic" type="text" id="subtopic" data-role="select" multiple>
+        </select>
+    </div>
+</div>
+
+
+
+
+
+

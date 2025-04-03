@@ -1,0 +1,34 @@
+<div id="topic-selector" class="row">
+    <div class="cell-md-third">
+        <label>Topic</label>
+        <select name="topic" id="topic" data-role="select">
+            <option id="select" value="">Please Select</option>
+            {% for r in rows_topics %}
+                <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }} ({{ r.count }})</option>
+                
+            {% endfor %}
+        </select>
+    </div>
+    <div class="cell-md-third">
+        <label>Subtopic</label>
+        <select name="subtopic" id="subtopic" data-role="select">
+            <option value="">Please Select</option>
+        </select>
+    </div>
+</div>
+<button id="deleteTopicSubtopic" class="button alert" onclick="deleteTopicSubtopic();"
+    data-role="hint" data-hint-position="right" data-cls-hint="bg-red fg-white drop-shadow"
+    data-hint-text="<strong>Usage:</strong><br>
+                    Select topic to delete the topic including all subtopics, questions, answers and user statitistics.<br><br>
+                    Select topic and subtopic to delete the subtopic, questions, answers and user statistics but keep the topic.">Delete</button><br>
+<small>
+    <strong class="fg-red">WARNING:</strong> Deleting topics and subtopics also deletes <strong>all</strong>
+    <br>questions, answers and user statistics for that topic/subtopic.<br>
+    Read description carefully.
+</small>
+
+
+
+
+
+
