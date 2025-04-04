@@ -143,7 +143,6 @@ def edit_answers():
         else:
             return msg
     if request.args.get("delete"):
-        print("cp", request.args)
         a_id = request.args.get("delete")
         q_id = request.args.get("q-id")
         msg = h.delete_answer(a_id, q_id)
@@ -285,7 +284,7 @@ def dev():
 
 @app.route("/register",methods=["GET","POST"])
 def register():
-    if session :
+    if session.get("user_id") :
         return redirect("/")
     if request.method == "POST":
         if not (request.form.get("username") and request.form.get("password") and request.form.get("confirm")):
