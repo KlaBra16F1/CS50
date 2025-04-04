@@ -48,7 +48,41 @@ def add_questions():
     topics = h.get_topics()
     return render_template("add-questions.html", rows_topics=topics)
 
-# Questions
+@app.route("/edit-questions")
+@h.maintainer_required
+def edit_questions():
+    if request.args.get("delete"):
+        q_id = request.args.get("delete")
+        questions, answers = h.delete_question(q_id)
+        return {"questions": questions, "answers": answers}
+    
+    if request.args.get("delTopicSubtopic"):
+        if request.args.get("delTopicSubtopic") == "t_id":
+            t_id = request.args.get("id")
+            print("topic:", t_id)
+            msg = h.delete_topic(t_id)
+            
+            return msg
+        
+        elif request.args.get("delTopicSubtopic") == "s_id":
+            s_id = request.args.get("id")
+            print("subtopic:", s_id)
+            msg = h.delete_subtopic(s_id)
+            
+        else:
+            return {"error":"unknown option"}
+
+    if request.args.get("update"):
+        q_id = request.args.get("update")
+        question = request.args.get("question", None)
+        multiple = request.args.get("multiple", None)
+        msg = h.update_question(q_id, question, multiple)
+        return jsonify(msg)
+        
+    topics = h.get_topics()
+    return render_template("edit-questions.html", rows_topics=topics)
+
+# Answers
 
 @app.route("/add-answers", methods=["GET","POST"])
 @h.maintainer_required
@@ -78,39 +112,7 @@ def add_answers():
 
     return render_template("add-answers.html")
 
-@app.route("/edit-questions")
-@h.maintainer_required
-def edit_questions():
-    if request.args.get("delete"):
-        q_id = request.args.get("delete")
-        questions, answers = h.delete_question(q_id)
-        return {"questions": questions, "answers": answers}
-    
-    if request.args.get("delTopicSubtopic"):
-        if request.args.get("delTopicSubtopic") == "t_id":
-            t_id = request.args.get("id")
-            print("topic:", t_id)
-            msg = h.delete_topic(t_id)
-            
-            return msg
-        
-        elif request.args.get("delTopicSubtopic") == "s_id":
-            s_id = request.args.get("id")
-            print("subtopic:", s_id)
-            msg = h.delete_subtopic(s_id)
-            return msg
-        else:
-            return {"error":"unknown option"}
 
-    if request.args.get("update"):
-        q_id = request.args.get("update")
-        question = request.args.get("question", None)
-        multiple = request.args.get("multiple", None)
-        msg = h.update_question(q_id, question, multiple)
-        return jsonify(msg)
-        
-    topics = h.get_topics()
-    return render_template("edit-questions.html", rows_topics=topics)
 
 @app.route("/edit-answers", methods=["POST","GET"])
 @h.maintainer_required
@@ -123,8 +125,18 @@ def edit_answers():
         q_id.append(int(request.args.get("q_id")))
         question = h.get_selected_questions(q_id)
         question = h.add_markdown(question,"question")
-        
         return render_template("edit-answers.html", question=question[0])
+    if request.args.get("update_answer"):
+        a_id = request.args.get("update_answer")
+        answer = request.args.get("answer")
+        is_true = request.args.get("is_true")
+        comment = request.args.get("comment")
+        print(a_id,answer,is_true,comment)
+        msg = h.update_answer(a_id, answer, is_true, comment)
+        if msg.get("error"):
+            return '500'
+        else:
+            return msg
 
     return '200'
 

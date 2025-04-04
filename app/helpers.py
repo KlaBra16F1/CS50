@@ -269,6 +269,17 @@ def add_answers(answers):
     db._disconnect()
     return changes
 
+def update_answer(a_id, answer, is_true, comment):
+    db.execute("UPDATE answers SET answer = ?, is_true = ?, comment = ? WHERE a_id = ?;", answer, is_true, comment, a_id)
+    changes = db.execute("SELECT changes();")
+    db._disconnect()
+    changes = changes[0]["changes()"]
+    msg = {"success": f"updated {changes} answer"}
+    if changes != 1:
+        msg = {"error": "database error"}
+    return msg
+    
+
 
 
 

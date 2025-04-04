@@ -19,3 +19,8 @@ td {
 .menu-right {
     margin-left: auto!important;
 }
+
+.text-regular {
+    font-size: 16px;
+    font-weight: 400 !important;
+}
