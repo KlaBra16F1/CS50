@@ -1,8 +1,8 @@
 **/app/.venv
 **/app/__pycache__
 **/app/flask_session
+./app/flask_session/*
 **/app/test
 *.bak
 **/.vscode
-
 
