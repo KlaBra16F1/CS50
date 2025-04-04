@@ -118,7 +118,7 @@ def add_answers():
 
 
 
-@app.route("/edit-answers")
+@app.route("/edit-answers",methods=["GET","POST"])
 @h.maintainer_required
 def edit_answers():
 
@@ -128,19 +128,25 @@ def edit_answers():
         question = h.get_selected_questions(q_id)
         question = h.add_markdown(question,"question")
         return render_template("edit-answers.html", question=question[0])
+    
     if request.args.get("update_answer"):
+        print("checkpoint")
         a_id = request.args.get("update_answer")
         answer = request.args.get("answer")
         is_true = request.args.get("is_true")
         comment = request.args.get("comment")
+        q_id = request.args.get("q-id")
         print(a_id,answer,is_true,comment)
-        msg = h.update_answer(a_id, answer, is_true, comment)
+        msg = h.update_answer(q_id, a_id, answer, is_true, comment)
         if msg.get("error"):
             return '500'
         else:
             return msg
     if request.args.get("delete"):
-        msg = h.delete_answer(request.args.get("delete"))
+        print("cp", request.args)
+        a_id = request.args.get("delete")
+        q_id = request.args.get("q-id")
+        msg = h.delete_answer(a_id, q_id)
         return msg
     return '200'
 

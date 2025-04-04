@@ -96,12 +96,13 @@
 
     };
     async function sendUpdate(a_id, event) {
-        console.log(a_id);
+        let q_id = document.querySelector('#q_id').value;
+        console.log(q_id);
         let answer = event.srcElement[1].value
         let is_true = event.srcElement[3].value
         let comment = event.srcElement[7].value
         let req = await fetch('/edit-answers?update_answer=' + a_id + '&answer=' + answer + 
-            '&is_true=' + is_true + '&comment=' + comment);
+            '&is_true=' + is_true + '&comment=' + comment + '&q-id=' + q_id);
         let res = await req.json();
         console.log(res);
         if (res["success"]) {
@@ -127,7 +128,8 @@
         getAnswers();
     };
     async function deleteAnswer(event) {
-        let req = await fetch("/edit-answers?delete=" + event.srcElement.value);
+        let q_id = document.querySelector('#q_id').value;
+        let req = await fetch("/edit-answers?delete=" + event.srcElement.value + '&q-id=' + q_id);
         let res = await req.json();
         console.log(res);
         if (res["success"]) {

@@ -267,12 +267,14 @@ def add_answers(answers):
         changes += change[0]["changes()"]
     db.execute("COMMIT;")
     db._disconnect()
+    is_multple_choice(answers[0]["q_id"])
     return changes
 
 def add_answer(q_id, answer, is_true, comment):
     db.execute("INSERT INTO answers (q_id, answer, is_true, comment) VALUES (?, ?, ?, ?);", q_id, answer, is_true, comment)
     changes = db.execute("SELECT changes();")
     db._disconnect()
+    is_multple_choice(q_id)
     changes = changes[0]["changes()"]
     msg = {"success": f"Added {changes} answer"}
     if changes != 1:
@@ -280,26 +282,41 @@ def add_answer(q_id, answer, is_true, comment):
     return msg
 
 
-def update_answer(a_id, answer, is_true, comment):
+def update_answer(q_id, a_id, answer, is_true, comment):
     db.execute("UPDATE answers SET answer = ?, is_true = ?, comment = ? WHERE a_id = ?;", answer, is_true, comment, a_id)
     changes = db.execute("SELECT changes();")
     db._disconnect()
+    is_multple_choice(q_id)
     changes = changes[0]["changes()"]
     msg = {"success": f"updated {changes} answer"}
     if changes != 1:
         msg = {"error": "database error"}
     return msg
 
-def delete_answer(a_id):
+def delete_answer(a_id, q_id):
     db.execute("DELETE FROM answers WHERE a_id = ?;", a_id)
     changes = db.execute("SELECT changes();")
     db._disconnect()
+    is_multple_choice(q_id)
     changes = changes[0]["changes()"]
     msg = {"success": f"Deleted {changes} answer"}
     if changes != 1:
         msg = {"error": "database error"}
     return msg
     
+# Special Feature
+
+def is_multple_choice(q_id):
+    db.execute("BEGIN TRANSACTION;")
+    is_true = db.execute("SELECT COUNT(*) AS count FROM answers WHERE q_id = ? AND is_true = 1", q_id)
+    print("i_t:",is_true, q_id)
+    if is_true[0]["count"] > 1:
+        db.execute("UPDATE questions SET isMultipleChoice = 1 WHERE q_id = ?;", q_id)
+    else:
+        db.execute("UPDATE questions SET isMultipleChoice = 0 WHERE q_id = ?;", q_id)
+    db.execute("COMMIT;")
+    db._disconnect()
+
 
 
 
