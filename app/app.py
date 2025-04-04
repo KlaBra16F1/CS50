@@ -89,10 +89,7 @@ def edit_questions():
 def add_answers():
     if request.method == "POST":
         form = request.form
-
-
         answers = []
-        
         
         for i in range (1,len(form)//4+1):
             answer = {}
@@ -107,6 +104,13 @@ def add_answers():
         changes = h.add_answers(answers)
         flash(f"Added {changes} questions.")
         return redirect("/edit-questions")
+    if request.args.get("q_id"):
+        q_id = request.args.get("q_id")
+        answer = request.args.get("answer")
+        is_true = request.args.get("is_true")
+        comment = request.args.get("comment")
+        msg = h.add_answer(q_id, answer, is_true, comment)
+        return msg
         
         
 
@@ -114,12 +118,10 @@ def add_answers():
 
 
 
-@app.route("/edit-answers", methods=["POST","GET"])
+@app.route("/edit-answers")
 @h.maintainer_required
 def edit_answers():
-    if request.method == "POST":
-        # todo
-        return 'todo'
+
     if request.args.get("q_id"):
         q_id = []
         q_id.append(int(request.args.get("q_id")))
@@ -137,7 +139,9 @@ def edit_answers():
             return '500'
         else:
             return msg
-
+    if request.args.get("delete"):
+        msg = h.delete_answer(request.args.get("delete"))
+        return msg
     return '200'
 
 

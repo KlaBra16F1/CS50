@@ -269,12 +269,33 @@ def add_answers(answers):
     db._disconnect()
     return changes
 
+def add_answer(q_id, answer, is_true, comment):
+    db.execute("INSERT INTO answers (q_id, answer, is_true, comment) VALUES (?, ?, ?, ?);", q_id, answer, is_true, comment)
+    changes = db.execute("SELECT changes();")
+    db._disconnect()
+    changes = changes[0]["changes()"]
+    msg = {"success": f"Added {changes} answer"}
+    if changes != 1:
+        msg = {"error": "database error"}
+    return msg
+
+
 def update_answer(a_id, answer, is_true, comment):
     db.execute("UPDATE answers SET answer = ?, is_true = ?, comment = ? WHERE a_id = ?;", answer, is_true, comment, a_id)
     changes = db.execute("SELECT changes();")
     db._disconnect()
     changes = changes[0]["changes()"]
     msg = {"success": f"updated {changes} answer"}
+    if changes != 1:
+        msg = {"error": "database error"}
+    return msg
+
+def delete_answer(a_id):
+    db.execute("DELETE FROM answers WHERE a_id = ?;", a_id)
+    changes = db.execute("SELECT changes();")
+    db._disconnect()
+    changes = changes[0]["changes()"]
+    msg = {"success": f"Deleted {changes} answer"}
     if changes != 1:
         msg = {"error": "database error"}
     return msg

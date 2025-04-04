@@ -18,6 +18,7 @@
                 <div>{{ a.comment | safe }}</div>
                 <div id="b{{ a.a_id }}">
                     <button class="button success" type="button" onclick="updateAnswer('{{a.a_id}}');">Edit</button>
+                    <button class="button alert" type="button" value="{{ a.a_id }}" onclick="deleteAnswer(event); return false;">Delete</button>
                 </div>
             </form>
         </div>

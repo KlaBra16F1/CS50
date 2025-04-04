@@ -4,6 +4,7 @@
     Edit Answers
 </h1>
 <h3>{{ question["question"] | safe }}</h3>
+<button class="button small" onclick="history.back();">Back to questions <span class="mif-keyboard-return mif-2x"></span></button>
 <input type="hidden" id="q_id" value="{{ question['q_id'] }}">
 
 {% endblock %}
@@ -11,29 +12,30 @@
 <p id="answers" class="mt-10"></p>
 <hr>
 <div class="card">
-    <div class="card-header bg-blue fg-white">
-        New answer
+    <div class="card-header bg-green fg-white">
+        Add new answer
     </div>
     <div class="card-content p-4">
-        <form>
+        <form onsubmit="add_answer(); return false;">
+            <input type="hidden" id="add_q_id" name="add-answer" value="{{ question['q_id'] }}">
             <label><strong>Answer</strong></label>
             <div>
-                <input type="text" data-role="input">
+                <input type="text" id="answer" name="answer" data-role="input" class="input-small">
             </div>
             <label><strong>Correct/Incorrect</strong></label>
             <div>
-                <select data-role="select">
-                    <option>True</option>
-                    <option>False</option>
+                <select data-role="select" id="is_true" name="is_true" class="input-small">
+                    <option value=1>True</option>
+                    <option value=0 >False</option>
                 </select>
             </div>
             <label><strong>Comment</strong></label>
             <div>
-                <input type="text" data-role="input">
+                <input type="text" data-role="input" id="comment" name="comment" class="input-small">
             </div>
         </div>
         <div class="card-footer">
-            <button class="button success mt-4" type="button">Edit</button>
+            <button class="button success mt-4" type="submit">Submit</button>
         </div>
     </form>
 </div>
@@ -108,8 +110,33 @@
             Metro.notify.create('Error',res["error"],{ cls: 'alert'});
         }
         getAnswers();
-        
+    };
+    async function add_answer() {
+        let q_id = document.getElementById('add_q_id').value;
+        let answer = document.getElementById('answer').value;
+        let is_true = document.getElementById('is_true').value;
+        let comment = document.getElementById('comment').value;
+        let req = await fetch('/add-answers?q_id=' + q_id + '&answer=' 
+        + answer + '&is_true=' + is_true + '&comment=' + comment);
+        let res = await req.json();
+        if (res["success"]) {
+            Metro.notify.create('Success',res["success"],{ cls: 'success'});
+        } else {
+            Metro.notify.create('Error',res["error"],{ cls: 'alert'});
+        }
+        getAnswers();
+    };
+    async function deleteAnswer(event) {
+        let req = await fetch("/edit-answers?delete=" + event.srcElement.value);
+        let res = await req.json();
+        console.log(res);
+        if (res["success"]) {
+            Metro.notify.create('Success',res["success"],{ cls: 'success'});
+        } else {
+            Metro.notify.create('Error',res["error"],{ cls: 'alert'});
+        }
+        getAnswers();
+    };
 
-    }
 </script>
 {% endblock %}
