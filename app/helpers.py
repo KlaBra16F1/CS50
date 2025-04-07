@@ -65,6 +65,27 @@ def check_user_id(u_id):
     db._disconnect() 
     return len(u_id)
 
+def change_password(u_id, old_pw, pw, confirm):
+    if verify_password(u_id, old_pw) == 0:
+        return {"error": "wrong password"}
+    if old_pw == pw:
+        return {"error": "new password is old passwword"}
+    if pw != confirm:
+        return {"error": "new passwords don't match"}
+    db.execute("UPDATE users set hash = ? WHERE u_id = ?;", generate_password_hash(pw), u_id)
+    changes = db.execute("SELECT changes();")
+    db._disconnect()
+    if changes[0]["changes()"] != 1:
+        return {"error": "database error"}
+    return {"success": "Password changed"}
+
+def verify_password(u_id, password):
+    pw = db.execute("SELECT hash FROM users WHERE u_id = ?;", u_id)
+    db._disconnect()
+    return check_password_hash(pw[0]["hash"], password)
+
+
+
 def register_user(username, password, confirm):
     password_pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[@ # $ % ^ & + =]).{8,}$"
     if check_username(username) > 0:

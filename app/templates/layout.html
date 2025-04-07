@@ -27,7 +27,7 @@
                     <li><a href="/login">Login</a></li>
                 {% endif %}
                 {% if session["user_id"] %}                
-                    <li><a href="/dev"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a></li>
+                    <li><a href="/profile"><span class="mif-account_circle mif-3x"></span> {{ session["user_name"]}}</a></li>
                     <li><a href="/logout">Log out</a></li>
                 {% endif %}
             </ul>
@@ -35,7 +35,7 @@
     </div>
     <!-- End Menu -->
     
-    <div class="container mt-20" style="margin-left: 10%; margin-right: 10%;">
+    <div class="mt-20 w-75 ml-auto mr-auto""> 
         <header>
             <!-- Status Messages -->
             {% for message in get_flashed_messages() %}
@@ -55,13 +55,13 @@
                 {% endblock %}
             
         </header>
+    </div>
         <main>
             
                 {% block main %}
                 
                 {% endblock %}
             </main>
-    </div>
     <footer>
 
     </footer>

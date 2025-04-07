@@ -353,6 +353,30 @@ def users():
     users = h.get_users()
     return render_template("users.html", users = users, roles=h.ROLES)
 
+@app.route("/profile")
+@h.login_required
+def profile():
+    return render_template("profile.html")
+
+@app.route("/change-password", methods=["POST"])
+@h.login_required
+def change_password():
+    old_pw = request.form.get("old-pw",None)
+    pw = request.form.get("password", None)
+    confirm = request.form.get("confirm", None)
+    if old_pw and pw and confirm:
+        msg = h.change_password(session["user_id"], old_pw, pw, confirm)
+        if "error" in msg:
+            return msg
+        else:
+            flash(msg["success"])
+        return redirect("/profile")
+    else:
+        print('err')
+    print(old_pw, pw, confirm)
+    return '101'
+
+
 @app.route("/logout")
 def logout():
     session.clear()

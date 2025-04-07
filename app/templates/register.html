@@ -32,11 +32,11 @@
 
     </form>
 </div>
+<script src="./static/pwConfirmMatch.js" type="text/javascript"></script>
 
 <script>
     let username = document.querySelector('#username');
-    let password = document.querySelector('#password');
-    let confirm = document.querySelector('#confirm');
+   
     // get username
     username.addEventListener('change', async function(){
         let feedback1 = Metro.getPlugin('#username','append');
@@ -57,24 +57,6 @@
             }   
         }
         
-    });
-    // password ok?
-    password.addEventListener('input', async function(){
-        if (password.value.length >= 8) {
-            console.log('OK');
-        }
-
-    });
-    // confirm match?
-    confirm.addEventListener('change', async function(){
-        let pw = document.querySelector('#password').value;
-        if (confirm.value != pw) {
-            console.log('cp');
-            $('#confirmInfo').html('<span class="fg-red">Passwords do not match!</span>');
-        } else {
-            $('#confirmInfo').html('&nbsp;');
-        }
-
     });
 </script>
 
