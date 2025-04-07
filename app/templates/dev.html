@@ -6,7 +6,7 @@
 {% endblock %}
 {% block main %}
     {% for t in tests %}
-        <a href="/make-test?test={{ t.t_id }}"><button type="button" class="button" name="take-{{ t.t_id }}" value="{{ t.t_id }}">{{ t.test_name }}</button></a>
+        <a href="/make-test?test={{ t.ut_id }}"><button type="button" class="button" name="take-{{ t.ut_id }}" value="{{ t.t_id }}">{{ t.test_name }}</button></a>
     {% endfor %}
 
     

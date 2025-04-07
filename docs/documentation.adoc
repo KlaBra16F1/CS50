@@ -60,7 +60,7 @@ CREATE TABLE answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTE
 
 CREATE TABLE user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, lastDate TEXT);
 
-CREATE TABLE user_tests (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));
+CREATE TABLE user_tests (ut_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));
 
 -- generated tables
 
@@ -107,7 +107,7 @@ user_questions {
     text lastDate
 }
 user_tests {
-    int t_id
+    int ut_id
     int u_id
     text test_name
     text questions

@@ -183,8 +183,8 @@ def make_test():
     topics = h.get_topics()
 
     if request.args.get("test"):
-        t_id = request.args.get("test")
-        questions, answers = h.get_user_test(session["user_id"], t_id)
+        ut_id = request.args.get("test")
+        questions, answers = h.get_user_test(session["user_id"], ut_id)
         questions = h.add_markdown(questions,"question")
         answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]

@@ -398,12 +398,13 @@ def save_test(u_id, test_name, questions):
     return {"success": "test saved"}
 
 def get_saved_tests(u_id):
-    tests = db.execute("SELECT t_id, test_name, questions FROM user_tests WHERE u_id = ?;", u_id)
+    tests = db.execute("SELECT ut_id, test_name, questions FROM user_tests WHERE u_id = ?;", u_id)
     db._disconnect()
+    print(tests)
     return tests
 
-def get_user_test(u_id,t_id):
-    q_ids = db.execute("SELECT questions FROM user_tests WHERE t_id = ? AND u_id = ?;", t_id,u_id)
+def get_user_test(u_id, ut_id):
+    q_ids = db.execute("SELECT questions FROM user_tests WHERE ut_id = ? AND u_id = ?;", ut_id,u_id)
     q_ids = q_ids[0]["questions"].split(',')
     q_ids = list(int(q) for q in q_ids)
     questions = get_selected_questions(q_ids)
