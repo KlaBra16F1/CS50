@@ -6,13 +6,14 @@
 {% endblock %}
 
 {% block main %}
-<form action="/make-test" method="post" id="make-test">
-    {%include "modules/test-topic-selector.html" %}
-    <input type="number" name="count" placeholder="Number of questions">
-    <button type="submit">Create test</button>
-</form>
-
-{% include "/modules/selector-script-test.html" %}
+<div class=" w-75 ml-auto mr-auto">
+    <form action="/make-test" method="post" id="make-test">
+        {%include "modules/test-topic-selector.html" %}
+        <input type="number" name="count" placeholder="Number of questions">
+        <button type="submit">Create test</button>
+    </form>
+    {% include "/modules/selector-script-test.html" %}
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function(){
         let form = document.querySelector('#make-test');

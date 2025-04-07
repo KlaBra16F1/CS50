@@ -245,6 +245,16 @@ def save_test():
     
     return redirect("/")
 
+@app.route("/delete-test")
+@h.login_required
+def delete_test():
+    if request.args.get("ut_id"):
+        ut_id = request.args.get("ut_id", None)
+        if ut_id:
+            msg = h.delete_test(session["user_id"], ut_id)
+            return msg
+        return 'error'
+    return 'error'
 # Inforoutes
 @app.route("/get-subtopics")
 def get_subtopics():
@@ -356,7 +366,8 @@ def users():
 @app.route("/profile")
 @h.login_required
 def profile():
-    return render_template("profile.html")
+    tests = h.get_saved_tests(session["user_id"])
+    return render_template("profile.html", tests=tests)
 
 @app.route("/change-password", methods=["POST"])
 @h.login_required

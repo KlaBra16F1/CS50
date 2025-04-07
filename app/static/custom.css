@@ -28,3 +28,9 @@ td {
     padding-left: 1rem;
     padding-right: 1rem;
 }
+
+section {
+    padding-top: 70px;
+    margin-top: 0;
+    /* display: inline-block; */
+}

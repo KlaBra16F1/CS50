@@ -439,6 +439,16 @@ def save_test(u_id, test_name, questions):
     
     return {"success": "test saved"}
 
+def delete_test(u_id, ut_id):
+    db.execute("DELETE FROM user_tests WHERE u_id = ? and ut_id = ?", u_id, ut_id)
+    count = db.execute("SELECT changes();")
+    db._disconnect()
+    if count[0]["changes()"] != 1:
+        return {"error": "database error"}
+    
+    return {"success": "test deleted"}
+
+
 def get_saved_tests(u_id):
     tests = db.execute("SELECT ut_id, test_name, questions FROM user_tests WHERE u_id = ?;", u_id)
     db._disconnect()
