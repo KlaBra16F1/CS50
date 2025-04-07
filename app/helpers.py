@@ -354,9 +354,11 @@ def get_questions_result(q_ids):
 
 def verify_test(u_id,test):
     update_db = None
+    is_user = 0
     # Check user
     if not (u_id is None or u_id == ""):
         update_db = True if get_user(int(u_id)) == True else None
+        is_user = 1
 
     now = dt.datetime.today().strftime("%Y-%m-%d")
 
@@ -365,6 +367,8 @@ def verify_test(u_id,test):
         questions.append(q)
 
     answers = db.execute("SELECT q_id, (SELECT COUNT(*) FROM answers b WHERE a.q_id = b.q_id) as count,a_id , answer FROM answers a WHERE q_id IN (?) AND is_true = 1;", questions)
+    # Update teststats only if test is finnisched
+    db.execute("UPDATE teststats set testsMade = testsMade + 1, forUser = forUser + ?", is_user)
     db._disconnect()
      
     for q in test:
