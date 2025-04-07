@@ -347,7 +347,7 @@ def users():
         hash = generate_password_hash(request.form.get("password"))
         role = request.form.get("role")
         h.add_user(name, hash, role)
-        flash("User {} created successfully as {}.".format(name, role))
+        flash("todo")
         return redirect("/users")
 
     users = h.get_users()
@@ -374,7 +374,23 @@ def change_password():
     else:
         print('err')
     print(old_pw, pw, confirm)
-    return '101'
+    return 'Error'
+
+@app.route("/delete-account", methods=["POST"])
+@h.login_required
+def delete_account():
+    password = request.form.get("password", None)
+    if password:
+        msg = h.delete_account(session["user_id"], password)
+        if "error" in msg:
+            return msg
+        else:
+            flash(msg["success"])
+        return redirect("/logout")
+
+    return "Error"
+
+
 
 
 @app.route("/logout")

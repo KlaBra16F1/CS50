@@ -33,6 +33,8 @@ def get_user(u_id):
     return False
 
 def add_user(name, hash, role):
+    if check_username(name) != 0:
+        return {"error" : "user exists"}
     db.execute("INSERT INTO users (name, hash, role) VALUES (?, ?, ?);", name, hash, role)
     db._disconnect()
 
@@ -111,12 +113,27 @@ def register_user(username, password, confirm):
 def change_role(u_id, role):
     if role not in ROLES:
         return {"error": "role not available"}
+    if session["user_name"] == "admin":
+        return {"error": "admin must stay admin"}
     if check_user_id(u_id) != 1:
         return {"error": "unknown user_id"}
     db.execute("UPDATE users set role = ? WHERE u_id = ?;", role, u_id )
     db._disconnect() 
     return {"success": "changed user role"}
 
+def delete_account(u_id, password):
+    if session["user_name"] == "admin":
+        return {"error": "we need an admin here!"}
+    if check_user_id(u_id) != 1:
+        return {"error": "user doesn't exist"}
+    if verify_password(u_id, password) != 1:
+        return {"error": "wrong password"}
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("DELETE FROM user_tests WHERE u_id = ?;", u_id)
+    db.execute("DELETE FROM user_questions WHERE u_id = ?", u_id)
+    db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
+    db.execute("COMMIT;")
+    return {"success": "Good bye."}
 
 
 
