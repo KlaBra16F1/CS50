@@ -40,9 +40,9 @@ def add_user(name, hash, role):
 
 def delete_user(u_id):
     db.execute("BEGIN TRANSACTION;")
-    db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
-    db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
     db.execute("DELETE FROM user_tests WHERE u_id = ?;", u_id)
+    db.execute("DELETE FROM user_questions WHERE u_id = ?", u_id)
+    db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
     db.execute("COMMIT;")
     db._disconnect()
     
@@ -185,6 +185,7 @@ def delete_stats(u_id):
     db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
     count = db.execute("SELECT changes();")
     db.execute("COMMIT;")
+    db._disconnect()
     if count[0]["changes()"] > 0:
         return {"success": "Your stats have been cleared."}
     else:
