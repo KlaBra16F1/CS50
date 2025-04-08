@@ -3,21 +3,36 @@
 <h1>
     Profile
 </h1>
+
 {% endblock %}
 {% block main %}
 {% set c = namespace(counter=0) %}
 {% set col = ['lime','emerald','cyan','cobalt','indigo','crimson','orange','olive','steel','terracotta','coral'] %}
-<ul class="sidenav-m3 float-right z-2" dir="rtl" style="position: sticky;top: 30px; right: 0px; width: 170px; overflow: hidden;">
-    <li class="title">Options</li>
-    <li><a href="#stats">Your stats</a></li>
-    <li><a href="#reset">Reset stats</a></li>
-    <li><a href="#tests">Saved tests</a></li>
-    <li><a href="#changePW">Change password</a></li>
-    <li><a href="#delete" class="bg-red fg-white">Delete account</a></li>
+<ul  class="sidenav-simple sidenav-simple-expand-xxl float-right z-1" style="position: sticky;top: 40px; right: 0px;  overflow: hidden;">
+    <li><a href="#stats">
+        <span class="mif-chart-dots icon"data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow"
+        data-hint-text="Your stats"></span>
+        <span class="title">Your stats</span></a></li>
+    <li><a href="#reset">
+        <span class="mif-undo icon"data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow"
+        data-hint-text="Reset stats"></span>
+        <span class="title">Reset stats</span></a></li>
+    <li><a href="#tests">
+        <span class="mif-bookmarks icon"data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow"
+        data-hint-text="Saved tests"></span>
+        <span class="title">Saved tests</span></a></li>
+    <li><a href="#changePW">
+        <span class="mif-security icon"data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow"
+        data-hint-text="Change password"></span>
+        <span class="title">Change password</span></a></li>
+    <li><a href="#delete">
+        <span class="mif-bin icon"data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow"
+        data-hint-text="Delete account"></span>
+        <span class="title">Delete account</span></a></li>
 </ul>
 
 
-<div class="w-75 ml-auto mr-auto">
+<div class="w-75 ml-auto mr-auto dark-style">
     <section id="stats" >
         <h3>
             Your stats
@@ -180,23 +195,7 @@
 </div>
 
 <script src="./static/pwConfirmMatch.js" type="text/javascript"></script>
-<script>
-    function loadTest(event) {
-        test = event.srcElement.value;
-        window.location.href = `./make-test?test=${test}`;
-    };
-    async function deleteTest(event) {
-        test = event.srcElement;
-        let req = await fetch("/delete-test?ut_id=" + test.value)
-        let res = await req.json()
-        if (res['success']) {
-            test.parentElement.parentElement.remove();
-            Metro.notify.create('Success',res['success'],{ cls: 'success'} );
-        } else {
-            Metro.notify.create('Success',res['error'],{ cls: 'alert'});
-        }
-    }
+<script src="./static/profile.js" type="text/javascript"></script>
 
-</script>
 
 {% endblock %}
