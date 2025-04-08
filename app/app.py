@@ -363,11 +363,26 @@ def users():
     users = h.get_users()
     return render_template("users.html", users = users, roles=h.ROLES)
 
-@app.route("/profile")
+@app.route("/profile",methods=["GET","POST"])
 @h.login_required
 def profile():
-    tests = h.get_saved_tests(session["user_id"])
-    return render_template("profile.html", tests=tests)
+    u_id = session["user_id"]
+    if request.method == "POST":
+        print(request.form)
+        if int(request.form.get("deleteStats")) == session["user_id"]:
+            msg = h.delete_stats(u_id)
+            if msg.get("success"):
+                flash(msg["success"])
+            else:
+                return 'error'
+            
+            return redirect("/profile")
+        else:
+            return 'error'
+        
+    tests = h.get_saved_tests(u_id)
+    stats = h.get_userstats(u_id)
+    return render_template("profile.html", tests=tests, stats=stats)
 
 @app.route("/change-password", methods=["POST"])
 @h.login_required

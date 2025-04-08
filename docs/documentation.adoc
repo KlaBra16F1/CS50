@@ -58,7 +58,8 @@ CREATE TABLE questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id IN
 
 CREATE TABLE answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL DEFAULT 0, FOREIGN KEY (q_id) REFERENCES questions(q_id));
 
-CREATE TABLE user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, lastDate TEXT);
+CREATE TABLE user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, 
+    accuracy REAL GENERATED ALWAYS AS (ROUND(CAST(timesRight AS REAL) / CAST(timesDone AS REAL),2)),lastDate TEXT);
 
 CREATE TABLE user_tests (ut_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));
 
@@ -111,6 +112,7 @@ user_questions {
     int q_id
     int timesDone
     int timesRight
+    real accuracy
     text lastDate
 }
 user_tests {
@@ -193,3 +195,21 @@ q_ids ggf. in CSS austauschen oder in sqlite ändern
 Antworten importieren
 
 insert into answers (answer, comment, q_id, is_true) select answer, comment, [question-id], isTrue from web_a;
+
+
+
+SELECT COUNT(DISTINCT t.t_id) AS topics, 
+COUNT(DISTINCT s.s_id) AS subtopics,
+COUNT(uq.timesDone) AS times, AVG(accuracy) AS accuracy, (SELECT COUNT(*) FROM questions) AS total_questions
+FROM user_questions uq INNER JOIN questions q USING (q_id) INNER JOIN subtopics s USING(s_id) INNER JOIN topics t USING(t_id)
+WHERE uq.u_id = 2;
+---
+
+SELECT t.topic, SUM(timesDone) AS times FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic ORDER BY times DESC LIMIT 3;
+SELECT t.topic, AVG(accuracy) AS accuracy FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic ORDER BY accuracy DESC LIMIT 3;
+
+
+SELECT t.topic, s.subtopic, SUM(timesDone) AS times FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic, s.subtopic ORDER BY times DESC LIMIT 3;
+SELECT t.topic, s.subtopic, AVG(accuracy) AS accuracy FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic, s.subtopic ORDER BY accuracy DESC LIMIT 3;
+
+SELECT distinct t.topic, (SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND uq.u_id = 3) as mystats, (SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = 3) as others FROM topics t WHERE mystats NOT null ORDER BY mystats DESC;

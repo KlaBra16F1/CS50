@@ -7,7 +7,7 @@
 {% block main %}
 {% set c = namespace(counter=0) %}
 {% set col = ['lime','emerald','cyan','cobalt','indigo','crimson','orange','olive','steel','terracotta','coral'] %}
-<ul class="sidenav-m3 float-right" dir="rtl" style="position: sticky;top: 30px; right: 0px; width: 170px; overflow: hidden;">
+<ul class="sidenav-m3 float-right z-2" dir="rtl" style="position: sticky;top: 30px; right: 0px; width: 170px; overflow: hidden;">
     <li class="title">Options</li>
     <li><a href="#stats">Your stats</a></li>
     <li><a href="#reset">Reset stats</a></li>
@@ -22,12 +22,87 @@
         <h3>
             Your stats
         </h3>
+            {% if stats[0]["times"] %}
+                You answered {{ stats[0]["times"]}} questions out of {{ stats[0]["topics"]}} topics and {{ stats[0]["subtopics"]}} subtopics with an accuracy of {{ stats[0]["accuracy"] | round(2) }}.
+            {% else %}
+                You have no stats yet. Make some test first.
+            {% endif %}
         <h4>
-            Totals
+            Your Top {{ stats[1] | length }}
         </h4>
+
+        <table class="table" data-role="table" data-rownum="true" data-show-search="false" data-show-rows-steps="false" data-show-table-info="false" data-show-pagination="false">
+            <thead>
+                <tr>
+                    <th data-cls-column="bg-grayWhite">Topic</th>
+                    <th data-cls-column="bg-grayWhite">Times</th>
+                    <th>Topic</th>
+                    <th>Accuracy</th>
+                    <th data-cls-column="bg-grayWhite">Subtopic</th>
+                    <th data-cls-column="bg-grayWhite">Times</th>
+                    <th>Subtopic</th>
+                    <th>Accuracy</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not stats[1][0] %}
+                    
+                {% else %}
+                {% for r in stats[1] %}
+                <tr>
+                    <td>{{ r["mostTopic"] }}</td>
+                    <td>{{ r["mostTopicCount"] }}</td>
+                    <td>{{r["bestTopic"] }}</td>
+                    <td>{{ r["bestTopicAccuracy"] | round(2) }}  &percnt;</td>
+                    <td>{{ r["mostSubtopic"] }}</td>
+                    <td>{{ r["mostSubtopicCount"] }}</td>
+                    <td>{{r["bestSubtopic"] }}</td>
+                    <td>{{ r["bestSubtopicAccuracy"] | round(2) }}  &percnt;</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                
+
+            </tbody>
+        </table>
         <h4>
-            By Categories
+            Comparison
         </h4>
+        <table class="table" data-role="table" data-rownum="true" data-show-search="false" data-show-rows-steps="false" data-show-table-info="false" data-show-pagination="false">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Your accuracy</th>
+                    <th>Other users</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in stats[2] %}
+                {% set m = namespace(col='') %}
+                {% set o = namespace(col='') %}
+                {% if (r["others"]) and (r["mystats"] < r["others"]) %}
+                    {% set m.col = 'red' %}
+                    {% set o.col = 'green' %}
+                {% elif (r["others"]) and (r["mystats"] > r["others"]) %}
+                    {% set m.col = 'green' %}
+                    {% set o.col = 'red' %}
+                {% endif %}
+                <tr>
+
+                    <td>{{ r["topic"] }}</td>
+                    <td><span class="fg-{{ m.col }}">{{ r["mystats"] | round(2) }} &percnt;</span></td>
+                    <td>{%if r["others"] %}
+                        <span class="fg-{{ o.col }}">{{ r["others"] | round(2) }} &percnt;</span>
+                        {% else %} N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form action="/profile" method="post">
+            <button class="button alert" type="submit" name="deleteStats" value="{{ session['user_id'] }}">Reset your stats</button>
+        </form>
 
     </section>
 
@@ -36,6 +111,9 @@
         <h3>
             Your saved tests
         </h3>
+        {% if not tests %}
+            You have not saved a test yet.
+        {% else %}
         <div class="tiles-grid tiles-group size-6">
             {% for t in tests %}
             {% set c.counter = c.counter + 1 %}
@@ -49,9 +127,10 @@
                             <button id="d{{ t.ut_id}}" value="{{ t.ut_id }}" class="button alert" type="button" onclick="deleteTest(event); return false;">Delete</button></span>
                 </div>
             {% endfor %}
-
-
         </div>
+        {% endif %}
+
+
 
     </section>
     <hr class="mt-10"> 
@@ -86,7 +165,7 @@
         </form>
     </section>
     <hr class="mt-10">
-    <section id="delete" class="mt-5" style="height: 2000px;">
+    <section id="delete" class="mt-5">
         <h3 >
             Delete Account
         </h3>

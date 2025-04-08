@@ -135,6 +135,60 @@ def delete_account(u_id, password):
     db.execute("COMMIT;")
     return {"success": "Good bye."}
 
+def get_userstats(u_id):
+    stats = []
+    db.execute("BEGIN TRANSACTION;")
+    overall = db.execute("SELECT COUNT(DISTINCT t.t_id) AS topics, COUNT(DISTINCT s.s_id) AS subtopics, "
+                            "COUNT(uq.timesDone) AS times, AVG(accuracy) AS accuracy, (SELECT COUNT(*) FROM questions) AS total_questions "
+                            "FROM user_questions uq INNER JOIN questions q USING (q_id) INNER JOIN subtopics s USING(s_id) INNER JOIN topics t USING(t_id) "
+                            "WHERE uq.u_id = ?;", u_id)
+    overall = {k:v for (k,v) in overall[0].items()}
+    stats.append(overall)
+    LIMIT = 3
+    top = []
+    mostTopic = db.execute("SELECT t.topic, SUM(timesDone) AS times " \
+                            "FROM user_questions uq, questions q, subtopics s, topics t " \
+                            "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
+                            "GROUP BY t.topic ORDER BY times DESC LIMIT ?;", u_id, LIMIT)
+    mostSubtopic = db.execute("SELECT t.topic, s.subtopic, SUM(timesDone) AS times FROM user_questions uq, questions q, subtopics s, topics t " \
+                                "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
+                                "GROUP BY t.topic, s.subtopic ORDER BY times DESC LIMIT ?;", u_id, LIMIT)
+    bestTopic= db.execute("SELECT t.topic, AVG(accuracy) AS accuracy " \
+                            "FROM user_questions uq, questions q, subtopics s, topics t " \
+                            "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
+                            "GROUP BY t.topic ORDER BY accuracy DESC LIMIT ?;", u_id, LIMIT)
+    bestSubtopic = db.execute("SELECT t.topic, s.subtopic, AVG(accuracy) AS accuracy " \
+                                "FROM user_questions uq, questions q, subtopics s, topics t " \
+                                "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
+                                "GROUP BY t.topic, s.subtopic ORDER BY accuracy DESC LIMIT ?;", u_id, LIMIT)
+    if len(mostTopic) > 0:
+        for row in range(len(mostTopic)):
+            top.append({"mostTopic": mostTopic[row]["topic"],"mostTopicCount": mostTopic[row]["times"], 
+                            "mostSubtopic": mostSubtopic[row]["topic"] + "/" + mostSubtopic[row]["subtopic"], "mostSubtopicCount": mostSubtopic[row]["times"],
+                            "bestTopic": bestTopic[row]["topic"], "bestTopicAccuracy": bestTopic[row]["accuracy"],
+                            "bestSubtopic": bestSubtopic[row]["topic"] + '/' + bestSubtopic[row]["subtopic"], "bestSubtopicAccuracy": bestSubtopic[row]["accuracy"]})
+        stats.append(top)
+        print(top)
+    compare = db.execute("SELECT distinct t.topic, "
+                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND uq.u_id = ?) AS mystats, "
+                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = ?) AS others " \
+                            "FROM topics t WHERE mystats NOT NULL ORDER BY mystats DESC;", u_id, u_id)
+    db._disconnect()
+    
+    
+    stats.append(compare)
+    return stats
+
+def delete_stats(u_id):
+    print("cp")
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
+    count = db.execute("SELECT changes();")
+    db.execute("COMMIT;")
+    if count[0]["changes()"] > 0:
+        return {"success": "Your stats have been cleared."}
+    else:
+        return {"error": "database error"}
 
 
     
@@ -452,7 +506,6 @@ def delete_test(u_id, ut_id):
 def get_saved_tests(u_id):
     tests = db.execute("SELECT ut_id, test_name, questions FROM user_tests WHERE u_id = ?;", u_id)
     db._disconnect()
-    print(tests)
     return tests
 
 def get_user_test(u_id, ut_id):
