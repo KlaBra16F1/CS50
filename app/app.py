@@ -379,6 +379,11 @@ def profile():
             return redirect("/profile")
         else:
             return 'error'
+    if request.args.get("t_id"):
+        print('cp')
+        t_id = request.args.get("t_id")
+        subtopics = h.get_userstats_details(t_id, u_id)
+        return render_template("user-stats-subtopics.html", subtopics = subtopics)
         
     tests = h.get_saved_tests(u_id)
     stats = h.get_userstats(u_id)

@@ -144,6 +144,7 @@ def get_userstats(u_id):
                             "WHERE uq.u_id = ?;", u_id)
     overall = {k:v for (k,v) in overall[0].items()}
     stats.append(overall)
+
     LIMIT = 3
     top = []
     mostTopic = db.execute("SELECT t.topic, SUM(timesDone) AS times " \
@@ -168,16 +169,23 @@ def get_userstats(u_id):
                             "bestTopic": bestTopic[row]["topic"], "bestTopicAccuracy": bestTopic[row]["accuracy"],
                             "bestSubtopic": bestSubtopic[row]["topic"] + '/' + bestSubtopic[row]["subtopic"], "bestSubtopicAccuracy": bestSubtopic[row]["accuracy"]})
         stats.append(top)
-        print(top)
-    compare = db.execute("SELECT distinct t.topic, "
-                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND uq.u_id = ?) AS mystats, "
-                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = ?) AS others " \
-                            "FROM topics t WHERE mystats NOT NULL ORDER BY mystats DESC;", u_id, u_id)
+
+
+    compareTopics = db.execute("SELECT t.t_id, t.topic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy, "
+                                "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = 3) as others "
+                                "FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND uq.u_id = ? GROUP BY t.t_id, t.topic;", u_id)
     db._disconnect()
     
     
-    stats.append(compare)
+    stats.append(compareTopics)
     return stats
+
+def get_userstats_details(t_id, u_id):
+    subtopics = db.execute("SELECT s.s_id, s.subtopic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy, "
+                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE s.s_id = q.s_id AND q.q_id = uq.q_id AND s.t_id = ? AND NOT uq.u_id = ?) as others "
+                            " FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = ? AND uq.u_id = ? GROUP BY s.s_id, s.subtopic;", t_id, u_id, t_id, u_id)
+    return subtopics
+
 
 def delete_stats(u_id):
     print("cp")
