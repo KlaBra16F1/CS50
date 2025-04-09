@@ -150,6 +150,7 @@ def get_userstats(u_id):
                                 "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = ?) as others, "
                                 "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = t.t_id) as q_count "
                                 "FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND uq.u_id = ? GROUP BY t.t_id, t.topic;", u_id, u_id)
+    db.execute("COMMIT;")
     db._disconnect()
     
     
@@ -162,6 +163,7 @@ def get_userstats_details(t_id, u_id):
                             "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics st WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND st.t_id = s.t_id AND NOT uq.u_id = ?) as others, "
                             "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = s.t_id) as q_count "
                             " FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = ? AND uq.u_id = ? GROUP BY s.s_id, s.subtopic;",  u_id, t_id, u_id)
+    
     return subtopics
 
 
