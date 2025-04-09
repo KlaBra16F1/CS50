@@ -82,7 +82,7 @@
                         <td><a href="#" id="t{{ r.t_id }}" onclick="getDetails('{{ r.t_id }}');" style="color: black; text-decoration: none;">{{ r.topic }}</a></td>
                         <td>{{ r["questions"] }}</td>
                         <td>{{ r["attempts"] }}</td>
-                        <td><div class="place-none">{{ r.questions }}/{{ r.q_count }}</div><div data-role="progress" data-value="{{ r.questions / r.q_count * 100 }}"></div></td>
+                        <td><div class="place-left">{{ r.questions }}/{{ r.q_count }}</div><div data-role="progress" data-value="{{ r.questions / r.q_count * 100 }}"></div></td>
                         <td><span class="fg-{{ m.col }}">{{ (r.accuracy * 100) |round(1) }} &percnt;</span></td>
                         <td>{%if r["others"] %}
                             <span class="fg-{{ o.col }}">{{ (r.others * 100) | round(1) }} &percnt;</span>
