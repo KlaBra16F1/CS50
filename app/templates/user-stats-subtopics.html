@@ -15,6 +15,7 @@
                         <td>{{ s["subtopic"] }}</td>
                         <td>{{ s["questions"] }}</td>
                         <td>{{ s["attempts"] }}</td>
+                        <td><div class="place-left">{{ s.questions }}/{{ s.q_count }}</div><div data-role="progress" data-value="{{ s.questions / s.q_count * 100 }}"></div></td>
                         <td><span class="fg-{{ m.col }}">{{ (s["accuracy"] * 100) |round(1) }} &percnt;</span></td>
                         <td>{%if s["others"] %}
                             <span class="fg-{{ o.col }}">{{ (s["others"] * 100) | round(1) }} &percnt;</span>

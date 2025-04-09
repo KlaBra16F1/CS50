@@ -145,45 +145,23 @@ def get_userstats(u_id):
     overall = {k:v for (k,v) in overall[0].items()}
     stats.append(overall)
 
-    LIMIT = 3
-    top = []
-    mostTopic = db.execute("SELECT t.topic, SUM(timesDone) AS times " \
-                            "FROM user_questions uq, questions q, subtopics s, topics t " \
-                            "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
-                            "GROUP BY t.topic ORDER BY times DESC LIMIT ?;", u_id, LIMIT)
-    mostSubtopic = db.execute("SELECT t.topic, s.subtopic, SUM(timesDone) AS times FROM user_questions uq, questions q, subtopics s, topics t " \
-                                "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
-                                "GROUP BY t.topic, s.subtopic ORDER BY times DESC LIMIT ?;", u_id, LIMIT)
-    bestTopic= db.execute("SELECT t.topic, AVG(accuracy) AS accuracy " \
-                            "FROM user_questions uq, questions q, subtopics s, topics t " \
-                            "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
-                            "GROUP BY t.topic ORDER BY accuracy DESC LIMIT ?;", u_id, LIMIT)
-    bestSubtopic = db.execute("SELECT t.topic, s.subtopic, AVG(accuracy) AS accuracy " \
-                                "FROM user_questions uq, questions q, subtopics s, topics t " \
-                                "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id = ? " \
-                                "GROUP BY t.topic, s.subtopic ORDER BY accuracy DESC LIMIT ?;", u_id, LIMIT)
-    if len(mostTopic) > 0:
-        for row in range(len(mostTopic)):
-            top.append({"mostTopic": mostTopic[row]["topic"],"mostTopicCount": mostTopic[row]["times"], 
-                            "mostSubtopic": mostSubtopic[row]["topic"] + "/" + mostSubtopic[row]["subtopic"], "mostSubtopicCount": mostSubtopic[row]["times"],
-                            "bestTopic": bestTopic[row]["topic"], "bestTopicAccuracy": bestTopic[row]["accuracy"],
-                            "bestSubtopic": bestSubtopic[row]["topic"] + '/' + bestSubtopic[row]["subtopic"], "bestSubtopicAccuracy": bestSubtopic[row]["accuracy"]})
-        stats.append(top)
-
 
     compareTopics = db.execute("SELECT t.t_id, t.topic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy, "
-                                "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = 3) as others "
-                                "FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND uq.u_id = ? GROUP BY t.t_id, t.topic;", u_id)
+                                "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = ?) as others, "
+                                "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = t.t_id) as q_count "
+                                "FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND uq.u_id = ? GROUP BY t.t_id, t.topic;", u_id, u_id)
     db._disconnect()
     
     
     stats.append(compareTopics)
+    print(stats[1])
     return stats
 
 def get_userstats_details(t_id, u_id):
     subtopics = db.execute("SELECT s.s_id, s.subtopic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy, "
-                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE s.s_id = q.s_id AND q.q_id = uq.q_id AND s.t_id = ? AND NOT uq.u_id = ?) as others "
-                            " FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = ? AND uq.u_id = ? GROUP BY s.s_id, s.subtopic;", t_id, u_id, t_id, u_id)
+                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics st WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND st.t_id = s.t_id AND NOT uq.u_id = ?) as others, "
+                            "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = s.t_id) as q_count "
+                            " FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = ? AND uq.u_id = ? GROUP BY s.s_id, s.subtopic;",  u_id, t_id, u_id)
     return subtopics
 
 

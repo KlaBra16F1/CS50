@@ -12,4 +12,18 @@ async function deleteTest(event) {
     } else {
         Metro.notify.create('Success',res['error'],{ cls: 'alert'});
     }
-}
+};
+
+function getDetails(t_id){
+    let topic = document.querySelector(`#t${t_id}`)
+    let details = document.querySelector('#details') 
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+        if (req.readyState == 4 && req.status == 200) {
+            document.querySelector('#subtopics').innerHTML = req.responseText;
+            details.innerHTML = `Details for topic '${topic.innerHTML}'`
+        }
+    };
+    req.open('GET', '/profile?t_id='+ t_id, true);
+    req.send();
+};
