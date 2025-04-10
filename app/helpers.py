@@ -113,7 +113,7 @@ def register_user(username, password, confirm):
 def change_role(u_id, role):
     if role not in ROLES:
         return {"error": "role not available"}
-    if session["user_name"] == "admin":
+    if u_id == 1: 
         return {"error": "admin must stay admin"}
     if check_user_id(u_id) != 1:
         return {"error": "unknown user_id"}
@@ -178,7 +178,7 @@ def get_sitestats():
     stats.append(users)
     # Topics - Subtopics - Questions - Answers - Usage
     stats_subtopics = db.execute("SELECT t.topic, s.subtopic, COUNT(distinct q.q_id) AS q_count, COUNT(a.a_id) AS a_count, "
-                "(SELECT SUM(uq.timesDone) FROM user_questions uq, questions qq WHERE uq.q_id = q.q_id and qq.s_id = s.s_id) as u_count " \
+                "(SELECT SUM(uq.timesDone) FROM user_questions uq, questions qq WHERE uq.q_id = qq.q_id and qq.s_id = s.s_id) as u_count " \
                 "FROM questions q INNER JOIN answers a USING (q_id) INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY t.topic, s.subtopic ORDER BY topic;")
     db.execute("COMMIT")
     db._disconnect()
