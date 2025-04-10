@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% block header %}
+<h1>
+    Statistics
+</h1>
+{% endblock %}
+
+{% block main %}
+{% set u = namespace(count=0) %}
+{% for uc in stats[1] %}
+    {% set u.count = u.count + uc['count'] %}
+{% endfor %}
+<div class="w-75 ml-auto mr-auto">
+    <span class="h5"> This site created
+        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade }}" id="counter1">0</span> tests by now.&nbsp;
+        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade - stats[0].forUser }}" id="counter2">0</span> for guests and
+        <span class="h3 text-light" data-role="counter"  data-value="{{ stats[0].forUser }}" id="counter3">0</span> for registered users. 
+    </span>
+    <!-- Users -->
+    <section id="users" class="mt-10">
+        <h3>
+            Users
+        </h3>
+        <div class="w-50">
+            <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+                <thead>
+                    <th>Role</th>
+                    <th class="colS">Count</th>
+                </thead>
+                <tbody>
+                    {% for u in stats[1] %}
+                    <tr>
+                        <td><span style="text-transform: capitalize;">{{ u.role }}</span></td>
+                        <td>{{ u.count }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td><strong>Total:</strong></td>
+                        <td><strong>{{ u.count }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+    <!-- Topics -->
+    <section class="mt-10">
+        <h3>
+            Topics
+        </h3>
+        <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+            <thead>
+                <th data-sortable="true" class="colL" data-sort-dir="asc">Topics</th>
+                <th data-sortable="true" class="colS">Questions</th>
+                <th data-sortable="true" class="colS">Answers</th>
+                <th data-sortable="true" class="colS">Usage</th>
+            </thead>
+            <tbody>
+                {% for t in stats[2] %}
+                <tr>
+                    <td>{{ t.topic }}</td>
+                    <td>{{ t.q_count}}</td>
+                    <td>{{ t.a_count }}</td>
+                    <td>{{ t.u_count }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </section>
+    <!-- Subtopics -->
+     <section class="mt-10">
+         <h3>
+            Subtopics
+         </h3>
+     </section>
+     <div data-role="accordion" data-one-frame="false" data-show-active="true">
+     {% for t in stats[2] %}
+        <div class="frame">
+            <div class="heading">{{ t.topic}} 1</div>
+            <div class="content ml-5">
+                <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+                    <thead>
+                        <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
+                        <th data-sortable="true" class="colS">Questions</th>
+                        <th data-sortable="true" class="colS">Answers</th>
+                        <th data-sortable="true" class="colS">Usage</th>
+                    </thead>
+                    <tbody>
+                        {% for s in stats[3] %}
+                            {% if s.topic == t.topic %}
+                            <tr>
+                                <td>{{ s.subtopic }}</td>
+                                <td>{{ s.q_count}}</td>
+                                <td>{{ s.a_count }}</td>
+                                <td>{{ s.u_count }}</td>
+                            </tr>
+            
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                 </table>
+                </div>
+            </div>
+            {% endfor %}
+     </div>
+
+     
+
+</div>
+
+
+{% endblock %}

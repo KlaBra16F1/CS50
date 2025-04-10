@@ -166,6 +166,36 @@ def get_userstats_details(t_id, u_id):
     
     return subtopics
 
+# Site-Stats
+def get_sitestats():
+    stats = []
+    db.execute("BEGIN TRANSACTION;")
+    # Usage
+    usage = db.execute("SELECT testsMade, forUser FROM teststats;")
+    stats.append(usage[0])
+    users = db.execute("SELECT role, count(*) AS count FROM users GROUP BY role;")
+    # Users
+    stats.append(users)
+    # Topics - Subtopics - Questions - Answers - Usage
+    stats_subtopics = db.execute("SELECT t.topic, s.subtopic, COUNT(distinct q.q_id) AS q_count, COUNT(a.a_id) AS a_count, "
+                "(SELECT SUM(uq.timesDone) FROM user_questions uq, questions qq WHERE uq.q_id = q.q_id and qq.s_id = s.s_id) as u_count " \
+                "FROM questions q INNER JOIN answers a USING (q_id) INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY t.topic, s.subtopic ORDER BY topic;")
+    db.execute("COMMIT")
+    db._disconnect()
+    topic_list = set(t['topic'] for t in stats_subtopics)
+    stats_topics = []
+    for t in topic_list:
+        td = dict()
+        for d in stats_subtopics:
+            if d['topic'] == t:
+                if d['u_count'] is None:
+                    d['u_count'] = 0
+                td = {'topic':t, 'q_count': td.get('q_count',0) + d['q_count'], 'a_count': td.get('a_count',0) + d['a_count'], 'u_count': td.get('u_count',0) + d['u_count'] }
+        stats_topics.append(td)
+    stats_topics = sorted(stats_topics, key=lambda x: x["topic"])
+    stats.append(stats_topics)
+    stats.append(stats_subtopics)
+    return stats
 
 def delete_stats(u_id):
     print("cp")

@@ -1,6 +1,38 @@
 {% extends "layout.html" %}
 {% block main %}
-<div class="w-75 ml-auto mr-auto">
+<style>
+    #example1 {
+        font-size: 38px;
+        font-weight: bold;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        padding: 50px;
+        background: white;
+        position: relative;
+    }
+    #example1 .char {
+        font-weight: bold;
+        display: inline-block;
+        width: 48px;
+        height: 56px;
+        line-height: 56px;
+        text-align: center;
+        text-transform: uppercase;
+        z-index: 2;
+        opacity: .8;
+    }
+    #example1 .char.te-odd {
+        background: black;
+        transform:rotate(-10deg)
+    }
+    #example1 .char:not(.space).te-even {
+        background: orange;
+        transform:rotate(10deg)
+    }
+</style>
+<div id="example1" data-role="tokenizer" data-cls-token="char" class="w-75 ml-auto mr-auto">
     You gotta start somewhere...
 </div>
+
 {% endblock %}

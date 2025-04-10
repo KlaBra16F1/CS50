@@ -204,3 +204,61 @@ Number of users / Roles
 SELECT role, COUNT(u_id) FROM users GROUP BY role;
 
 select t.topic, s.subtopic, count(q.q_id) as count from questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY t.topic, s.subtopic;
+
+for i in db2:
+...     topics2[i['topic']] = topics2.get(i['topic'], 0) + i['count']
+
+topics = {topic: sum(item['count'] for item in db if item['topic'] == topic) 
+          for topic in set(item['topic'] for item in db)}
+
+SELECT t.topic, s.subtopic, COUNT(distinct q.q_id) AS q_count, COUNT(a.a_id) AS a_count, (SELECT SUM(uq.timesDone) FROM user_questions uq, questions qq WHERE uq.q_id = q.q_id and qq.s_id = s.s_id) as u_count FROM questions q INNER JOIN answers a USING (q_id) INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY t.topic, s.subtopic;
+
+topic                  subtopic              q_count  a_count  u_count
+---------------------  --------------------  -------  -------  -------
+Excel                  Daten-Import          10       29
+Excel                  Diagramme             10       25
+Excel                  Formatierung          10       29
+Excel                  Formeln               10       29       10
+Excel                  Pivot-Tabellen        5        13
+Katzen                 Füttern               1        3        6
+Katzen                 Pflege                2        6        12
+Katzen                 Spielen               1        5        5
+Programming Languages  C++                   10       20       10
+Programming Languages  Go                    10       20       10
+Programming Languages  Java                  10       20       10
+Programming Languages  Python                10       20
+Programming Languages  Ruby                  10       20
+Software Developement  Architecture          10       20       10
+Software Developement  Design Patterns       10       20
+Software Developement  Design Principles     10       20
+Software Developement  DevOps                10       20
+Software Developement  Testing               10       20
+Web Developement       CSS                   15       31
+Web Developement       HTML                  15       35       60
+Web Developement       HTTP Status Messages  12       27       24
+Web Developement       JavaScript            8        16
+
+{"Excel": [(Subtopic,q_count)]}
+
+[{"topic":"Excel","subtopic":"Daten-Import","q_count":10,"a_count":29,"u_count":None},
+{"topic":"Excel","subtopic":"Diagramme","q_count":10,"a_count":25,"u_count":None},
+{"topic":"Excel","subtopic":"Formatierung","q_count":10,"a_count":29,"u_count":None},
+{"topic":"Excel","subtopic":"Formeln","q_count":10,"a_count":29,"u_count":10},
+{"topic":"Excel","subtopic":"Pivot-Tabellen","q_count":5,"a_count":13,"u_count":None},
+{"topic":"Katzen","subtopic":"Füttern","q_count":1,"a_count":3,"u_count":6},
+{"topic":"Katzen","subtopic":"Pflege","q_count":2,"a_count":6,"u_count":12},
+{"topic":"Katzen","subtopic":"Spielen","q_count":1,"a_count":5,"u_count":5},
+{"topic":"Programming Languages","subtopic":"C++","q_count":10,"a_count":20,"u_count":10},
+{"topic":"Programming Languages","subtopic":"Go","q_count":10,"a_count":20,"u_count":10},
+{"topic":"Programming Languages","subtopic":"Java","q_count":10,"a_count":20,"u_count":10},
+{"topic":"Programming Languages","subtopic":"Python","q_count":10,"a_count":20,"u_count":None},
+{"topic":"Programming Languages","subtopic":"Ruby","q_count":10,"a_count":20,"u_count":None},
+{"topic":"Software Developement","subtopic":"Architecture","q_count":10,"a_count":20,"u_count":10},
+{"topic":"Software Developement","subtopic":"Design Patterns","q_count":10,"a_count":20,"u_count":None},
+{"topic":"Software Developement","subtopic":"Design Principles","q_count":10,"a_count":20,"u_count":None},
+{"topic":"Software Developement","subtopic":"DevOps","q_count":10,"a_count":20,"u_count":None},
+{"topic":"Software Developement","subtopic":"Testing","q_count":10,"a_count":20,"u_count":None},
+{"topic":"Web Developement","subtopic":"CSS","q_count":15,"a_count":31,"u_count":None},
+{"topic":"Web Developement","subtopic":"HTML","q_count":15,"a_count":35,"u_count":60},
+{"topic":"Web Developement","subtopic":"HTTP Status Messages","q_count":12,"a_count":27,"u_count":24},
+{"topic":"Web Developement","subtopic":"JavaScript","q_count":8,"a_count":16,"u_count":None}]

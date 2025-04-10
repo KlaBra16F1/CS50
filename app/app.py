@@ -284,6 +284,11 @@ def get_answers():
     answers = h.add_markdown(answers, "answer","comment" )
     return render_template("answers.html", answers=answers) 
 
+@app.route('/statistics')
+@h.maintainer_required
+def stats():
+    stats = h.get_sitestats()
+    return render_template("statistics.html", stats=stats)
 # Dev
 @app.route("/dev")
 def dev():
