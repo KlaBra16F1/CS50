@@ -198,28 +198,9 @@ insert into answers (answer, comment, q_id, is_true) select answer, comment, [qu
 
 
 
-SELECT COUNT(DISTINCT t.t_id) AS topics, 
-COUNT(DISTINCT s.s_id) AS subtopics,
-COUNT(uq.timesDone) AS times, AVG(accuracy) AS accuracy, (SELECT COUNT(*) FROM questions) AS total_questions
-FROM user_questions uq INNER JOIN questions q USING (q_id) INNER JOIN subtopics s USING(s_id) INNER JOIN topics t USING(t_id)
-WHERE uq.u_id = 2;
----
+Stats
 
-SELECT t.topic, SUM(timesDone) AS times FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic ORDER BY times DESC LIMIT 3;
-SELECT t.topic, AVG(accuracy) AS accuracy FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic ORDER BY accuracy DESC LIMIT 3;
+Number of users / Roles
+SELECT role, COUNT(u_id) FROM users GROUP BY role;
 
-
-SELECT t.topic, s.subtopic, SUM(timesDone) AS times FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic, s.subtopic ORDER BY times DESC LIMIT 3;
-SELECT t.topic, s.subtopic, AVG(accuracy) AS accuracy FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND u_id =3 GROUP BY t.topic, s.subtopic ORDER BY accuracy DESC LIMIT 3;
-
-SELECT distinct t.topic, (SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND uq.u_id = 3) as mystats, (SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = 3) as others FROM topics t WHERE mystats NOT null ORDER BY mystats DESC;
-
-SELECT t.t_id, t.topic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy, 
-(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = 3) as others, 
-(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = t.t_id) as q_count 
-FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND uq.u_id = 3 GROUP BY t.t_id, t.topic;
-
-
-SELECT s.s_id, s.subtopic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy,
-(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = 1 AND NOT uq.u_id = 3) as others
- FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = 1 AND uq.u_id = 3 GROUP BY s.s_id, s.subtopic;
+select t.topic, s.subtopic, count(q.q_id) as count from questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY t.topic, s.subtopic;
