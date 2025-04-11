@@ -289,11 +289,7 @@ def get_answers():
 def stats():
     stats = h.get_sitestats()
     return render_template("statistics.html", stats=stats)
-# Dev
-@app.route("/dev")
-def dev():
-    tests = h.get_saved_tests(session["user_id"])
-    return render_template("dev.html", tests=tests)
+
 
 # Users
 
@@ -426,10 +422,17 @@ def delete_account():
 
     return "Error"
 
-
-
-
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("login")
+
+# ERRORS
+@app.errorhandler(404)
+def notfound(e):
+    return render_template("error.html", error=e)
+
+@app.errorhandler(500)
+def server_error(e):
+    print('cp')
+    return render_template("error.html", error=e)
