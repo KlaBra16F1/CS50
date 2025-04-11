@@ -1,70 +1,62 @@
 <!DOCTYPE html>
 <html lang="de">
 {% include "./modules/head.html" %}
-<body>
-    <!-- Menu -->
-    <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
-                <a href="/" class="brand no-hover">
-                    <h4><em>Test</em><strong>Forge</strong></h4>
-                </a>
-
+    <body>
+        <!-- Menu -->
+        <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
+            <a href="/" class="brand no-hover">
+                <h4><em>Test</em><strong>Forge</strong></h4>
+            </a>
             <ul class="app-bar-menu ">
                 <li><a href="/make-test">Make Test</a></li>
                 {% if session["user_id"] %}
                 {% if session["role"] in ["admin","maintainer"] %}
-                    <li><a href="/add-questions">Add questions</a></li>
-                    <li><a href="/edit-questions">Edit questions</a></li>
-                    <li><a href="/statistics">Statistics</a></li>
+                <li><a href="/add-questions">Add questions</a></li>
+                <li><a href="/edit-questions">Edit questions</a></li>
+                <li><a href="/statistics">Statistics</a></li>
                 {% endif %}
                 {% if session["role"] == "admin" %}
-                    <li><a href="/users">Manage Users</a></li>
+                <li><a href="/users">Manage Users</a></li>
                 {% endif %}
                 {% endif %}
             </ul>
-
             <ul class="app-bar-menu menu-right">
                 {% if not session["user_id"] %}
-                    <li><a href="/register">Register</a></li>
-                    <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/login">Login</a></li>
                 {% endif %}
-                {% if session["user_id"] %}                
-                    <li><a href="/profile"><span class="mif-account_circle mif-3x" style="vertical-align: middle;"></span> {{ session["user_name"]}}</a></li>
-                    <li><a href="/logout">Log out</a></li>
+                {% if session["user_id"] %}
+                <li><a href="/profile"><span class="mif-account_circle mif-3x" style="vertical-align: middle;"></span> {{
+                        session["user_name"]}}</a></li>
+                <li><a href="/logout">Log out</a></li>
                 {% endif %}
             </ul>
-
-    </div>
-    <!-- End Menu -->
-    
-    <div class="mt-20 w-75 ml-auto mr-auto""> 
-        <header>
-            <!-- Status Messages -->
-            {% for message in get_flashed_messages() %}
-                {% if error %}
-                <script type="text/javascript">
-                    Metro.notify.create('{{ error }}', 'ERROR', {cls: "alert", animation: 'none'});
-                </script>
-                {% else %}
-                <script type="text/javascript">
-                    Metro.notify.create('{{ message }}', 'Success', {cls: "success", animation: 'none'});
-                </script>
-                {% endif %}
+        </div>
+        <!-- End Menu -->
+        <div class="mt-20 w-75 ml-auto mr-auto""> 
+            <header>
+                <!-- Status Messages -->
+                {% for message in get_flashed_messages() %}
+                    {% if error %}
+                    <script type=" text/javascript">
+            Metro.notify.create('{{ error }}', 'ERROR', {cls: "alert", animation: 'none'});
+            </script>
+            {% else %}
+            <script type="text/javascript">
+                Metro.notify.create('{{ message }}', 'Success', { cls: "success", animation: 'none' });
+            </script>
+            {% endif %}
             {%endfor%}
-
-                {% block header %}
-                
-                {% endblock %}
-            
-        </header>
-    </div>
+            {% block header %}
+            {% endblock %}
+            </header>
+        </div>
         <main>
-            
-                {% block main %}
-                
-                {% endblock %}
-            </main>
-    <footer>
+            {% block main %}
+            {% endblock %}
+        </main>
+        <footer>
+        </footer>
+    </body>
 
-    </footer>
-</body>
 </html>

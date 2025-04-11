@@ -1,28 +1,36 @@
 {% include "./modules/head.html" %}
 {% block main %}
 {% set c = namespace(count=0) %}
-    {% for a in answers %}
-        {% set c.count = c.count + 1 %}
-    <div class="card">
-        <div class="card-header bg-blue fg-white">
-            Answer: {{ c.count }}
-        </div>
-        <div class="card-content p-4 text-regular" id="a{{ a.a_id }}">
-            <form onsubmit="sendUpdate('{{a.a_id }}', event);return false;">
-                <input type="hidden" name="update_answer" value="{{ a.a_id}}"
-                <label><h6>Answer:</h6></label>
-                <div>{{ a.answer | safe }}</div>
-                <label><h6 class="mt-2">Correct:</h6></label>
-                <div><input type="hidden" value="{{a.is_true}}">{% if a.is_true == 1 %}Correct ✅{% else %}Incorrect ❌{% endif %}</div>
-                <label><h6 class="mt-2">Comment:</h6></label>
-                <div>{{ a.comment | safe }}</div>
-                <div id="b{{ a.a_id }}">
-                    <button class="button success" type="button" onclick="updateAnswer('{{a.a_id}}');">Edit</button>
-                    <button class="button alert" type="button" value="{{ a.a_id }}" onclick="deleteAnswer(event); return false;">Delete</button>
-                </div>
-            </form>
-        </div>
+{% for a in answers %}
+{% set c.count = c.count + 1 %}
+<div class="card">
+    <div class="card-header bg-blue fg-white">
+        Answer: {{ c.count }}
     </div>
-    {% endfor %}
+    <div class="card-content p-4 text-regular" id="a{{ a.a_id }}">
+        <form onsubmit="sendUpdate('{{a.a_id }}', event);return false;">
+            <input type="hidden" name="update_answer" value="{{ a.a_id}}">
+            <label>
+                <h6>Answer:</h6>
+            </label>
+            <div>{{ a.answer | safe }}</div>
+            <label>
+                <h6 class="mt-2">Correct:</h6>
+            </label>
+            <div><input type="hidden" value="{{a.is_true}}">{% if a.is_true == 1 %}Correct ✅{% else %}Incorrect ❌{%
+                endif %}</div>
+            <label>
+                <h6 class="mt-2">Comment:</h6>
+            </label>
+            <div>{{ a.comment | safe }}</div>
+            <div id="b{{ a.a_id }}">
+                <button class="button success" type="button" onclick="updateAnswer('{{a.a_id}}');">Edit</button>
+                <button class="button alert" type="button" value="{{ a.a_id }}"
+                    onclick="deleteAnswer(event); return false;">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock %}

@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 {% block header %}
-    <h1>
-        Edit Questions
-    </h1>
+<h1>
+    Edit Questions
+</h1>
 {% endblock %}
 {% block main %}
 <div class="w-75 ml-auto mr-auto">
 
-{% include "modules/topic-selector-edit.html" %}
+    {% include "modules/topic-selector-edit.html" %}
 
-{% include "modules/selector-script-edit.html" %}
+    {% include "modules/selector-script-edit.html" %}
     <p id="table"></p>
     <script src="./static/editQuestions.js" type="text/javascript"></script>
 </div>

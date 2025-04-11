@@ -9,7 +9,7 @@
 {% endblock %}
 {% block main %}
 <div class="mt-20 w-75 ml-auto mr-auto">
-    <form  action="/add-answers" method="post">
+    <form action="/add-answers" method="post">
         <div id="answer-container">
             <h3>Answer 1:</h3>
             <div class="row">
@@ -17,7 +17,8 @@
                     <input type="hidden" name="answer[1][q_id]" id="q_id" value="{{ q_id }}">
                     <label>Answer</label><br>
                     <input name="answer[1][answer]" data-role="input">
-                    <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code> </small>
+                    <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
+                    </small>
                 </div>
                 <div class="cell-md-fifth">
                     <label>True</label><br>
@@ -29,13 +30,14 @@
                 <div class="cell-md-full">
                     <label>Comment</label><br>
                     <textarea name="answer[1][comment]" data-role="textarea" class="w-75"></textarea>
-                    <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code> </small>
+                    <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
+                    </small>
                 </div>
             </div>
         </div>
-    
+
         <a href="javascript:;" id="add-new-answer">Add new Answer</a>
-    
+
         <p>
             <input class="button primary" type="submit">
         </p>

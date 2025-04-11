@@ -4,17 +4,19 @@
     Statistics
 </h1>
 {% endblock %}
-
 {% block main %}
 {% set u = namespace(count=0) %}
 {% for uc in stats[1] %}
-    {% set u.count = u.count + uc['count'] %}
+{% set u.count = u.count + uc['count'] %}
 {% endfor %}
 <div class="w-75 ml-auto mr-auto">
     <span class="h5"> This site created
-        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade }}" id="counter1">0</span> tests so far.&nbsp;
-        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade - stats[0].forUser }}" id="counter2">0</span> for guests and
-        <span class="h3 text-light" data-role="counter"  data-value="{{ stats[0].forUser }}" id="counter3">0</span> for registered users. 
+        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade }}" id="counter1">0</span>
+        tests so far.&nbsp;
+        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade - stats[0].forUser }}"
+            id="counter2">0</span> for guests and
+        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].forUser }}" id="counter3">0</span> for
+        registered users.
     </span>
     <!-- Users -->
     <section id="users" class="mt-10">
@@ -22,7 +24,8 @@
             Users
         </h3>
         <div class="w-50">
-            <table class="table striped" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+            <table class="table striped" data-role="table" data-rownum="false" data-show-table-info="false"
+                data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
                 <thead>
                     <th>Role</th>
                     <th class="colS">Count</th>
@@ -41,7 +44,6 @@
                 </tbody>
             </table>
         </div>
-
     </section>
     <!-- Topics -->
     <section class="mt-10">
@@ -49,7 +51,8 @@
             Topics
         </h3>
         <div class="w-75">
-            <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+            <table class="table" data-role="table" data-rownum="false" data-show-table-info="false"
+                data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
                 <thead>
                     <th data-sortable="true" class="colL" data-sort-dir="asc">Topics</th>
                     <th data-sortable="true" class="colS">Questions</th>
@@ -65,53 +68,46 @@
                         <td>{{ t.u_count }}</td>
                     </tr>
                     {% endfor %}
-
                 </tbody>
             </table>
             <small>* Usage only shows use of registered users.</small>
         </div>
     </section>
     <!-- Subtopics -->
-     <section class="mt-10">
-         <h3>
+    <section class="mt-10">
+        <h3>
             Subtopics
-         </h3>
-     </section>
-     <div class="w-75"data-role="accordion" data-one-frame="false" data-show-active="true">
-     {% for t in stats[2] %}
+        </h3>
+    </section>
+    <div class="w-75" data-role="accordion" data-one-frame="false" data-show-active="true">
+        {% for t in stats[2] %}
         <div class="frame">
             <div class="heading">{{ t.topic}} 1</div>
             <div class="content">
-                    <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
-                        <thead>
-                            <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
-                            <th data-sortable="true" class="colS">Questions</th>
-                            <th data-sortable="true" class="colS">Answers</th>
-                            <th data-sortable="true" class="colS">Usage</th>
-                        </thead>
-                        <tbody>
-                            {% for s in stats[3] %}
-                                {% if s.topic == t.topic %}
-                                <tr>
-                                    <td>{{ s.subtopic }}</td>
-                                    <td>{{ s.q_count}}</td>
-                                    <td>{{ s.a_count }}</td>
-                                    <td>{{ s.u_count }}</td>
-                                </tr>
-                
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table" data-role="table" data-rownum="false" data-show-table-info="false"
+                    data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+                    <thead>
+                        <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
+                        <th data-sortable="true" class="colS">Questions</th>
+                        <th data-sortable="true" class="colS">Answers</th>
+                        <th data-sortable="true" class="colS">Usage</th>
+                    </thead>
+                    <tbody>
+                        {% for s in stats[3] %}
+                        {% if s.topic == t.topic %}
+                        <tr>
+                            <td>{{ s.subtopic }}</td>
+                            <td>{{ s.q_count}}</td>
+                            <td>{{ s.a_count }}</td>
+                            <td>{{ s.u_count }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-             {% endfor %}
-
-     </div>
-
-     
-
+        </div>
+        {% endfor %}
+    </div>
 </div>
-
-
 {% endblock %}
