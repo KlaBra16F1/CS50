@@ -370,6 +370,7 @@ def get_answers(q_ids):
     return answers
 
 def add_answers(answers):
+    print(answers)
     changes = 0
     db.execute("BEGIN TRANSACTION;")
     for answer in answers:
