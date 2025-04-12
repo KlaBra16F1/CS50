@@ -7,7 +7,7 @@ document.getElementById('add-new-answer').onclick = function () {
             <div class="cell-md-half">
                 <input type="hidden" name="answer[${i}][q_id]" value="${q_id.value}">
                 <label>Answer</label><br>
-                <input name="answer[${i}][answer]" data-role="input">
+                <input name="answer[${i}][answer]" data-role="input" autocomplete="off">>
                 <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>\`code\`.</code> </small>
             </div>
             <div class="cell-md-fifth">

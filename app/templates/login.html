@@ -8,9 +8,9 @@
 
 <div class="mt-20 w-75 ml-auto mr-auto">
     <form action="/login" method="post">
-        <input name="username" placeholder="Username" type="text" autofocus data-role="input" class="w-50"
-            data-prepend="Username">
-        <input name="password" placeholder="Password" type="password" autofocus data-role="input" class="w-50"
+        <input class="w-50" name="username" placeholder="Username" type="text" autofocus autocomplete="off"
+        data-role="input" data-prepend="Username">
+        <input name="password" placeholder="Password" type="password" autocomplete="off" data-role="input" class="w-50"
             data-prepend="Password">
         <button type="submit" class="button success mt-5">Log in</button>
     </form>

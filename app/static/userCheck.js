@@ -15,7 +15,7 @@ username.addEventListener('change', async function(){
             $('#userNameInfo').html('<span class="fg-red">Username is already taken</span>');
         } else {
             $('#userNameAlert').html("<span class='mif-more-horiz mif-2x fg-gray'></span>");
-            $('#userNameInfo').html('Must be 4-16 characters or numbers. Must not contain whitespaces and special characters.');
+            $('#userNameInfo').html('4-16 characters or numbers. Must not contain whitespaces and special characters.');
         }   
     }
 });

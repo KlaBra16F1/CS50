@@ -16,7 +16,7 @@
                 <div class="cell-md-half">
                     <input type="hidden" name="answer[1][q_id]" id="q_id" value="{{ q_id }}">
                     <label>Answer</label><br>
-                    <input name="answer[1][answer]" data-role="input">
+                    <input name="answer[1][answer]" data-role="input" autocomplete="off">
                     <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
                     </small>
                 </div>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="cell-md-full">
                     <label>Comment</label><br>
-                    <textarea name="answer[1][comment]" data-role="textarea" class="w-75"></textarea>
+                    <input name="answer[1][comment]" data-role="input" class="w-75" autocomplete="off">
                     <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
                     </small>
                 </div>
