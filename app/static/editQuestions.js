@@ -75,6 +75,7 @@ function update (id) {
       td[4].querySelector('div').appendChild(document.createElement('p'))
     }
     let question = td[4].querySelector('p').innerHTML
+    console.log(question)
     let multiple = td[5].querySelector('input').value
     // Make pre-selection based on previous entry
     let selected0 = ''
@@ -84,21 +85,22 @@ function update (id) {
     } else {
       selected0 = 'selected'
     }
+    // Using 'single quotes' in html to escape quotes in questions
     let html = `
         <td>${td[2].innerHTML}</td>
         <td>${td[3].innerHTML}</td>
-        <td colspan="2">
-            <form onsubmit="sendUpdate(${id}, event);return false;">
+        <td colspan='2'>
+            <form onsubmit='sendUpdate(${id}, event);return false;'>
 
                 <label>Question</label>
-                <input name="question" value="${question}" type="text" data-role="input" >
+                <input name='question' value='${question}' type='text' data-role='input' >
                 <label>Multiple Choice</label>
-                <select name="multiple" class="input-small w-25" data-filter="false">
+                <select name='multiple' class='input-small w-25' data-filter='false'>
                     <option value=0 ${selected0}>No</option>
                     <option value=1 ${selectet1}>Yes</option>
                 </select>
-            <button class="button success">Update</button>
-            <button type="button" class="button" onclick="getQuestions();">Abort</button>
+            <button class='button success'>Update</button>
+            <button type='button' class='button' onclick='getQuestions();'>Abort</button>
 
             </form>
         </td>

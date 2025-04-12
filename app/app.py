@@ -122,9 +122,9 @@ def add_answers():
 @h.maintainer_required
 def edit_answers():
 
-    if request.args.get("q_id"):
+    if request.args.get("question"):
         q_id = []
-        q_id.append(int(request.args.get("q_id")))
+        q_id.append(int(request.args.get("question")))
         question = h.get_selected_questions(q_id)
         question = h.add_markdown(question,"question")
         return render_template("edit-answers.html", question=question[0])
@@ -135,7 +135,7 @@ def edit_answers():
         answer = request.args.get("answer")
         is_true = request.args.get("is_true")
         comment = request.args.get("comment")
-        q_id = request.args.get("q-id")
+        q_id = request.args.get("q_id")
         print(a_id,answer,is_true,comment)
         msg = h.update_answer(q_id, a_id, answer, is_true, comment)
         if msg.get("error"):

@@ -35,7 +35,7 @@
                 <button type="button" name="edit" id="b{{ q.q_id }}" value="{{q.q_id}}" class="button success rounded"
                     onclick="update('{{ q.q_id }}');" title="Edit Questions"><span
                         class="mif-pencil fg-white"></span></button>
-                <a href="/edit-answers?q_id={{ q.q_id }}"><button type="submit" name="q_id" id="a{{ q.q_id }}"
+                <a href="/edit-answers?question={{ q.q_id }}"><button type="submit" name="q_id" id="a{{ q.q_id }}"
                         value="{{q.q_id}}" class="button warning rounded" title="Edit Answers"><span
                             class="mif-list fg-white"></span></button></a>
                 <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded"

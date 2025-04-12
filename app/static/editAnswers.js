@@ -46,9 +46,10 @@ function updateAnswer (id) {
   } else {
     selected0 = 'selected'
   }
-  fields[0].innerHTML = `<input type="text" autocomplete="off" class="input-small" name="answer" data-role="input" value="${f[0].children[0].innerHTML}">`
+  // Using 'single quotes' in html to escape quotes in answers/comments
+  fields[0].innerHTML = `<input type='text' autocomplete='off' class='input-small' name='answer' data-role='input' value='${f[0].children[0].innerHTML}'>`
   fields[1].innerHTML = `<select data-role="select" class="input-small" name="is_true"><option value=1 ${selectet1}>True</option><option value=0 ${selected0}>False</option></select>`
-  fields[2].innerHTML = `<input type="text" name="comment" autocomplete="off" class="input-small" data-role="input" value="${f[2].children[0].innerHTML}">`
+  fields[2].innerHTML = `<input type='text' name='comment' autocomplete='off' class='input-small' data-role='input' value='${f[2].children[0].innerHTML}'>`
   button.innerHTML = `<button id="" class="button success mt-4" type="submit">Update</button>
     <button type="button" class="button mt-4" onclick="getAnswers();">Abort</button>`
 }
@@ -67,7 +68,7 @@ async function sendUpdate (a_id, event) {
       is_true +
       '&comment=' +
       comment +
-      '&q-id=' +
+      '&q_id=' +
       q_id
   )
   let res = await req.json()
