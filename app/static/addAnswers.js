@@ -1,7 +1,9 @@
-let i = 2;
+// Script of 'add-answers.html'
+// Create new answer elements in form
+let i = 2
 document.getElementById('add-new-answer').onclick = function () {
-    let q_id = document.getElementById('q_id')
-    let template = `
+  let q_id = document.getElementById('q_id')
+  let template = `
         <h3>Answer ${i}:</h3>
         <div class="row">
             <div class="cell-md-half">
@@ -22,12 +24,11 @@ document.getElementById('add-new-answer').onclick = function () {
                 <textarea name="answer[${i}][comment]" data-role="textarea" class="w-75"></textarea>
                 <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>\`code\`.</code> </small>
             </div>
-        </div>`;
+        </div>`
 
-    let container = document.getElementById('answer-container');
-    let div = document.createElement('div');
-    div.innerHTML = template;
-    container.appendChild(div);
-
-    i++;
-};
+  let container = document.getElementById('answer-container')
+  let div = document.createElement('div')
+  div.innerHTML = template
+  container.appendChild(div)
+  i++
+}

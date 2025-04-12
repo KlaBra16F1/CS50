@@ -347,7 +347,8 @@ def update_question(q_id, question, multiple):
     changes = db.execute("SELECT changes();")
     db.execute("COMMIT;")
     db._disconnect()
-    return changes[0]
+    msg =  f"Updated {changes[0]} question."
+    return {"success": msg}
 
 
 def delete_question(q_id):
@@ -358,9 +359,8 @@ def delete_question(q_id):
     questions = db.execute("SELECT changes();")
     db.execute("COMMIT;")
     db._disconnect()
-    
-
-    return questions[0]["changes()"], answers[0]["changes()"]
+    msg = f"Deleted {questions[0]['changes()']} questions and {answers[0]['changes()']} answers."
+    return {"success": msg}
 
 # ANSWERS
 

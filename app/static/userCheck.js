@@ -1,6 +1,7 @@
+// Script for 'register.html'
 let username = document.querySelector('#username');
    
-// get username
+// Check if username already exists in db
 username.addEventListener('change', async function(){
     let feedback1 = Metro.getPlugin('#username','append');
     let req = await fetch('/register?username=' + username.value);

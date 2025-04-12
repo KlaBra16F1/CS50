@@ -1,3 +1,5 @@
+// Script for 'make-test.html'
+// Compensates for multi-select on this page
 var subtopics_loaded;
     let topic = document.querySelector('#topic');
     topic.addEventListener('change', async function() {

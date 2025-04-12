@@ -53,8 +53,8 @@ def add_questions():
 def edit_questions():
     if request.args.get("delete"):
         q_id = request.args.get("delete")
-        questions, answers = h.delete_question(q_id)
-        return {"questions": questions, "answers": answers}
+        msg = h.delete_question(q_id)
+        return msg
     
     if request.args.get("delTopicSubtopic"):
         if request.args.get("delTopicSubtopic") == "t_id":
@@ -77,7 +77,7 @@ def edit_questions():
         question = request.args.get("question", None)
         multiple = request.args.get("multiple", None)
         msg = h.update_question(q_id, question, multiple)
-        return jsonify(msg)
+        return msg
         
     topics = h.get_topics()
     return render_template("edit-questions.html", rows_topics=topics)
@@ -273,7 +273,7 @@ def get_questions():
 
     # Markdown
     answers = h.add_markdown(answers,"answer","comment")
-    return render_template("questions.html", questions = questions, answers = answers)
+    return render_template("modules/questions.html", questions = questions, answers = answers)
 
 @app.route("/get-answers")
 @h.maintainer_required
@@ -282,7 +282,7 @@ def get_answers():
     answers = h.get_answers(q_id)
     answers = sorted(answers, key=lambda x: x["a_id"])
     answers = h.add_markdown(answers, "answer","comment" )
-    return render_template("answers.html", answers=answers) 
+    return render_template("modules/answers.html", answers=answers) 
 
 @app.route('/statistics')
 @h.maintainer_required
@@ -384,7 +384,7 @@ def profile():
         print('cp')
         t_id = request.args.get("t_id")
         subtopics = h.get_userstats_details(t_id, u_id)
-        return render_template("user-stats-subtopics.html", subtopics = subtopics)
+        return render_template("modules/user-stats-subtopics.html", subtopics = subtopics)
         
     tests = h.get_saved_tests(u_id)
     stats = h.get_userstats(u_id)
