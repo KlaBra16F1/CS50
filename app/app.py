@@ -1,6 +1,7 @@
-from flask import Flask, render_template, jsonify, request, redirect, flash, session
+from flask import Flask, render_template, jsonify, request, redirect, flash, session, abort
 from flask_session import Session
 from werkzeug.security import generate_password_hash
+import werkzeug.exceptions
 from markdown import markdown
 import helpers as h
 
@@ -336,8 +337,10 @@ def login():
     return render_template("login.html")
 
 @app.route("/users", methods=["GET","POST"])
-@h.admin_required
+@h.login_required
 def users():
+    if not session.get('user_id'):
+        return unauthorized_error(None)
     if request.method == "POST":
         if request.form.get("delete") != None:
             u_id = request.form.get("delete")
@@ -379,12 +382,13 @@ def profile():
             
             return redirect("/profile")
         else:
-            return 'error'
+            abort(400)
     if request.args.get("t_id"):
-        print('cp')
         t_id = request.args.get("t_id")
         subtopics = h.get_userstats_details(t_id, u_id)
         return render_template("modules/user-stats-subtopics.html", subtopics = subtopics)
+    else:
+        abort(400)
         
     tests = h.get_saved_tests(u_id)
     stats = h.get_userstats(u_id)
@@ -428,11 +432,36 @@ def logout():
     return redirect("login")
 
 # ERRORS
-@app.errorhandler(404)
-def notfound(e):
-    return render_template("error.html", error=e)
+
+@app.errorhandler(werkzeug.exceptions.BadRequest)
+def handle_bad_request(e):
+    err = str(e).split(":")
+    return render_template("error.html", error=err), 400
+
+@app.errorhandler(werkzeug.exceptions.Unauthorized)
+def handle_unauthorized(e):
+    print('cp')
+    err = str(e).split(":")
+    return render_template("error.html", error=err), 401
+
+@app.errorhandler(werkzeug.exceptions.NotFound)
+def not_found(e):
+    print('cp')
+    err = str(e).split(":")
+    return render_template("error.html", error=err), 404
+
+@app.errorhandler(werkzeug.exceptions.MethodNotAllowed)
+def handle_method_not_allowed(e):
+    err = str(e).split(":")
+    return render_template("error.html", error=err), 405
 
 @app.errorhandler(500)
 def server_error(e):
-    print('cp')
-    return render_template("error.html", error=e)
+    err = str(e).split(":")
+    return render_template("error.html", error=err), 500
+
+
+
+
+
+

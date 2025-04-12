@@ -1,5 +1,5 @@
 from cs50 import SQL
-from flask import redirect, render_template, session
+from flask import redirect, render_template, session,abort
 from functools import wraps
 import random
 import sqlite3
@@ -562,7 +562,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-            return redirect("/login")
+            abort(401)
         return f(*args, **kwargs)
 
     return decorated_function
@@ -576,7 +576,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None or session["role"] not in ROLES[0]:
-            return ("",401)
+            abort(401)
         return f(*args, **kwargs)
 
     return decorated_function
@@ -590,7 +590,7 @@ def maintainer_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None or session["role"] not in ROLES[:2]:
-            return ("",401)
+            abort(401)
         return f(*args, **kwargs)
 
     return decorated_function
