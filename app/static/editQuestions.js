@@ -94,6 +94,7 @@ function update (id) {
 
                 <label>Question</label>
                 <input name='question' value='${question}' type='text' data-role='input' >
+                <small class='text-light'>Your Markdown tags are displayed as HTML. Leave as is or change back to Markdown. Unsafe tags will be removed or may lead to unwanted results.</small>
                 <label>Multiple Choice</label>
                 <select name='multiple' class='input-small w-25' data-filter='false'>
                     <option value=0 ${selected0}>No</option>

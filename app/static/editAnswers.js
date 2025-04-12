@@ -47,7 +47,8 @@ function updateAnswer (id) {
     selected0 = 'selected'
   }
   // Using 'single quotes' in html to escape quotes in answers/comments
-  fields[0].innerHTML = `<input type='text' autocomplete='off' class='input-small' name='answer' data-role='input' value='${f[0].children[0].innerHTML}'>`
+  fields[0].innerHTML = `<input type='text' autocomplete='off' class='input-small' name='answer' data-role='input' value='${f[0].children[0].innerHTML}'>
+  <small class='text-light'>Your Markdown tags are displayed as HTML. Leave as is or change back to Markdown. Unsafe tags will be removed or may lead to unwanted results.</small>`
   fields[1].innerHTML = `<select data-role="select" class="input-small" name="is_true"><option value=1 ${selectet1}>True</option><option value=0 ${selected0}>False</option></select>`
   fields[2].innerHTML = `<input type='text' name='comment' autocomplete='off' class='input-small' data-role='input' value='${f[2].children[0].innerHTML}'>`
   button.innerHTML = `<button id="" class="button success mt-4" type="submit">Update</button>
