@@ -13,7 +13,6 @@ app.config["SESSION_TYPE"] = "filesystem"
 # Cookies
 Session(app)
 
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -25,27 +24,46 @@ def add_questions():
     if request.method == "POST":
         if request.form.get("new-topic") != "":
             new_topic = request.form.get("new-topic")
-            h.add_topic(new_topic)
-            flash("New topic {} created.".format(new_topic))
-            return redirect("add-questions")
+            msg = h.add_topic(new_topic)
+            if msg.get("error"):
+                flash(msg.get("error"),"Error")
+                return redirect("/add-questions")
+            else:
+                flash(msg.get("success"),"Success")
+                return redirect("/add-questions")
+        
         if request.form.get("new-subtopic") != "":
             if not request.form.get("topic"):
                 error = "Select a topic first to create a subtopic."
-                flash("")
-                return render_template("add-questions.html", error=error)
-            t_id = int(request.form.get("topic"))
-            new_subtopic = request.form.get("new-subtopic")
-            h.add_subtopic(t_id, new_subtopic)
-            flash("New subtopic {} created.".format(new_subtopic))
+                flash(error,"Error")
+                return redirect("/add-questions")
+            t_id = h.get_int(request.form.get("topic"))
+            new_subtopic = request.form.get("new-subtopic", "")
+            msg = h.add_subtopic(t_id, new_subtopic)
+            if msg.get("error"):
+                flash(msg.get("error"),"Error")
+                return redirect("/add-questions")
+            else:
+                flash(msg.get("success"),"Success")
+                return redirect("/add-questions")
+                
+        if request.form.get("subtopic") == "":
+            flash("You must select a subtopic before adding a questions","Error")
             return redirect("/add-questions")
-        s_id = request.form.get("subtopic")    
-        question = request.form.get("question")
+        s_id = h.get_int(request.form.get("subtopic", None))
+        question = request.form.get("question", None)
         difficulty = request.form.get("difficulty", None)
         isMultipleChoice = request.form.get("isMultipleChoice",0)
+        if question == "":
+            flash("Question can't be empty","Error")
+            return redirect("/add-questions")
+            
         q_id = h.add_question(s_id, question, difficulty, isMultipleChoice)
         question = markdown(question)
+
         flash("Question successully added. Enter Answers now.")
         return render_template("add-answers.html", q_id = q_id["q_id"], question = question)
+    
     topics = h.get_topics()
     return render_template("add-questions.html", rows_topics=topics)
 
@@ -53,14 +71,13 @@ def add_questions():
 @h.maintainer_required
 def edit_questions():
     if request.args.get("delete"):
-        q_id = request.args.get("delete")
+        q_id = h.get_int(request.args.get("delete"))
         msg = h.delete_question(q_id)
         return msg
-    
+    ###TODO
     if request.args.get("delTopicSubtopic"):
         if request.args.get("delTopicSubtopic") == "t_id":
-            t_id = request.args.get("id")
-            print("topic:", t_id)
+            t_id = h.get_int(request.args.get("id"))
             msg = h.delete_topic(t_id)
             
             return msg
@@ -71,12 +88,14 @@ def edit_questions():
             msg = h.delete_subtopic(s_id)
             
         else:
-            return {"error":"unknown option"}
+            abort(400)
 
     if request.args.get("update"):
-        q_id = request.args.get("update")
+        q_id = h.get_int(request.args.get("update"))
         question = request.args.get("question", None)
         multiple = request.args.get("multiple", None)
+        if question == "":
+            return {"error": "Question can't be empty."} 
         msg = h.update_question(q_id, question, multiple)
         return msg
         
@@ -90,34 +109,34 @@ def edit_questions():
 def add_answers():
     if request.method == "POST":
         form = request.form
+        # Extract multiple answers from form
         answers = []
-        
         for i in range (1,len(form)//4+1):
             answer = {}
-            answer["q_id"] =  form[f"answer[{i}][q_id]"]
+            answer["q_id"] =  h.get_int(form[f"answer[{i}][q_id]"])
             answer["answer"] = form[f"answer[{i}][answer]"]
             if answer["answer"] == "":
                 continue
             answer["comment"] = form[f"answer[{i}][comment]"]
-            answer["true"] = form[f"answer[{i}][true]"]
+            answer["true"] = h.get_int(form[f"answer[{i}][true]"])
             answers.append(answer)
 
         changes = h.add_answers(answers)
-        flash(f"Added {changes} questions.")
-        return redirect("/edit-questions")
+        flash(f"Added {changes} questions.","Success")
+        return redirect("/add-questions")
+    
     if request.args.get("q_id"):
-        q_id = request.args.get("q_id")
-        answer = request.args.get("answer")
-        is_true = request.args.get("is_true")
-        comment = request.args.get("comment")
+        q_id = h.get_int(request.args.get("q_id", None))
+        print('q_id:',q_id)
+        answer = request.args.get("answer", "")
+        is_true = request.args.get("is_true", 0)
+        comment = request.args.get("comment", "")
+        if answer == "":
+            return {"error": "Answer can't be empty."}
         msg = h.add_answer(q_id, answer, is_true, comment)
         return msg
-        
-        
-
-    return render_template("add-answers.html")
-
-
+    else:
+        return redirect("/add-questions")
 
 @app.route("/edit-answers",methods=["GET","POST"])
 @h.maintainer_required
@@ -125,30 +144,29 @@ def edit_answers():
 
     if request.args.get("question"):
         q_id = []
-        q_id.append(int(request.args.get("question")))
+        q_id.append(h.get_int(request.args.get("question")))
         question = h.get_selected_questions(q_id)
         question = h.add_markdown(question,"question")
         return render_template("edit-answers.html", question=question[0])
     
     if request.args.get("update_answer"):
         print("checkpoint")
-        a_id = request.args.get("update_answer")
-        answer = request.args.get("answer")
+        a_id = h.get_int(request.args.get("update_answer"))
+        answer = request.args.get("answer","")
         is_true = request.args.get("is_true")
         comment = request.args.get("comment")
-        q_id = request.args.get("q_id")
-        print(a_id,answer,is_true,comment)
+        q_id = h.get_int(request.args.get("q_id"))
+        if answer == "":
+            return {"error": "Answer can't be empty"}
         msg = h.update_answer(q_id, a_id, answer, is_true, comment)
-        if msg.get("error"):
-            return '500'
-        else:
-            return msg
+        return msg
+    
     if request.args.get("delete"):
-        a_id = request.args.get("delete")
-        q_id = request.args.get("q-id")
+        a_id = h.get_int(request.args.get("delete"))
+        q_id = h.get_int(request.args.get("q-id"))
         msg = h.delete_answer(a_id, q_id)
         return msg
-    return '200'
+    return redirect("/edit-questions")
 
 
 # Tests
@@ -162,19 +180,17 @@ def make_test():
         t_id = request.form.get("topic")
         s_id = request.form.get("subtopic")
         count = request.form.get("count",0)
+
         if not session.get("user_id"):
             u_id = None
         else:
             u_id = session["user_id"]
         # Extract subtopics
-        print(s_id)
         if s_id != "":
-            print('multi',s_id)
             s_id = s_id[1:-1]
             s_id = s_id.split(',')
-            s_id = list(int(s) for s in s_id)
+            s_id = list(h.get_int(s) for s in s_id)
         
-        print(s_id)
         questions, answers = h.create_test(u_id,t_id, s_id, count)
         questions = h.add_markdown(questions,"question")
         answers = h.add_markdown(answers,"answer","comment")
@@ -184,15 +200,15 @@ def make_test():
     topics = h.get_topics()
 
     if request.args.get("test"):
-        ut_id = request.args.get("test")
+        if session.get("user_id") is None:
+            abort(400)
+        ut_id = h.get_int(request.args.get("test"))
         questions, answers = h.get_user_test(session["user_id"], ut_id)
         questions = h.add_markdown(questions,"question")
         answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
         return render_template("test.html", questions=questions, answers=answers)
-        
-
 
     return render_template("make-test.html", rows_topics=topics)
 
@@ -207,13 +223,10 @@ def get_results():
             if rs[0] == "question":
                 test[rs[1]] = []
             else:
-                test[rs[0]].append(int(rs[1]))
+                test[rs[0]].append(h.get_int(rs[1]))
         else:
-            test[r].append(int(request.form.get(r)))
+            test[r].append(h.get_int(request.form.get(r)))
 
-
-
-    
     # send answers to users table
     u_id = None if session is None else session.get("user_id")
     h.verify_test(u_id,test)
@@ -225,20 +238,21 @@ def get_results():
     questions_ordered = []
     for q in session["q_order"]:
         for question in questions:
-            if question["q_id"] == int(q):
+            if question["q_id"] == h.get_int(q):
                 questions_ordered.append(question)
     # Send answers in same random order like make_test
     answers_ordered = []
     for a in session["a_order"]:
         for answer in answers:
-            if answer["a_id"] == int(a):
+            if answer["a_id"] == h.get_int(a):
                 answers_ordered.append(answer)
     return render_template("results.html", questions=questions_ordered, answers=answers_ordered, test=test)
-    # return 'hello'
+
 
 @app.route("/save-test")
+@h.login_required
 def save_test():
-    if request.args.get("save") and int(request.args.get("save")) == session["user_id"]:
+    if request.args.get("save") and h.get_int(request.args.get("save")) == session["user_id"]:
         
         questions = session["q_order"]
         msg = h.save_test(session["user_id"], str(request.args.get("name")), questions)
@@ -250,23 +264,32 @@ def save_test():
 @h.login_required
 def delete_test():
     if request.args.get("ut_id"):
-        ut_id = request.args.get("ut_id", None)
-        if ut_id:
-            msg = h.delete_test(session["user_id"], ut_id)
-            return msg
-        return 'error'
-    return 'error'
+        ut_id = h.get_int(request.args.get("ut_id", None))
+        msg = h.delete_test(session["user_id"], ut_id)
+        return msg
+    abort(400)
+
 # Inforoutes
 @app.route("/get-subtopics")
 def get_subtopics():
-    t_id = request.args.get("t_id")
-    subtopics = h.get_subtopics(t_id)
-    return jsonify(subtopics)
+    if request.args.get("t_id"):
+        t_id = request.args.get("t_id")
+        if t_id != "":
+            t_id = h.get_int(t_id)
+        subtopics = h.get_subtopics(t_id)
+        return jsonify(subtopics)
+    else:
+        abort(405)
 
 @app.route("/get-questions")
+@h.maintainer_required
 def get_questions():
     t_id = request.args.get("t_id")
+    if t_id != "":
+        t_id = h.get_int(t_id)
     s_id = request.args.get("s_id")
+    if s_id != "":
+        s_id = h.get_int(s_id)
     questions = h.get_questions(t_id, s_id)
     questions = h.add_markdown(questions,"question")
     q_ids = [q_id["q_id"] for q_id in questions]
@@ -279,7 +302,7 @@ def get_questions():
 @app.route("/get-answers")
 @h.maintainer_required
 def get_answers():
-    q_id = request.args.get("q_id")
+    q_id = h.get_int(request.args.get("q_id"))
     answers = h.get_answers(q_id)
     answers = sorted(answers, key=lambda x: x["a_id"])
     answers = h.add_markdown(answers, "answer","comment" )
@@ -296,18 +319,20 @@ def stats():
 
 @app.route("/register",methods=["GET","POST"])
 def register():
-    if session.get("user_id") :
+    if session.get("user_id"):
         return redirect("/")
     if request.method == "POST":
         if not (request.form.get("username") and request.form.get("password") and request.form.get("confirm")):
-            return 'error'
+            abort(400)
         else:
             msg = h.register_user(request.form.get('username'),request.form.get("password"),request.form.get("confirm"))
-        if "error" in msg:
-            return msg
-        else:
-            flash(msg["success"])
-            return redirect ("/login")
+        
+            if msg.get("error"):
+                flash(msg.get("error"),"Error")
+                return redirect("/register")
+            else:
+                flash(msg.get("success"), "Success")
+                return redirect ("/login")
     
     if request.args.get("username"):
         username = request.args.get("username")
@@ -323,45 +348,48 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
         if not username or not password:
-            error = "Field empty"
-            flash('')
-            return render_template("login.html", error=error)
+            flash("User not found or password incorrect","Error")
+            return redirect("/login")
         session["user_name"], session["user_id"], session["role"], error_msg = h.login_user(username, password)
         
         if not session["user_id"] or not session["role"]:
-            error = error_msg
-            flash('')
-            return render_template("login.html", error=error)
-        flash("User {} successfully logged in as {}".format(username, session["role"]))
-        return redirect("/")
+            flash(error_msg,"Error")
+            return redirect("/login")
+        flash("User {} successfully logged in as {}".format(username, session["role"]),"Success")
+        return redirect("/profile")
     return render_template("login.html")
 
 @app.route("/users", methods=["GET","POST"])
-@h.login_required
+@h.admin_required
 def users():
-    if not session.get('user_id'):
-        return unauthorized_error(None)
     if request.method == "POST":
         if request.form.get("delete") != None:
-            u_id = request.form.get("delete")
+            u_id = h.get_int(request.form.get("delete"))
             name = request.form.get("name")
-            h.delete_user(u_id)
-            flash("User {} deleted successfully.".format(name))
+            msg = h.delete_user(u_id)
+            if msg.get("error"):
+                flash(msg.get("error"), "Error")
+            else:
+                flash(msg.get("success"), "Success")
             return redirect("/users")
+        
         if request.form.get("change-role") != None:
             msg = h.change_role(request.form.get("change-role"), request.form.get("role"))
         
-            if "error" in msg:
-                return msg
+            if msg.get("error"):
+                flash(msg.get("error"), "Error")
             else:
-                flash(msg["success"])
-                return redirect ("/users")
+                flash(msg.get("success"), "Success")
+            return redirect("/users")
         
         name = request.form.get("name")
         hash = generate_password_hash(request.form.get("password"))
         role = request.form.get("role")
-        h.add_user(name, hash, role)
-        flash("todo")
+        msg = h.add_user(name, hash, role)
+        if msg.get("error"):
+                flash(msg.get("error"), "Error")
+        else:
+            flash(msg.get("success"), "Success")
         return redirect("/users")
 
     users = h.get_users()
@@ -373,22 +401,20 @@ def profile():
     u_id = session["user_id"]
     if request.method == "POST":
         print(request.form)
-        if int(request.form.get("deleteStats")) == session["user_id"]:
+        if h.get_int(request.form.get("deleteStats")) == session["user_id"]:
             msg = h.delete_stats(u_id)
-            if msg.get("success"):
-                flash(msg["success"])
+            if msg.get("error"):
+                flash(msg.get("error"), "Error")
             else:
-                return 'error'
+                flash(msg.get("success"), "Success")
             
             return redirect("/profile")
-        else:
-            abort(400)
+
     if request.args.get("t_id"):
-        t_id = request.args.get("t_id")
+        t_id = h.get_int(request.args.get("t_id"))
         subtopics = h.get_userstats_details(t_id, u_id)
         return render_template("modules/user-stats-subtopics.html", subtopics = subtopics)
-    else:
-        abort(400)
+
         
     tests = h.get_saved_tests(u_id)
     stats = h.get_userstats(u_id)
@@ -402,31 +428,34 @@ def change_password():
     confirm = request.form.get("confirm", None)
     if old_pw and pw and confirm:
         msg = h.change_password(session["user_id"], old_pw, pw, confirm)
-        if "error" in msg:
-            return msg
+        if msg.get("error"):
+            flash(msg.get("error"), "Error")
         else:
-            flash(msg["success"])
-        return redirect("/profile")
+            flash(msg.get("success"), "Success")
     else:
-        print('err')
-    print(old_pw, pw, confirm)
-    return 'Error'
+        flash("Something is wrong with your input", "Error")
+        
+
+    return redirect("/profile")
 
 @app.route("/delete-account", methods=["POST"])
 @h.login_required
 def delete_account():
     password = request.form.get("password", None)
-    if password:
-        msg = h.delete_account(session["user_id"], password)
-        if "error" in msg:
-            return msg
-        else:
-            flash(msg["success"])
-        return redirect("/logout")
 
-    return "Error"
+    if password:
+
+        msg = h.delete_account(session["user_id"], password)
+        if msg.get("error"):
+                flash(msg.get("error"), "Error")
+                return redirect("/profile")
+        else:
+            flash(msg.get("success"), "Success")
+            return redirect("/logout")
+
 
 @app.route("/logout")
+@h.login_required
 def logout():
     session.clear()
     return redirect("login")

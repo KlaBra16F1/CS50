@@ -13,7 +13,7 @@ async function deleteTest (event) {
     test.parentElement.parentElement.remove()
     Metro.notify.create('Success', res['success'], { cls: 'success' })
   } else {
-    Metro.notify.create('Success', res['error'], { cls: 'alert' })
+    Metro.notify.create('Error', res['error'], { cls: 'alert' })
   }
 }
 // AJAX -> 'user-stats-subtopics.html'

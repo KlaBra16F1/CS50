@@ -48,8 +48,7 @@
             <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].subtopics}}" id="counter3">00</span>
             subtopics with an accuracy of
             <span
-                class="h3 text-light fg-{% if stats[0].accuracy < 0.3 %}red{% elif stats[0].accuracy > 0.75 %}green{% else %}cobalt{% endif %}"
-                data-role="counter" data-value="{{ (stats[0].accuracy * 100) | round(1)}}" id="counter4">0</span>
+                class="h3 text-light" data-role="counter" data-value="{{ (stats[0].accuracy * 100) | round(1)}}" id="counter4">0</span>
             &percnt;.
         </span>
         {% else %}

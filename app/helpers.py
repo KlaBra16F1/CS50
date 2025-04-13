@@ -28,7 +28,7 @@ def get_users():
 def get_user(u_id):
     user = db.execute("SELECT COUNT(u_id) AS count FROM users WHERE u_id = ?;", u_id)
     db._disconnect()
-    if int(user[0]["count"]) == 1:
+    if get_int(user[0]["count"]) == 1:
         return True
     return False
 
@@ -37,14 +37,32 @@ def add_user(name, hash, role):
         return {"error" : "user exists"}
     db.execute("INSERT INTO users (name, hash, role) VALUES (?, ?, ?);", name, hash, role)
     db._disconnect()
+    return {"success": f"User {name} created as {role}."}
+
 
 def delete_user(u_id):
+    if u_id == 1:
+        return {"error": "Cant' delete admin account."}
     db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM user_tests WHERE u_id = ?;", u_id)
     db.execute("DELETE FROM user_questions WHERE u_id = ?", u_id)
     db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
     db.execute("COMMIT;")
+    count = db.execute("SELECT changes() as changes;")
     db._disconnect()
+    if count[0].get("changes") != 1:
+        return {"error": "User not found."}
+    return {"success": "User deleted."}
+
+def delete_account(u_id, password):
+    if session["user_name"] == "admin":
+        return {"error": "we need an admin here!"}
+    if check_user_id(u_id) != 1:
+        return {"error": "User doesn't exist"}
+    if verify_password(u_id, password) != 1:
+        return {"error": "wrong password"}
+    msg = delete_user(u_id)
+    return msg
     
 
 def login_user(username, password):
@@ -56,6 +74,7 @@ def login_user(username, password):
             return None, None, None, "Invalid password."
     else:
         return user[0]["name"], user[0]["u_id"], user[0]["role"], None
+
     
 def check_username(user):
     users = db.execute("SELECT u_id FROM users WHERE name = ?;", user)
@@ -112,28 +131,16 @@ def register_user(username, password, confirm):
     
 def change_role(u_id, role):
     if role not in ROLES:
-        return {"error": "role not available"}
+        return {"error": "Role not available"}
     if u_id == 1: 
-        return {"error": "admin must stay admin"}
+        return {"error": "Admin must stay admin"}
     if check_user_id(u_id) != 1:
-        return {"error": "unknown user_id"}
+        return {"error": "Unknown user"}
     db.execute("UPDATE users set role = ? WHERE u_id = ?;", role, u_id )
     db._disconnect() 
     return {"success": "changed user role"}
 
-def delete_account(u_id, password):
-    if session["user_name"] == "admin":
-        return {"error": "we need an admin here!"}
-    if check_user_id(u_id) != 1:
-        return {"error": "user doesn't exist"}
-    if verify_password(u_id, password) != 1:
-        return {"error": "wrong password"}
-    db.execute("BEGIN TRANSACTION;")
-    db.execute("DELETE FROM user_tests WHERE u_id = ?;", u_id)
-    db.execute("DELETE FROM user_questions WHERE u_id = ?", u_id)
-    db.execute("DELETE FROM users WHERE u_id = ?;", u_id)
-    db.execute("COMMIT;")
-    return {"success": "Good bye."}
+
 
 def get_userstats(u_id):
     stats = []
@@ -197,8 +204,8 @@ def get_sitestats():
     stats.append(stats_subtopics)
     return stats
 
+
 def delete_stats(u_id):
-    print("cp")
     db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
     count = db.execute("SELECT changes();")
@@ -218,9 +225,15 @@ def get_topics():
     db._disconnect()
     return topics
 
+
 def add_topic(new_topic):
+    topic = db.execute("SELECT topic FROM topics WHERE topic = ?;", new_topic)
+    if len(topic) != 0:
+        db._disconnect()
+        return {"error": "Topic exists."}
     db.execute("INSERT INTO topics (topic) values (?);", new_topic)
     db._disconnect()
+    return {"success": f"Topic {new_topic} created."}
 
 def get_subtopics(t_id):
     subtopics =  db.execute("SELECT s_id, subtopic, (SELECT COUNT(q.q_id) FROM questions q, subtopics sc WHERE q.s_id = sc.s_id AND sc.s_id = s.s_id) AS count FROM subtopics s WHERE t_id = ? ORDER BY subtopic;", t_id)
@@ -228,8 +241,13 @@ def get_subtopics(t_id):
     return subtopics
 
 def add_subtopic(t_id, new_subtopic):
+    subtopic = db.execute("SELECT subtopic FROM subtopics WHERE t_id = ? AND subtopic = ?", t_id, new_subtopic)
+    if len(subtopic) != 0:
+        db._disconnect()
+        return {"error": "Subtopic exists."}
     db.execute("INSERT INTO subtopics (t_id, subtopic) VALUES (?, ?);", t_id, new_subtopic)
     db._disconnect()
+    return {"success": f"Subtopic {new_subtopic} created."}
 
 def delete_topic(t_id):
     deleted = {}
@@ -284,12 +302,12 @@ def get_questions(t_id, s_id):
         db._disconnect()
         return questions
     elif s_id is None or s_id == "":
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", t_id)
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ?;", get_int(t_id))
         db._disconnect()
         return questions
     else:
-        print(s_id)
-        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id IN (?);", t_id, s_id)
+
+        questions = db.execute("SELECT t.topic, s.subtopic,q.question, q.q_id, q.difficulty, q.isMultipleChoice FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) WHERE t.t_id = ? AND s.s_id IN (?);", get_int(t_id), s_id)
         db._disconnect()
         return questions
     
@@ -305,6 +323,7 @@ def get_user_questions(u_id, t_id, s_id):
         db._disconnect()
         return questions
     elif s_id is None or s_id == "":
+        t_id = get_int(t_id)
         questions = db.execute("SELECT row_number() OVER (order by random()) AS random, t.topic, s.subtopic, q.q_id, q.question, q.isMultipleChoice,"
                                 "(SELECT timesDONE FROM user_questions WHERE u_id = ? AND q_id = q.q_id ) AS timesDone, "
                                 "(SELECT ROUND((CAST(timesRight AS REAL) / CAST(timesDone AS REAL)),2) AS score "
@@ -333,7 +352,6 @@ def get_selected_questions(q_ids):
     db._disconnect()
     return questions
 
-   
 
 def add_question(s_id, question, difficulty, isMultipleChoice):
     db.execute("INSERT INTO questions (s_id, question, difficulty, isMultipleChoice) values (?, ?, ?, ?)", s_id, question, difficulty, isMultipleChoice)
@@ -341,25 +359,29 @@ def add_question(s_id, question, difficulty, isMultipleChoice):
     db._disconnect()
     return q_id[0]
 
+
 def update_question(q_id, question, multiple):
     db.execute("BEGIN TRANSACTION;")
     db.execute("UPDATE questions SET question = ?, isMultipleChoice = ? WHERE q_id = ?;", question, multiple, q_id)
-    changes = db.execute("SELECT changes();")
+    changes = db.execute("SELECT changes() as changes;")
     db.execute("COMMIT;")
     db._disconnect()
-    msg =  f"Updated {changes[0]} question."
+    
+    msg = f"Updated {changes[0]['changes']} question"
     return {"success": msg}
 
 
 def delete_question(q_id):
     db.execute("BEGIN TRANSACTION;")
     db.execute("DELETE FROM answers WHERE q_id = ?;", q_id)
-    answers = db.execute("SELECT changes();")
+    answers = db.execute("SELECT changes() as changes;")
     db.execute("DELETE FROM questions WHERE q_id = ?;", q_id)
-    questions = db.execute("SELECT changes();")
+    questions = db.execute("SELECT changes() as changes;")
     db.execute("COMMIT;")
     db._disconnect()
-    msg = f"Deleted {questions[0]['changes()']} questions and {answers[0]['changes()']} answers."
+    msg = f"Deleted {questions[0]['changes']} questions and {answers[0]['changes']} answers."
+    if questions[0]["changes"] == 0:
+        return {"error": "Nothing to delete"}
     return {"success": msg}
 
 # ANSWERS
@@ -369,8 +391,8 @@ def get_answers(q_ids):
     db._disconnect()
     return answers
 
+
 def add_answers(answers):
-    print(answers)
     changes = 0
     db.execute("BEGIN TRANSACTION;")
     for answer in answers:
@@ -400,7 +422,7 @@ def update_answer(q_id, a_id, answer, is_true, comment):
     db._disconnect()
     is_multple_choice(q_id)
     changes = changes[0]["changes()"]
-    msg = {"success": f"updated {changes} answer"}
+    msg = {"success": f"Updated {changes} answer"}
     if changes != 1:
         msg = {"error": "database error"}
     return msg
@@ -416,32 +438,13 @@ def delete_answer(a_id, q_id):
         msg = {"error": "database error"}
     return msg
     
-# Special Feature
-
-def is_multple_choice(q_id):
-    db.execute("BEGIN TRANSACTION;")
-    is_true = db.execute("SELECT COUNT(*) AS count FROM answers WHERE q_id = ? AND is_true = 1", q_id)
-    print("i_t:",is_true, q_id)
-    if is_true[0]["count"] > 1:
-        db.execute("UPDATE questions SET isMultipleChoice = 1 WHERE q_id = ?;", q_id)
-    else:
-        db.execute("UPDATE questions SET isMultipleChoice = 0 WHERE q_id = ?;", q_id)
-    db.execute("COMMIT;")
-    db._disconnect()
-
-
-
-
-
-
 # TESTS
 
 def create_test(u_id, t_id, s_id, count):
-    
     if count == "":
         count = None
     else:
-        count = int(count)
+        count = get_int(count)
 
     questions = []
     if u_id is None or u_id == "":
@@ -450,6 +453,7 @@ def create_test(u_id, t_id, s_id, count):
         random.shuffle(questions)
         questions = questions[0:count]
     else:
+        u_id = get_int(u_id)
         questions = get_user_questions(u_id, t_id, s_id)
         questions = list(questions)
         questions = questions[0:count]
@@ -460,6 +464,7 @@ def create_test(u_id, t_id, s_id, count):
     answers = get_answers(q_ids)
     return questions, answers
 
+
 def get_questions_result(q_ids):
     questions = get_selected_questions(q_ids)
     return questions
@@ -469,14 +474,14 @@ def verify_test(u_id,test):
     is_user = 0
     # Check user
     if not (u_id is None or u_id == ""):
-        update_db = True if get_user(int(u_id)) == True else None
+        update_db = True if get_user(get_int(u_id)) == True else None
         is_user = 1
 
     now = dt.datetime.today().strftime("%Y-%m-%d")
 
     questions = []
     for q in test:
-        questions.append(q)
+        questions.append(get_int(q))
 
     answers = db.execute("SELECT q_id, (SELECT COUNT(*) FROM answers b WHERE a.q_id = b.q_id) as count,a_id , answer FROM answers a WHERE q_id IN (?) AND is_true = 1;", questions)
     # Update teststats only if test is finnisched
@@ -484,7 +489,7 @@ def verify_test(u_id,test):
     db._disconnect()
      
     for q in test:
-        right_answers = [a["a_id"] for a in answers if a["q_id"] == int(q)]
+        right_answers = [a["a_id"] for a in answers if a["q_id"] == get_int(q)]
         right_answers = set(right_answers)
         right_count = len(right_answers)
         user_answers = set(test[q])
@@ -504,6 +509,7 @@ def verify_test(u_id,test):
                 db._disconnect()
 
 def save_test(u_id, test_name, questions):
+    u_id = get_int(u_id)
     questions = ','.join(str(q) for q in questions)
     db.execute("INSERT INTO user_tests (u_id, test_name, questions) VALUES (?, ?, ?)", u_id, test_name, questions)
     count = db.execute("SELECT changes()")
@@ -511,16 +517,17 @@ def save_test(u_id, test_name, questions):
     if count[0]["changes()"] != 1:
         return {"error": "database error"}
     
-    return {"success": "test saved"}
+    return {"success": "Your test has been saved to your user profile."}
+
 
 def delete_test(u_id, ut_id):
     db.execute("DELETE FROM user_tests WHERE u_id = ? and ut_id = ?", u_id, ut_id)
     count = db.execute("SELECT changes();")
     db._disconnect()
     if count[0]["changes()"] != 1:
-        return {"error": "database error"}
+        return {"error": "Database error"}
     
-    return {"success": "test deleted"}
+    return {"success": "Test deleted"}
 
 
 def get_saved_tests(u_id):
@@ -537,6 +544,18 @@ def get_user_test(u_id, ut_id):
     db._disconnect()
     return questions, answers
     
+# Special Feature
+
+def is_multple_choice(q_id):
+    db.execute("BEGIN TRANSACTION;")
+    is_true = db.execute("SELECT COUNT(*) AS count FROM answers WHERE q_id = ? AND is_true = 1", q_id)
+    print("i_t:",is_true, q_id)
+    if is_true[0]["count"] > 1:
+        db.execute("UPDATE questions SET isMultipleChoice = 1 WHERE q_id = ?;", q_id)
+    else:
+        db.execute("UPDATE questions SET isMultipleChoice = 0 WHERE q_id = ?;", q_id)
+    db.execute("COMMIT;")
+    db._disconnect()
 
 # Tools
 
@@ -550,6 +569,24 @@ def add_markdown(data, *args):
         output.append(d)
     return output
 
+def get_int(i):
+    print(i)
+    if i is None:
+        abort(400)
+    if not isinstance(i, int):
+        if isinstance(i,str):
+            try:
+                i = int(i)
+                
+            except ValueError:
+                abort(400)
+        else:
+            abort(400)
+    if i < 0:
+        abort(400)
+    
+
+    return i
 
 # Website Functions
 
@@ -562,7 +599,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-            abort(401)
+            return redirect("/login")
         return f(*args, **kwargs)
 
     return decorated_function
@@ -575,8 +612,10 @@ def admin_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None or session["role"] not in ROLES[0]:
-            abort(401)
+        if session.get("user_id") is None:
+            return redirect("/login")
+        if session["role"] not in ROLES[0]:
+                abort(401)
         return f(*args, **kwargs)
 
     return decorated_function
@@ -589,7 +628,9 @@ def maintainer_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None or session["role"] not in ROLES[:2]:
+        if session.get("user_id") is None:
+            return redirect("/login")
+        if session["role"] not in ROLES[:2]:
             abort(401)
         return f(*args, **kwargs)
 

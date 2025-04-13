@@ -36,17 +36,20 @@
         <div class="mt-20 w-75 ml-auto mr-auto""> 
             <header>
                 <!-- Status Messages -->
-                {% for message in get_flashed_messages() %}
-                    {% if error %}
-                    <script type=" text/javascript">
-            Metro.notify.create('{{ error }}', 'ERROR', {cls: "alert", animation: 'none'});
-            </script>
-            {% else %}
-            <script type="text/javascript">
-                Metro.notify.create('{{ message }}', 'Success', { cls: "success", animation: 'none' });
-            </script>
-            {% endif %}
-            {%endfor%}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                
+                        {% if category == 'Error' %}
+                            <script type=" text/javascript">
+                                Metro.notify.create('{{ message }}', '{{ category }}', {cls: "alert", animation: 'none'});
+                            </script>
+                        {% else %}
+                            <script type="text/javascript">
+                                Metro.notify.create('{{ message }}', '{{ category}}', { cls: "success", animation: 'none' });
+                            </script>
+                        {% endif %}
+                    {%endfor%}
+                {% endwith %}
             {% block header %}
             {% endblock %}
             </header>

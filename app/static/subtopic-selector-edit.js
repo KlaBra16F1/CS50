@@ -36,7 +36,7 @@ async function deleteTopicSubtopic () {
     del = subtopic.value
     target = 's_id'
   }
-  console.log(target, del)
+  
   let req = await fetch(
     '/edit-questions?delTopicSubtopic=' + target + '&id=' + del
   )
@@ -61,4 +61,28 @@ async function deleteTopicSubtopic () {
   if (target == 't_id') {
     window.location.href = './edit-questions'
   }
+}
+
+function safety(){
+  let topic = document.querySelector('#topic')
+  let subtopic = document.querySelector('#subtopic')
+  if (subtopic.value == '' && topic.value == '') {
+    return
+  }
+  Metro.dialog.create({
+    title: "Are you sure?",
+    content: "<div>You are going to delete a lot of questions and answers. You might want to choose a more selective approach.</div>",
+    actions: [
+      {
+          caption: "Delete",
+          cls: "js-dialog-close alert",
+          onclick: deleteTopicSubtopic
+      },
+      {
+          caption: "Cancel",
+          cls: "js-dialog-close",
+          onclick: close
+      }
+  ]
+  });
 }
