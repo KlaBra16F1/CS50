@@ -18,6 +18,12 @@
         <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].forUser }}" id="counter3">0</span> for
         registered users.
     </span>
+    {% if session.role == 'admin' %}
+    <form class="mt-5" action="/reset-site-statistics" method="post">
+        <button class="button alert" type="submit">Reset site-statistics</button>
+    </form>
+    {% endif %}
+
     <!-- Users -->
     <section id="users" class="mt-10">
         <h3>
@@ -110,4 +116,5 @@
         {% endfor %}
     </div>
 </div>
+
 {% endblock %}

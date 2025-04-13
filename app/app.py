@@ -308,12 +308,19 @@ def get_answers():
     answers = h.add_markdown(answers, "answer","comment" )
     return render_template("modules/answers.html", answers=answers) 
 
+#Statistics
 @app.route('/statistics')
 @h.maintainer_required
 def stats():
     stats = h.get_sitestats()
     return render_template("statistics.html", stats=stats)
 
+@app.route("/reset-site-statistics", methods=["POST"])
+@h.admin_required
+def delete_site_stats():
+    h.reset_site_stats()
+    flash("Site statistics have been reset.")
+    return redirect("/statistics")
 
 # Users
 

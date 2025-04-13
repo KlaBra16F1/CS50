@@ -173,10 +173,22 @@ def get_userstats_details(t_id, u_id):
     
     return subtopics
 
+def delete_stats(u_id):
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
+    count = db.execute("SELECT changes();")
+    db.execute("COMMIT;")
+    db._disconnect()
+    if count[0]["changes()"] > 0:
+        return {"success": "Your stats have been cleared."}
+    else:
+        return {"error": "database error"}
+
 # Site-Stats
 def get_sitestats():
     stats = []
     db.execute("BEGIN TRANSACTION;")
+    q_count = db.execute("SELECT COUNT(*) AS q_count FROM questions;")
     # Usage
     usage = db.execute("SELECT testsMade, forUser FROM teststats;")
     stats.append(usage[0])
@@ -202,19 +214,13 @@ def get_sitestats():
     stats_topics = sorted(stats_topics, key=lambda x: x["topic"])
     stats.append(stats_topics)
     stats.append(stats_subtopics)
+    stats.append(q_count[0].get("q_count"))
     return stats
 
-
-def delete_stats(u_id):
-    db.execute("BEGIN TRANSACTION;")
-    db.execute("DELETE FROM user_questions WHERE u_id = ?;", u_id)
-    count = db.execute("SELECT changes();")
-    db.execute("COMMIT;")
+def reset_site_stats():
+    db.execute("UPDATE teststats SET testsMade = 0, forUser = 0;")
     db._disconnect()
-    if count[0]["changes()"] > 0:
-        return {"success": "Your stats have been cleared."}
-    else:
-        return {"error": "database error"}
+
 
 
     
