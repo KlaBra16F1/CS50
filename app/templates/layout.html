@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 {% include "./modules/head.html" %}
-    <body >
-
+    <body>
         <!-- Menu -->
         <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
             <a href="/" class="brand no-hover">
@@ -31,10 +30,11 @@
                         session["user_name"]}}</a></li>
                 <li><a href="/logout">Log out</a></li>
                 {% endif %}
+                <li><a href="https://github.com/KlaBra16F1/CS50-Final_Project" rel="noopener noreferrer" target="_blank"><span class="mif-github mif-2x" style="vertical-align: middle;"></span></a></li>
             </ul>
         </div>
         <!-- End Menu -->
-        <div class="mt-20 w-75 ml-auto mr-auto""> 
+        <div class="mt-20 w-75 ml-auto mr-auto"> 
             <header>
                 <!-- Status Messages -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -54,12 +54,12 @@
             {% block header %}
             {% endblock %}
             </header>
+            <main>
+                {% block main %}
+                {% endblock %}
+            </main>
+            
         </div>
-        <main>
-            {% block main %}
-            {% endblock %}
-        </main>
-
     </body>
 
 </html>

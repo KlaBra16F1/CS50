@@ -106,6 +106,10 @@
         <button class="button success pos-bottom-center mt-10 mb-20" type="submit">Save Test</button>
     </form>
 </div>
+{% else %}
+<div class="w-75 mt-10 mb-20 pos-bottom-center text-center">
+    Consider <a href="/register">registration</a> for a free account, so you can save your tests and track your progress.
+</div>
 {% endif %}
 <script src="./static/afterTest.js" type="text/javascript"></script>
 {% endblock %}
