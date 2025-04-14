@@ -162,7 +162,6 @@ def get_userstats(u_id):
     
     
     stats.append(compareTopics)
-    print(stats[1])
     return stats
 
 def get_userstats_details(t_id, u_id):
@@ -221,7 +220,6 @@ def topics_diagramm():
     total = db.execute("SELECT COUNT(q_id) as total FROM questions;")
     data = db.execute("SELECT ROUND((CAST(COUNT(q.q_id) AS real) / ? * 100),2) AS percent, t.topic AS topic FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY topic;", total[0].get("total"))
     db._disconnect()
-    print(data)
     return data
 
 def userTopics_diagram():
@@ -570,7 +568,6 @@ def get_user_test(u_id, ut_id):
 def is_multple_choice(q_id):
     db.execute("BEGIN TRANSACTION;")
     is_true = db.execute("SELECT COUNT(*) AS count FROM answers WHERE q_id = ? AND is_true = 1", q_id)
-    print("i_t:",is_true, q_id)
     if is_true[0]["count"] > 1:
         db.execute("UPDATE questions SET isMultipleChoice = 1 WHERE q_id = ?;", q_id)
     else:
@@ -591,7 +588,6 @@ def add_markdown(data, *args):
     return output
 
 def get_int(i):
-    print(i)
     if i is None:
         abort(400)
     if not isinstance(i, int):

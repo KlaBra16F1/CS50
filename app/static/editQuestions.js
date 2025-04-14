@@ -95,13 +95,13 @@ function update (id) {
                 <label>Question</label>
                 <input name='question' value='${question}' type='text' data-role='input' >
                 <small class='text-light'>Your Markdown tags are displayed as HTML. Leave as is or change back to Markdown. Unsafe tags will be removed or may lead to unwanted results.</small>
-                <label>Multiple Choice</label>
+                <br><label>Multiple Choice</label>
                 <select name='multiple' class='input-small w-25' data-filter='false'>
                     <option value=0 ${selected0}>No</option>
                     <option value=1 ${selectet1}>Yes</option>
                 </select>
-            <button class='button success'>Update</button>
-            <button type='button' class='button' onclick='getQuestions();'>Abort</button>
+            <br><button class='button success mt-5'>Update</button>
+            <button type='button' class='button mt-5' onclick='getQuestions();'>Abort</button>
 
             </form>
         </td>

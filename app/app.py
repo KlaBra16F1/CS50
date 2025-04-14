@@ -84,7 +84,6 @@ def edit_questions():
         
         elif request.args.get("delTopicSubtopic") == "s_id":
             s_id = request.args.get("id")
-            print("subtopic:", s_id)
             msg = h.delete_subtopic(s_id)
             
         else:
@@ -127,7 +126,6 @@ def add_answers():
     
     if request.args.get("q_id"):
         q_id = h.get_int(request.args.get("q_id", None))
-        print('q_id:',q_id)
         answer = request.args.get("answer", "")
         is_true = request.args.get("is_true", 0)
         comment = request.args.get("comment", "")
@@ -146,11 +144,12 @@ def edit_answers():
         q_id = []
         q_id.append(h.get_int(request.args.get("question")))
         question = h.get_selected_questions(q_id)
+        if len(question) < 1:
+            abort(400)
         question = h.add_markdown(question,"question")
         return render_template("edit-answers.html", question=question[0])
     
     if request.args.get("update_answer"):
-        print("checkpoint")
         a_id = h.get_int(request.args.get("update_answer"))
         answer = request.args.get("answer","")
         is_true = request.args.get("is_true")
@@ -278,8 +277,7 @@ def get_subtopics():
             t_id = h.get_int(t_id)
         subtopics = h.get_subtopics(t_id)
         return jsonify(subtopics)
-    else:
-        abort(405)
+    return {"empty":200}
 
 @app.route("/get-questions")
 @h.maintainer_required
@@ -420,7 +418,6 @@ def users():
 def profile():
     u_id = session["user_id"]
     if request.method == "POST":
-        print(request.form)
         if h.get_int(request.form.get("deleteStats")) == session["user_id"]:
             msg = h.delete_stats(u_id)
             if msg.get("error"):
@@ -489,13 +486,11 @@ def handle_bad_request(e):
 
 @app.errorhandler(werkzeug.exceptions.Unauthorized)
 def handle_unauthorized(e):
-    print('cp')
     err = str(e).split(":")
     return render_template("error.html", error=err), 401
 
 @app.errorhandler(werkzeug.exceptions.NotFound)
 def not_found(e):
-    print('cp')
     err = str(e).split(":")
     return render_template("error.html", error=err), 404
 

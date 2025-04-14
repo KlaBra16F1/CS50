@@ -5,7 +5,12 @@ topic.addEventListener('change', async function () {
   subtopics_loaded = false
   let res = await fetch('/get-subtopics?t_id=' + topic.value)
   document.querySelector('#subtopic').innerHTML = ''
+  
   let subtopics = await res.json()
+  console.log('log', subtopics)
+  if (subtopics["empty"] == 200) {
+    return
+  }
   let html = '<option value="">Please Select</option>'
   for (s of subtopics) {
     html +=
@@ -19,4 +24,5 @@ topic.addEventListener('change', async function () {
   }
   document.querySelector('#subtopic').innerHTML = html
   subtopics_loaded = true
+  
 })
