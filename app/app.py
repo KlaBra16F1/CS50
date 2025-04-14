@@ -315,6 +315,19 @@ def stats():
     stats = h.get_sitestats()
     return render_template("statistics.html", stats=stats)
 
+@app.route("/diagram-api")
+@h.maintainer_required
+def diagram_api():
+    if request.args.get("topic"):
+        data = h.topics_diagramm()
+        return jsonify(data)
+    if request.args.get("users"):
+        data = h.userTopics_diagram()
+        return jsonify(data)
+    
+    abort(400)
+
+
 @app.route("/reset-site-statistics", methods=["POST"])
 @h.admin_required
 def delete_site_stats():

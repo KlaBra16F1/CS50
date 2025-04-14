@@ -262,3 +262,12 @@ Web Developement       JavaScript            8        16
 {"topic":"Web Developement","subtopic":"HTML","q_count":15,"a_count":35,"u_count":60},
 {"topic":"Web Developement","subtopic":"HTTP Status Messages","q_count":12,"a_count":27,"u_count":24},
 {"topic":"Web Developement","subtopic":"JavaScript","q_count":8,"a_count":16,"u_count":None}]
+
+
+SELECT t.topic, SUM(uq.timesDone) AS questions
+FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id 
+GROUP BY t.topic;
+
+SELECT sum(timesDone) from user_questions;
+
+SELECT (SELECT ROUND((CAST(SUM(uq.timesDONE) AS real) / 193 * 100),2) FROM user_questions uq WHERE uq.q_id = q.q_id) as percent, t.topics AS topics FROM topics.t INNER JOIN subtopics s USING(t_id) INNER JOIN questions q USING(s_id) GROUP BY topics;

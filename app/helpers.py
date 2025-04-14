@@ -217,6 +217,21 @@ def get_sitestats():
     stats.append(q_count[0].get("q_count"))
     return stats
 
+def topics_diagramm():
+    total = db.execute("SELECT COUNT(q_id) as total FROM questions;")
+    data = db.execute("SELECT ROUND((CAST(COUNT(q.q_id) AS real) / ? * 100),2) AS percent, t.topic AS topic FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY topic;", total[0].get("total"))
+    db._disconnect()
+    print(data)
+    return data
+
+def userTopics_diagram():
+    total = db.execute("SELECT SUM(timesDone) AS total FROM user_questions;")
+    data = db.execute("SELECT t.topic, ROUND((CAST(SUM(uq.timesDone) AS real) / ? * 100),2) AS percent "
+                        "FROM user_questions uq, questions q, subtopics s, topics t "
+                        "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id GROUP BY t.topic;", total[0].get("total"))
+    db._disconnect()
+    return data
+
 def reset_site_stats():
     db.execute("UPDATE teststats SET testsMade = 0, forUser = 0;")
     db._disconnect()
