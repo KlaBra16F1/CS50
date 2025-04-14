@@ -203,6 +203,8 @@ def make_test():
             abort(400)
         ut_id = h.get_int(request.args.get("test"))
         questions, answers = h.get_user_test(session["user_id"], ut_id)
+        if questions is None or answers is None:
+            abort(400)
         questions = h.add_markdown(questions,"question")
         answers = h.add_markdown(answers,"answer","comment")
         session["q_order"] = [q["q_id"] for q in questions]

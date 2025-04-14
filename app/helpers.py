@@ -556,6 +556,8 @@ def get_saved_tests(u_id):
 
 def get_user_test(u_id, ut_id):
     q_ids = db.execute("SELECT questions FROM user_tests WHERE ut_id = ? AND u_id = ?;", ut_id,u_id)
+    if len(q_ids) < 1:
+        return None, None
     q_ids = q_ids[0]["questions"].split(',')
     q_ids = list(int(q) for q in q_ids)
     questions = get_selected_questions(q_ids)
