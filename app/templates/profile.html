@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block header %}
 
-<h1>
+<h1 class="mt-20 w-75 ml-auto mr-auto">
     Profile
 </h1>
 {% endblock %}
@@ -9,7 +9,7 @@
 {% set c = namespace(counter=0) %}
 {% set col = ['lime','emerald','cyan','cobalt','indigo','crimson','orange','olive','steel','terracotta','coral'] %}
 <!-- Side-Navigation -->
-<ul class="sidenav-simple sidenav-simple-expand-lg float-right z-1"
+<ul class="sidenav-simple sidenav-simple-expand-lg float-right z-2"
     style="position:sticky ; margin-top: -100px ;top: 50px; right: 0px; height:auto;  overflow: hidden;">
     <li><a href="#stats">
             <span class="mif-chart-dots icon" data-role="hint" data-hint-position="left"
@@ -162,7 +162,7 @@
         <form action="/change-password" method="post" data-role="validator" class="w-50">
             <div class="form-group">
                 <input type="password" name="old-pw" id="old-pw" placeholder="Current password" autocomplete="off"
-                    autofocus data-role="input" data-prepend="Current password">
+                    data-role="input" data-prepend="Current password">
             </div>
             <div class="form-group">
 

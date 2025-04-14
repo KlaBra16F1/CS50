@@ -268,6 +268,12 @@ SELECT t.topic, SUM(uq.timesDone) AS questions
 FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id 
 GROUP BY t.topic;
 
+SELECT t.topic, ROUND((CAST(SUM(uq.timesDone) AS real) / 105 * 100),2) AS questions
+FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id 
+GROUP BY t.topic;
+
 SELECT sum(timesDone) from user_questions;
 
-SELECT (SELECT ROUND((CAST(SUM(uq.timesDONE) AS real) / 193 * 100),2) FROM user_questions uq WHERE uq.q_id = q.q_id) as percent, t.topics AS topics FROM topics.t INNER JOIN subtopics s USING(t_id) INNER JOIN questions q USING(s_id) GROUP BY topics;
+SELECT t.topic, ROUND((CAST(SUM(uq.timesDone) AS real) / 193 * 100),2) AS precent
+FROM user_questions uq, questions q, subtopics s, topics t
+WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id GROUP BY t.topic;

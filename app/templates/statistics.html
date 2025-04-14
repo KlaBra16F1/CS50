@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1>
+<h1 class="mt-20 w-75 ml-auto mr-auto">
     Statistics
 </h1>
 {% endblock %}
@@ -134,11 +134,12 @@
     var chart1 = new CanvasJS.Chart("Chart1", {
         animationEnabled: true,
         title: {
-            text: "Our Focus"
+            text: "Available Questions"
         },
         data: [{
             type: "pie",
             startAngle: 240,
+            radius: 100,
             yValueFormatString: "##0.00\"%\"",
             indexLabel: "{label} {y}",
             dataPoints: dataPointsOF
@@ -147,11 +148,12 @@
     var chart2 = new CanvasJS.Chart("Chart2", {
         animationEnabled: true,
         title: {
-            text: "User Focus"
+            text: "Users Choice"
         },
         data: [{
             type: "pie",
             startAngle: 240,
+            radius: 100,
             yValueFormatString: "##0.00\"%\"",
             indexLabel: "{label} {y}",
             dataPoints: dataPointsUF

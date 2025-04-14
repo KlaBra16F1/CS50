@@ -1,12 +1,15 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1>
-    Edit Answers
-</h1>
-<h3>{{ question["question"] | safe }}</h3>
-<button class="button small" onclick="history.back();">Back to questions <span
+<div class="mt-20 w-75 ml-auto mr-auto">
+
+    <h1>
+        Edit Answers
+    </h1>
+    <h3>{{ question["question"] | safe }}</h3>
+    <button class="button small" onclick="history.back();">Back to questions <span
         class="mif-keyboard-return mif-2x"></span></button>
-<input type="hidden" id="q_id" value="{{ question['q_id'] }}">
+        <input type="hidden" id="q_id" value="{{ question['q_id'] }}">
+</div>
 
 {% endblock %}
 {% block main %}
@@ -22,7 +25,7 @@
                 <input type="hidden" id="add_q_id" name="add-answer" value="{{ question['q_id'] }}">
                 <label><strong>Answer</strong></label>
                 <div>
-                    <input type="text" id="answer" name="answer" data-role="input" class="input-small">
+                    <input type="text" id="answer" name="answer" data-role="input" class="input-small" autocomplete="off">
                 </div>
                 <label><strong>Correct/Incorrect</strong></label>
                 <div>
@@ -33,7 +36,7 @@
                 </div>
                 <label><strong>Comment</strong></label>
                 <div>
-                    <input type="text" data-role="input" id="comment" name="comment" class="input-small">
+                    <input type="text" data-role="input" id="comment" name="comment" class="input-small" autocomplete="off">
                 </div>
         </div>
         <div class="card-footer">
