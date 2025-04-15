@@ -1,19 +1,20 @@
 # _Test_**Forge**
+
 ### Video Demo:  <URL HERE>
 ### Description:
-_Test_**Forge** is a multiple choice test-generator with a variety of options, depending on a users role.
+_Test_**Forge** is a multiple choice test-generator with a variety of options, depending on the role of the user.
 
 #### Visitors:
-As a unregistered guest you can create a test from available topics, subtopics (multiple selection) or a random set across all topics. After finnishing your test, you get your test-results along with - if available - some helpful comments on wrong answers. If a questions has multiple right answers and you missed one, there might be a comment, too. Visitors can also register as users.
+As a unregistered guest you can create a test from available topics, subtopics (multiple selection) or a random set across all topics. After finishing your test, you get your results along with - if available - some helpful comments on wrong answers. If a question has multiple right answers and you missed one, there might be a comment, too. Visitors can also register as users.
 
 #### Users:
-Registered users have the option to save a finnished test, in case they want to repeat it later. Saved tests can be found on the users profile page, where you can find some statistics, track your progress and compare against other users. Here you also can change your password or delete your account.
+Registered users have the option to save a finished test, in case they want to repeat it later. Saved tests can be found on the users profile page, where you can find some statistics, track your progress and compare against other users. Here you can also change your password or delete your account.
 
 #### Maintainer:
-If you're promoted to maintaier, you can create new topics and suptopics, add questions, answers and helpful comments. Of course you can to edit or delete each item from the database. There'even a bit of markdown support so you can write __bold__, _italics_ and `code`. Sortable and searchable tables will be of great assistance when dealing with lots of entries. You also have access to the site statistics, where you can track the test activity and if you have enough questions for your users demands.
+If you're promoted to maintainer, you can create new topics and suptopics, add questions, answers and helpful comments. Of course you can edit or delete each item from the database, too. There's even markdown support so you can write __bold__, _italics_ and `code`. Sortable and searchable tables will be of great assistance when dealing with lots of entries. You also have access to the site statistics, where you can track the test activity and if you have enough questions for your users demands.
 
 #### Admin:
-As an admin you have acces to the users management. You can easily generate new accounts and are privileged to hand out _unsafe_ passwords (i.e. for test-accounts). You also can promote users to maintainer or admin and - if neccessary - delete user-accounts.
+As an admin you have access to user management. You can easily generate new accounts and are privileged to hand out _unsafe_ passwords (i.e. for test accounts). You can also promote users to maintainer or admin and - if neccessary - delete user accounts.
 
 > [!TIP]
 > 
@@ -97,6 +98,6 @@ docker run -p 8080:5000  -v /host/path:/app/database --name TestForge TestForge/
 
 ### Docs
 
-Visit the [Documentattion](/docs/documentation.md) for more information about the app.
+Visit the [Documentation](/docs/documentation.md) for more information about the app.
 
 
