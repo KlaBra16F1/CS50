@@ -1,50 +1,44 @@
 {% include "./modules/head.html" %}
 {% block main %}
 
-<table class="table row-hover" data-show-search="true" data-search-fields="question" data-cell-wrapper="false"
-    data-rows="10" rownum="true" data-role="table" width="80%" style="table-layout: fixed!important;">
-    <thead>
-        <tr>
-            <th data-name="topic" class="sortable-column colM" data-sort-dir="asc">Topic</th>
-            <th data-name="subtopic" class="sortable-column colM">Subtopic</th>
-            <th data-name="question" class="sortable-column colL">Question</th>
-            <th data-name="multiple" class="colS">M</th>
-            <th data-name="options" class="colM">Options</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for q in questions %}
-        <tr>
-            <td class="colM">{{ q.topic }}</td>
-            <td class="colM">{{ q.subtopic }}</td>
-            <td class="colL">
-                <div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div>
-            </td>
-            <td>
-                <div id="m{{ q.q_id | int }}">
-                    {% if q.isMultipleChoice == 1 %}
-                    <span title="Multiple Choice" class="mif-list"></span>
-                    <input type="hidden" value="{{ q.isMultipleChoice |int }}">
-                    {% else %}
-                    <span title="Single Choice" class="mif-check_circle_outline"></span>
-                    <input type="hidden" value="{{ q.isMultipleChoice |int }}">
-                    {% endif %}
-                </div>
-            </td>
-            <td>
-                <button type="button" name="edit" id="b{{ q.q_id }}" value="{{q.q_id}}" class="button success rounded"
-                    onclick="update('{{ q.q_id }}');" title="Edit Questions"><span
-                        class="mif-pencil fg-white"></span></button>
-                <a href="/edit-answers?question={{ q.q_id }}"><button type="submit" name="q_id" id="a{{ q.q_id }}"
-                        value="{{q.q_id}}" class="button warning rounded" title="Edit Answers"><span
-                            class="mif-list fg-white"></span></button></a>
-                <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded"
-                    onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <table class="table row-hover" data-show-search="true" data-search-fields="question" data-cell-wrapper="false" data-rows="10" rownum="true" data-role="table" width="80%" style="table-layout: fixed!important;">
+        <thead>
+            <tr>
+                <th data-name="topic" class="sortable-column colM" data-sort-dir="asc">Topic</th>
+                <th data-name="subtopic" class="sortable-column colM">Subtopic</th>
+                <th data-name="question" class="sortable-column colL">Question</th>
+                <th data-name="multiple" class="colS">M</th>
+                <th data-name="options" class="colM">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for q in questions %}
+                <tr>
+                    <td class="colM">{{ q.topic }}</td>
+                    <td class="colM">{{ q.subtopic }}</td>
+                    <td class="colL">
+                        <div id="q{{ q.q_id | int }}">{{ q.question | safe }}</div>
+                    </td>
+                    <td>
+                        <div id="m{{ q.q_id | int }}">
+                            {% if q.isMultipleChoice == 1 %}
+                                <span title="Multiple Choice" class="mif-list"></span>
+                                <input type="hidden" value="{{ q.isMultipleChoice |int }}">
+                            {% else %}
+                                <span title="Single Choice" class="mif-check_circle_outline"></span>
+                                <input type="hidden" value="{{ q.isMultipleChoice |int }}">
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" name="edit" id="b{{ q.q_id }}" value="{{q.q_id}}" class="button success rounded" onclick="update('{{ q.q_id }}');" title="Edit Questions"><span class="mif-pencil fg-white"></span></button>
+                        <a href="/edit-answers?question={{ q.q_id }}"><button type="submit" name="q_id" id="a{{ q.q_id }}" value="{{q.q_id}}" class="button warning rounded" title="Edit Answers"><span class="mif-list fg-white"></span></button></a>
+                        <button type="button" name="delete" value="{{q.q_id}}" class="button alert rounded" onclick="deleteQuestion(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 
 {% endblock %}

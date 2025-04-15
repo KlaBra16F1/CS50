@@ -1,47 +1,47 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Add answers to:
-</h1>
-<h3>
-    {{ question | safe }}
-</h3>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Add answers to:
+    </h1>
+    <h3>
+        {{ question | safe }}
+    </h3>
 {% endblock %}
 {% block main %}
-<div class="mt-20 w-75 ml-auto mr-auto">
-    <form action="/add-answers" method="post">
-        <div id="answer-container">
-            <h3>Answer 1:</h3>
-            <div class="row">
-                <div class="cell-md-half">
-                    <input type="hidden" name="answer[1][q_id]" id="q_id" value="{{ q_id }}">
-                    <label>Answer</label><br>
-                    <input name="answer[1][answer]" data-role="input" autocomplete="off">
-                    <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
-                    </small>
-                </div>
-                <div class="cell-md-fifth">
-                    <label>True</label><br>
-                    <select name="answer[1][true]" data-role="select" data-filter="false">
-                        <option value="0">False</option>
-                        <option value="1">True</option>
-                    </select>
-                </div>
-                <div class="cell-md-full">
-                    <label>Comment</label><br>
-                    <input name="answer[1][comment]" data-role="input" class="w-75" autocomplete="off">
-                    <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
-                    </small>
+    <div class="mt-20 w-75 ml-auto mr-auto">
+        <form action="/add-answers" method="post">
+            <div id="answer-container">
+                <h3>Answer 1:</h3>
+                <div class="row">
+                    <div class="cell-md-half">
+                        <input type="hidden" name="answer[1][q_id]" id="q_id" value="{{ q_id }}">
+                        <label>Answer</label><br>
+                        <input name="answer[1][answer]" data-role="input" autocomplete="off">
+                        <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
+                        </small>
+                    </div>
+                    <div class="cell-md-fifth">
+                        <label>True</label><br>
+                        <select name="answer[1][true]" data-role="select" data-filter="false">
+                            <option value="0">False</option>
+                            <option value="1">True</option>
+                        </select>
+                    </div>
+                    <div class="cell-md-full">
+                        <label>Comment</label><br>
+                        <input name="answer[1][comment]" data-role="input" class="w-75" autocomplete="off">
+                        <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
+                        </small>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <a href="javascript:;" id="add-new-answer">Add new Answer</a>
+            <a href="javascript:;" id="add-new-answer">Add new Answer</a>
 
-        <p>
-            <input class="button primary" type="submit">
-        </p>
-    </form>
-</div>
-<script src="./static/addAnswers.js" type="text/javascript"></script>
+            <p>
+                <input class="button primary" type="submit">
+            </p>
+        </form>
+    </div>
+    <script src="./static/addAnswers.js" type="text/javascript"></script>
 {% endblock %}

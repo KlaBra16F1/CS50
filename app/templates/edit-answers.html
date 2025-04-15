@@ -1,50 +1,49 @@
 {% extends "layout.html" %}
 {% block header %}
-<div class="mt-20 w-75 ml-auto mr-auto">
+    <div class="mt-20 w-75 ml-auto mr-auto">
 
-    <h1>
-        Edit Answers
-    </h1>
-    <h3>{{ question["question"] | safe }}</h3>
-    <button class="button small" onclick="history.back();">Back to questions <span
-        class="mif-keyboard-return mif-2x"></span></button>
+        <h1>
+            Edit Answers
+        </h1>
+        <h3>{{ question["question"] | safe }}</h3>
+        <button class="button small" onclick="history.back();">Back to questions <span class="mif-keyboard-return mif-2x"></span></button>
         <input type="hidden" id="q_id" value="{{ question['q_id'] }}">
-</div>
+    </div>
 
 {% endblock %}
 {% block main %}
-<div class="w-75 ml-auto mr-auto">
-    <p id="answers" class="mt-10"></p>
-    <hr>
-    <div class="card">
-        <div class="card-header bg-green fg-white">
-            Add new answer
-        </div>
-        <div class="card-content p-4">
-            <form onsubmit="add_answer(); return false;">
-                <input type="hidden" id="add_q_id" name="add-answer" value="{{ question['q_id'] }}">
-                <label><strong>Answer</strong></label>
-                <div>
-                    <input type="text" id="answer" name="answer" data-role="input" class="input-small" autocomplete="off">
+    <div class="w-75 ml-auto mr-auto">
+        <p id="answers" class="mt-10"></p>
+        <hr>
+        <div class="card">
+            <div class="card-header bg-green fg-white">
+                Add new answer
+            </div>
+            <div class="card-content p-4">
+                <form onsubmit="add_answer(); return false;">
+                    <input type="hidden" id="add_q_id" name="add-answer" value="{{ question['q_id'] }}">
+                    <label><strong>Answer</strong></label>
+                    <div>
+                        <input type="text" id="answer" name="answer" data-role="input" class="input-small" autocomplete="off">
+                    </div>
+                    <label><strong>Correct/Incorrect</strong></label>
+                    <div>
+                        <select data-role="select" id="is_true" name="is_true" class="input-small">
+                            <option value=1>True</option>
+                            <option value=0>False</option>
+                        </select>
+                    </div>
+                    <label><strong>Comment</strong></label>
+                    <div>
+                        <input type="text" data-role="input" id="comment" name="comment" class="input-small" autocomplete="off">
+                    </div>
                 </div>
-                <label><strong>Correct/Incorrect</strong></label>
-                <div>
-                    <select data-role="select" id="is_true" name="is_true" class="input-small">
-                        <option value=1>True</option>
-                        <option value=0>False</option>
-                    </select>
+                <div class="card-footer">
+                    <button class="button success mt-4" type="submit">Submit</button>
                 </div>
-                <label><strong>Comment</strong></label>
-                <div>
-                    <input type="text" data-role="input" id="comment" name="comment" class="input-small" autocomplete="off">
-                </div>
+            </form>
         </div>
-        <div class="card-footer">
-            <button class="button success mt-4" type="submit">Submit</button>
-        </div>
-        </form>
     </div>
-</div>
 
-<script src="./static/editAnswers.js" type="text/javascript"></script>
+    <script src="./static/editAnswers.js" type="text/javascript"></script>
 {% endblock %}

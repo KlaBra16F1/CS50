@@ -1,51 +1,51 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Test
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Test
+    </h1>
 {% endblock %}
 {% block main %}
-<p class="mt-20"></p>
-<form action="/get-results" method="post">
-    {% for q in questions %}
-    <div class="card w-75 ">
-        <div class="card-header bg-blue fg-white">
-            <small><strong>{{ q.topic }}</strong> - {{ q.subtopic }}</small>
-            <h5>{{ q.question | safe }}</h5>
-            {% if q.isMultipleChoice %}
-            <small>Multiple answers possible</small>
-            {% else %}
-            <small>Only one answer</small>
-            {% endif %}
-        </div>
-        <div class="card-content p-2 text-regular">
-            <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
-            <div>
-                {% for a in answers %}
-                {% if a.q_id == q.q_id %}
-                <div class="row">
-                    <div class="cell-md-1">
+    <p class="mt-20"></p>
+    <form action="/get-results" method="post">
+        {% for q in questions %}
+            <div class="card w-75 ">
+                <div class="card-header bg-blue fg-white">
+                    <small><strong>{{ q.topic }}</strong> - {{ q.subtopic }}</small>
+                    <h5>{{ q.question | safe }}</h5>
+                    {% if q.isMultipleChoice %}
+                        <small>Multiple answers possible</small>
+                    {% else %}
+                        <small>Only one answer</small>
+                    {% endif %}
+                </div>
+                <div class="card-content p-2 text-regular">
+                    <input name="question.{{ q.q_id }}" type="hidden" value="{{ q.q_id }}">
+                    <div>
+                        {% for a in answers %}
+                            {% if a.q_id == q.q_id %}
+                                <div class="row">
+                                    <div class="cell-md-1">
 
-                        {% if q.isMultipleChoice %}
-                        <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}">
-                        {% else %}
-                        <input type="radio" name="{{ q.q_id }}" value="{{ a.a_id }}">
-                        {% endif %}
-                    </div>
-                    <div class="cell-md-6">
-                        <label>{{ a.answer | safe }}</label>
+                                        {% if q.isMultipleChoice %}
+                                            <input type="checkbox" name="{{ q.q_id }}.{{ a.a_id }}" value="{{ a.a_id }}">
+                                        {% else %}
+                                            <input type="radio" name="{{ q.q_id }}" value="{{ a.a_id }}">
+                                        {% endif %}
+                                    </div>
+                                    <div class="cell-md-6">
+                                        <label>{{ a.answer | safe }}</label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
-                {% endif %}
-                {% endfor %}
+                <div class="footer">
+                </div>
             </div>
+        {% endfor %}
+        <div>
+            <button class="button primary success pos-bottom-center mb-20" type="submit">Submit</button>
         </div>
-        <div class="footer">
-        </div>
-    </div>
-    {% endfor %}
-    <div>
-        <button class="button primary success pos-bottom-center mb-20" type="submit">Submit</button>
-    </div>
-</form>
+    </form>
 {% endblock %}

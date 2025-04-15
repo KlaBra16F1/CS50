@@ -1,202 +1,128 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Statistics
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Statistics
+    </h1>
 {% endblock %}
 {% block main %}
-{% set u = namespace(count=0) %}
-{% for uc in stats[1] %}
-{% set u.count = u.count + uc['count'] %}
-{% endfor %}
-<div class="w-75 ml-auto mr-auto">
-    <span class="h5"> This site created
-        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade }}" id="counter1">0</span>
-        tests so far.&nbsp;
-        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade - stats[0].forUser }}"
-            id="counter2">0</span> for guests and
-        <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].forUser }}" id="counter3">0</span> for
-        registered users.
-    </span>
-    {% if session.role == 'admin' %}
-    <form class="mt-5" action="/reset-site-statistics" method="post">
-        <button class="button alert" type="submit">Reset site-statistics</button>
-    </form>
-    {% endif %}
+    {% set u = namespace(count=0) %}
+    {% for uc in stats[1] %}
+        {% set u.count = u.count + uc['count'] %}
+    {% endfor %}
+    <div class="w-75 ml-auto mr-auto">
+        <span class="h5"> This site created
+            <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade }}" id="counter1">0</span>
+            tests so far.&nbsp;
+            <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].testsMade - stats[0].forUser }}" id="counter2">0</span> for guests and
+            <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].forUser }}" id="counter3">0</span> for
+            registered users.
+        </span>
+        {% if session.role == 'admin' %}
+            <form class="mt-5" action="/reset-site-statistics" method="post">
+                <button class="button alert" type="submit">Reset site-statistics</button>
+            </form>
+        {% endif %}
 
     <!-- Users -->
-    <section id="users" class="mt-10">
-        <h3>
-            Users
-        </h3>
-        <div class="w-50">
-            <table class="table striped" data-role="table" data-rownum="false" data-show-table-info="false"
-                data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
-                <thead>
-                    <th>Role</th>
-                    <th class="colS">Count</th>
-                </thead>
-                <tbody>
-                    {% for u in stats[1] %}
-                    <tr>
-                        <td><span style="text-transform: capitalize;">{{ u.role }}</span></td>
-                        <td>{{ u.count }}</td>
-                    </tr>
-                    {% endfor %}
-                    <tr>
-                        <td><strong>Total:</strong></td>
-                        <td><strong>{{ u.count }}</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-    <!-- Diagramms -->
-    <section class="mt-10">
-        <h3>
-            Analysis
-        </h3>
-        <input id="total" value="{{ stats[4] }}" type="hidden">
-        <div id="Chart1" style="height: 300px; width: 44%;display:inline-block; border: 1px; border-style: solid; border-color: gray; margin-right: 5px;" ></div>
-        <div id="Chart2" style="height: 300px; width: 44%;display: inline-block;border: 1px; border-style: solid; border-color: gray; margin-left: 5px;"></div>
-        <br><a href="https://canvasjs.com" rel="noreferrer noopener" target="_blank"><small class="text-muted">Made with canvasJS</small></a>
-    </section>
-    <!-- Topics -->
-    <section class="mt-10">
-        <h3>
-            Topics
-        </h3>
-        <div class="w-75">
-            <table class="table" data-role="table" data-rownum="false" data-show-table-info="false"
-                data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
-                <thead>
-                    <th data-sortable="true" class="colL" data-sort-dir="asc">Topics</th>
-                    <th data-sortable="true" class="colS">Questions</th>
-                    <th data-sortable="true" class="colS">Answers</th>
-                    <th data-sortable="true" class="colS">Usage<sup>*</sup></th>
-                </thead>
-                <tbody>
-                    {% for t in stats[2] %}
-                    <tr>
-                        <td >{{ t.topic }}</td>
-                        <td>{{ t.q_count}}</td>
-                        <td>{{ t.a_count }}</td>
-                        <td>{{ t.u_count }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <small>* Usage only shows use of registered users.</small>
-        </div>
-    </section>
-    <!-- Subtopics -->
-    <section class="mt-10">
-        <h3>
-            Subtopics
-        </h3>
-    </section>
-    <div class="w-75" data-role="accordion" data-one-frame="false" data-show-active="true">
-        {% for t in stats[2] %}
-        <div class="frame">
-            <div class="heading">{{ t.topic}} 1</div>
-            <div class="content">
-                <table class="table" data-role="table" data-rownum="false" data-show-table-info="false"
-                    data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+        <section id="users" class="mt-10">
+            <h3>
+                Users
+            </h3>
+            <div class="w-50">
+                <table class="table striped" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
                     <thead>
-                        <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
-                        <th data-sortable="true" class="colS">Questions</th>
-                        <th data-sortable="true" class="colS">Answers</th>
-                        <th data-sortable="true" class="colS">Usage</th>
+                        <th>Role</th>
+                        <th class="colS">Count</th>
                     </thead>
                     <tbody>
-                        {% for s in stats[3] %}
-                        {% if s.topic == t.topic %}
-                        <tr>
-                            <td>{{ s.subtopic }}</td>
-                            <td>{{ s.q_count}}</td>
-                            <td>{{ s.a_count }}</td>
-                            <td>{{ s.u_count }}</td>
-                        </tr>
-                        {% endif %}
+                        {% for u in stats[1] %}
+                            <tr>
+                                <td><span style="text-transform: capitalize;">{{ u.role }}</span></td>
+                                <td>{{ u.count }}</td>
+                            </tr>
                         {% endfor %}
+                        <tr>
+                            <td><strong>Total:</strong></td>
+                            <td><strong>{{ u.count }}</strong></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
+        </section>
+    <!-- Diagramms -->
+        <section class="mt-10">
+            <h3>
+                Analysis
+            </h3>
+            <input id="total" value="{{ stats[4] }}" type="hidden">
+            <div id="Chart1" style="height: 300px; width: 44%;display:inline-block; border: 1px; border-style: solid; border-color: gray; margin-right: 5px;"></div>
+            <div id="Chart2" style="height: 300px; width: 44%;display: inline-block;border: 1px; border-style: solid; border-color: gray; margin-left: 5px;"></div>
+            <br><a href="https://canvasjs.com" rel="noreferrer noopener" target="_blank"><small class="text-muted">Made with canvasJS</small></a>
+        </section>
+    <!-- Topics -->
+        <section class="mt-10">
+            <h3>
+                Topics
+            </h3>
+            <div class="w-75">
+                <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+                    <thead>
+                        <th data-sortable="true" class="colL" data-sort-dir="asc">Topics</th>
+                        <th data-sortable="true" class="colS">Questions</th>
+                        <th data-sortable="true" class="colS">Answers</th>
+                        <th data-sortable="true" class="colS">Usage<sup>*</sup></th>
+                    </thead>
+                    <tbody>
+                        {% for t in stats[2] %}
+                            <tr>
+                                <td>{{ t.topic }}</td>
+                                <td>{{ t.q_count}}</td>
+                                <td>{{ t.a_count }}</td>
+                                <td>{{ t.u_count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <small>* Usage only shows use of registered users.</small>
+            </div>
+        </section>
+    <!-- Subtopics -->
+        <section class="mt-10">
+            <h3>
+                Subtopics
+            </h3>
+        </section>
+        <div class="w-75" data-role="accordion" data-one-frame="false" data-show-active="true">
+            {% for t in stats[2] %}
+                <div class="frame">
+                    <div class="heading">{{ t.topic}} 1</div>
+                    <div class="content">
+                        <table class="table" data-role="table" data-rownum="false" data-show-table-info="false" data-show-search="false" data-show-pagination="false" data-show-rows-steps="false">
+                            <thead>
+                                <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
+                                <th data-sortable="true" class="colS">Questions</th>
+                                <th data-sortable="true" class="colS">Answers</th>
+                                <th data-sortable="true" class="colS">Usage</th>
+                            </thead>
+                            <tbody>
+                                {% for s in stats[3] %}
+                                    {% if s.topic == t.topic %}
+                                        <tr>
+                                            <td>{{ s.subtopic }}</td>
+                                            <td>{{ s.q_count}}</td>
+                                            <td>{{ s.a_count }}</td>
+                                            <td>{{ s.u_count }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
-<p class="mb-20"></p>
-<script src="./static/canvasjs.min.js" type="text/javascript"></script>
-<script>
-    window.onload = function() {
-    var dataPointsOF = [];
-    var dataPointsUF = [];
-    var chart1 = new CanvasJS.Chart("Chart1", {
-        animationEnabled: true,
-        title: {
-            text: "Available Questions"
-        },
-        data: [{
-            type: "pie",
-            startAngle: 240,
-            radius: 100,
-            yValueFormatString: "##0.00\"%\"",
-            indexLabel: "{label} {y}",
-            dataPoints: dataPointsOF
-        }]
-    });
-    var chart2 = new CanvasJS.Chart("Chart2", {
-        animationEnabled: true,
-        title: {
-            text: "Users Choice"
-        },
-        data: [{
-            type: "pie",
-            startAngle: 240,
-            radius: 100,
-            yValueFormatString: "##0.00\"%\"",
-            indexLabel: "{label} {y}",
-            dataPoints: dataPointsUF
-        }]
-    });
-
-    function addDataOF(data) {
-	for (var i = 0; i < data.length; i++) {
-		dataPointsOF.push({
-			label: data[i].topic,
-			y: data[i].percent
-		});
-	}
-	chart1.render();
-    removeLink();
-    }
-
-    function addDataUF(data) {
-	for (var i = 0; i < data.length; i++) {
-		dataPointsUF.push({
-			label: data[i].topic,
-			y: data[i].percent
-		});
-	}
-	chart2.render();
-    removeLink();
-    }
-    function removeLink(){
-        let l = document.getElementsByClassName('canvasjs-chart-credit')
-        for (i of l){
-            i.remove();
-        }
-    }
-
-    $.json("/diagram-api?topic=true").then(function(response){
-        addDataOF(response);
-    })
-    $.json("/diagram-api?users=true").then(function(response){
-        addDataUF(response);
-    })
-    
-    }
-    
-    </script>
+    <p class="mb-20"></p>
+    <script src="./static/canvasjs.min.js" type="text/javascript"></script>
+    <script src="./static/diagrams-stats.js" type="text/javascript"></script>
 {% endblock %}

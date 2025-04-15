@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Welcome to <em>Test</em><strong>FORGE</strong>
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Welcome to <em>Test</em><strong>FORGE</strong>
+    </h1>
 {% endblock %}
 {% block main %}
-<div>
-    <section class="container-fluid mb-10 accent-block dark fg-white">
+    <div>
+        <section class="container-fluid mb-10 accent-block dark fg-white">
         <!-- <div class="container"> -->
             <div class="w-75 mt-20  enlarge-2 pt-10 pb-10 text-left ml-auto mr-auto">
-                <p><em>Test</em><strong>FORGE</strong> is a web-application that lets you create, take and evaluate 
-                multiple choice tests from various categories.</p>
+                <p><em>Test</em><strong>FORGE</strong> is a web-application that lets you create, take and evaluate
+                    multiple choice tests from various categories.</p>
                 <p>Select a topic, choose from multiple subtopics and enter the desired ammount of questions.
                     Or just enter the ammount of questions an test your knowlegde on a random selection of all categories.
                 </p>
@@ -18,116 +18,109 @@
             </div>
 
         <!-- </div> -->
-    </section>
-    <section class="mt-20 mb-20 w-75 ml-auto mr-auto">
-        <h2>
-            More Features
-        </h2>
-        <div data-role="carousel"
-        data-cls-bullet="bullet-big bg-darkGray"
-        data-auto-start="true"
-        data-height="21/9"
-        data-cls-controls="fg-white"
-        data-bullets-position="right"
-        data-control-next="<span class='mif-chevron-right fg-dark'></span>"
-        data-control-prev="<span class='mif-chevron-left fg-dark'></span>">
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container rounded">
-                        <img src="./static/images/results.png">
+        </section>
+        <section class="mt-20 mb-20 w-75 ml-auto mr-auto">
+            <h2>
+                More Features
+            </h2>
+            <div data-role="carousel" data-cls-bullet="bullet-big bg-darkGray" data-auto-start="true" data-height="21/9" data-cls-controls="fg-white" data-bullets-position="right" data-control-next="<span class='mif-chevron-right fg-dark'></span>" data-control-prev="<span class='mif-chevron-left fg-dark'></span>">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container rounded">
+                                <img src="./static/images/results.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Not only results</h1>
+                            <p class="mt-4 mb-4">Getting results is good. Getting helpful comments is better. If available, they show up when you chose a wrong answer or missed a right one.</p>
+                            <a href="/register"><button class="mt-5 button success pos-center">Register now.</button></a>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Not only results</h1>
-                    <p class="mt-4 mb-4">Getting results is good. Getting helpful comments is better. If available, they show up when you chose a wrong answer or missed a right one.</p>
-                    <a href="/register"><button class="mt-5 button success pos-center">Register now.</button></a>
-                </div>
-            </div>
-        </div>
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container rounded">
-                        <img src="./static/images/userprofile.png">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container rounded">
+                                <img src="./static/images/userprofile.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Statistics</h1>
+                            <p class="mt-4 mb-4">As a registered user you have access to the profile page, where you can read some statistics, track your progress and see how you perform against other users.</p>
+                            <a href="/register"><button class="mt-5 button success pos-center">Register now.</button></a>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Statistics</h1>
-                    <p class="mt-4 mb-4">As a registered user you have access to the profile page, where you can read some statistics, track your progress and see how you perform against other users.</p>
-                    <a href="/register"><button class="mt-5 button success pos-center">Register now.</button></a>
-                </div>
-            </div>
-        </div>
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container thumbnail rounded">
-                        <img src="./static/images/save-tests.png">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container thumbnail rounded">
+                                <img src="./static/images/save-tests.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Save your tests.</h1>
+                            <p class="mt-4 mb-4">If you enjoyed a test or feel you could do better, you can simply save it to your user profile and repeat it whenever you want.</p>
+                            <a href="/register"><button class="mt-5 button success pos-center">Register now.</button></a>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Save your tests.</h1>
-                    <p class="mt-4 mb-4">If you enjoyed a test or feel you could do better, you can simply save it to your user profile and repeat it whenever you want.</p>
-                    <a href="/register"><button class="mt-5 button success pos-center">Register now.</button></a>
-                </div>
-            </div>
-        </div>
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container thumbnail rounded">
-                        <img src="./static/images/add-questions.png">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container thumbnail rounded">
+                                <img src="./static/images/add-questions.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Add new content</h1>
+                            <p class="mt-4 mb-4">Apply as a maintainer and add new topics, subtopics, questions and answers.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Add new content</h1>
-                    <p class="mt-4 mb-4">Apply as a maintainer and add new topics, subtopics, questions and answers.</p>
-                </div>
-            </div>
-        </div>
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container thumbnail rounded">
-                        <img src="./static/images/edit-questions.png">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container thumbnail rounded">
+                                <img src="./static/images/edit-questions.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Edit or delete</h1>
+                            <p class="mt-4 mb-4">Make changes to questions and answers, add additional options or delete a whole topic or subtopic.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Edit or delete</h1>
-                    <p class="mt-4 mb-4">Make changes to questions and answers, add additional options or delete a whole topic or subtopic.</p>
-                </div>
-            </div>
-        </div>
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container thumbnail rounded">
-                        <img src="./static/images/statistics.png">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container thumbnail rounded">
+                                <img src="./static/images/statistics.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Insights</h1>
+                            <p class="mt-4 mb-4">See what you have in stock and what users care about. You might want to add some new questions where the demand is high.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Insights</h1>
-                    <p class="mt-4 mb-4">See what you have in stock and what users care about. You might want to add some new questions where the demand is high.</p>
-                </div>
-            </div>
-        </div>
-        <div class="slide p-2 pl-20 pr-20 bg-gray">
-            <div class="row flex-align-center h-100">
-                <div class="cell-md-6 text-center">
-                    <div class="img-container thumbnail rounded">
-                        <img src="./static/images/users.png">
+                <div class="slide p-2 pl-20 pr-20 bg-gray">
+                    <div class="row flex-align-center h-100">
+                        <div class="cell-md-6 text-center">
+                            <div class="img-container thumbnail rounded">
+                                <img src="./static/images/users.png">
+                            </div>
+                        </div>
+                        <div class="cell-md-6">
+                            <h1 class="text-light">Manage users</h1>
+                            <p class="mt-4 mb-4">As an admin you can easily create new users, promote them for higher roles like maintainer or admin and - if neccessary - delete them.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="cell-md-6">
-                    <h1 class="text-light">Manage users</h1>
-                    <p class="mt-4 mb-4">As an admin you can easily create new users, promote them for higher roles like maintainer or admin and - if neccessary - delete them.</p>
-                </div>
             </div>
-        </div>
-    </div>
-    </section>
+        </section>
 
-    
-</div>
+
+    </div>
 {% endblock %}

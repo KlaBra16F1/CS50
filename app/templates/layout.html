@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
-{% include "./modules/head.html" %}
+    {% include "./modules/head.html" %}
+
     <body>
         <!-- Menu -->
         <div class="app-bar-container bg-blue fg-white" data-role="appbar" data-expand-point="md">
@@ -10,56 +11,62 @@
             <ul class="app-bar-menu ">
                 <li><a href="/make-test">Make Test</a></li>
                 {% if session["user_id"] %}
-                {% if session["role"] in ["admin","maintainer"] %}
-                <li><a href="/add-questions">Add questions</a></li>
-                <li><a href="/edit-questions">Edit questions</a></li>
-                <li><a href="/statistics">Statistics</a></li>
-                {% endif %}
-                {% if session["role"] == "admin" %}
-                <li><a href="/users">Manage Users</a></li>
-                {% endif %}
+                    {% if session["role"] in ["admin","maintainer"] %}
+                        <li><a href="/add-questions">Add questions</a></li>
+                        <li><a href="/edit-questions">Edit questions</a></li>
+                        <li><a href="/statistics">Statistics</a></li>
+                    {% endif %}
+                    {% if session["role"] == "admin" %}
+                        <li><a href="/users">Manage Users</a></li>
+                    {% endif %}
                 {% endif %}
             </ul>
             <ul class="app-bar-menu menu-right">
                 {% if not session["user_id"] %}
-                <li><a href="/register">Register</a></li>
-                <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/login">Login</a></li>
                 {% endif %}
                 {% if session["user_id"] %}
-                <li><a href="/profile"><span class="mif-account_circle mif-3x" title="Profile" style="vertical-align: middle;"></span> {{
+                    <li><a href="/profile"><span class="mif-account_circle mif-3x" title="Profile" style="vertical-align: middle;"></span> {{
                         session["user_name"]}}</a></li>
-                <li><a href="/logout">Log out</a></li>
+                    <li><a href="/logout">Log out</a></li>
                 {% endif %}
                 <li><a href="https://github.com/KlaBra16F1/CS50-Final_Project" rel="noopener noreferrer" target="_blank"><span class="mif-github mif-2x" style="vertical-align: middle;"></span></a></li>
             </ul>
         </div>
         <!-- End Menu -->
- 
+
         <header>
             <!-- Status Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% for category, message in messages %}
-            
+
                     {% if category == 'Error' %}
                         <script type=" text/javascript">
-                            Metro.notify.create('{{ message }}', '{{ category }}', {cls: "alert", animation: 'none'});
+                            Metro.notify.create('{{ message }}', '{{ category }}', {
+                                cls: "alert",
+                                animation: 'none'
+                            });
                         </script>
                     {% else %}
                         <script type="text/javascript">
-                            Metro.notify.create('{{ message }}', '{{ category}}', { cls: "success", animation: 'none' });
+                            Metro.notify.create('{{ message }}', '{{ category}}', {
+                                cls: "success",
+                                animation: 'none'
+                            });
                         </script>
                     {% endif %}
                 {%endfor%}
             {% endwith %}
 
-        {% block header %}
-        {% endblock %}
+            {% block header %}
+            {% endblock %}
         </header>
         <main>
             {% block main %}
             {% endblock %}
         </main>
-            
+
 
     </body>
 

@@ -1,77 +1,73 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    User Management
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        User Management
+    </h1>
 {% endblock %}
 {% block main %}
-<div class="mt-20 w-75 ml-auto mr-auto">
-    <h3>
-        Create New User
-    </h3>
-    <form action="/users" method="post">
-        <div class="row">
-            <div class="cell-md-3">
-                <input data-role="input" name="name" type="text" placeholder="Name">
+    <div class="mt-20 w-75 ml-auto mr-auto">
+        <h3>
+            Create New User
+        </h3>
+        <form action="/users" method="post">
+            <div class="row">
+                <div class="cell-md-3">
+                    <input data-role="input" name="name" type="text" placeholder="Name">
+                </div>
+                <div class="cell-md-3">
+                    <input data-role="input" name="password" type="password" placeholder="Password">
+                </div>
+                <div class="cell-md-2">
+                    <select data-role="select" name="role">
+                        {% for r in roles %}
+                            <option value="{{ r }}">{{ r }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="cell-md-3">
-                <input data-role="input" name="password" type="password" placeholder="Password">
-            </div>
-            <div class="cell-md-2">
-                <select data-role="select" name="role">
-                    {% for r in roles %}
-                    <option value="{{ r }}">{{ r }}</option>
+            <button type="submit" class="button primary">Submit</button>
+        </form>
+        <h3>
+            Manage Users
+        </h3>
+        <div class="w-75">
+            <table class="table row-hover" data-show-search="true" data-search-fields="username, role" data-cell-wrapper="false" data-rows="10" rownum="true" data-role="table" width="80%" style="table-layout: fixed!important;">
+                <thead>
+                    <tr>
+                        <th data-name="username" class="sortable-column colL" data-sort-dir="asc">Username</th>
+                        <th data-name="role" class="sortable-column" data-sort-dir="asc">Role</th>
+                        <th data-name="options" class="colM text-center">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        {% if u.name != 'admin' %}
+                            <tr>
+                                <td>{{ u.name }}</td>
+                                <td>
+                                    <form action="/users" method="post">
+                                        <input name="change-role" type="hidden" value="{{ u.u_id }}">
+                                        <select name="role" class="input-small">
+                                            {% for r in roles %}
+                                                <option value="{{ r }}" {% if r==u.role %} selected {% endif %}>{{ r }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="button small rounded">Change</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="/users" method="post">
+                                        <input name="delete" type="hidden" value="{{ u.u_id }}">
+                                        <input name="name" type="hidden" value="{{ u.name }}">
+                                        <button type="submit" name="delete" value="{{u.u_id}}" class="button alert rounded pos-bottom-center" onclick="deleteUser(event);" title="Delete"><span class="mif-bin fg-white"></span></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
-                </select>
-            </div>
+                </tbody>
+            </table>
         </div>
-        <button type="submit" class="button primary">Submit</button>
-    </form>
-    <h3>
-        Manage Users
-    </h3>
-    <div class="w-75">
-        <table class="table row-hover" data-show-search="true" data-search-fields="username, role"
-            data-cell-wrapper="false" data-rows="10" rownum="true" data-role="table" width="80%"
-            style="table-layout: fixed!important;">
-            <thead>
-                <tr>
-                    <th data-name="username" class="sortable-column colL" data-sort-dir="asc">Username</th>
-                    <th data-name="role" class="sortable-column" data-sort-dir="asc">Role</th>
-                    <th data-name="options" class="colM text-center">Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for u in users %}
-                {% if u.name != 'admin' %}
-                <tr>
-                    <td>{{ u.name }}</td>
-                    <td>
-                        <form action="/users" method="post">
-                            <input name="change-role" type="hidden" value="{{ u.u_id }}">
-                            <select name="role" class="input-small">
-                                {% for r in roles %}
-                                <option value="{{ r }}" {% if r==u.role %} selected {% endif %}>{{ r }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="submit" class="button small rounded">Change</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form action="/users" method="post">
-                            <input name="delete" type="hidden" value="{{ u.u_id }}">
-                            <input name="name" type="hidden" value="{{ u.name }}">
-                            <button type="submit" name="delete" value="{{u.u_id}}"
-                                class="button alert rounded pos-bottom-center" onclick="deleteUser(event);"
-                                title="Delete"><span class="mif-bin fg-white"></span></button>
-                        </form>
-                    </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
-</div>
 
 {% endblock %}

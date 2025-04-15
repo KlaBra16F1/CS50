@@ -4,7 +4,7 @@
         <select name="topic" id="topic" data-role="select">
             <option value="">Please Select</option>
             {% for r in rows_topics %}
-            <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }} ({{ r.count }})</option>
+                <option name="{{ r.t_id }}" value="{{ r.t_id }}">{{ r.topic }} ({{ r.count }})</option>
             {% endfor %}
         </select>
     </div>

@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Make Test
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Make Test
+    </h1>
 {% endblock %}
 
 {% block main %}
-<div class=" w-75 ml-auto mr-auto">
-    <form action="/make-test" method="post" id="make-test">
-        {%include "modules/test-topic-selector.html" %}
-        <input type="number" name="count" placeholder="Number of questions">
-        <button type="submit">Create test</button>
-    </form>
-    {% include "/modules/selector-script-test.html" %}
-</div>
-<script src="./static/makeTest.js" type="text/javascript"></script>
+    <div class=" w-75 ml-auto mr-auto">
+        <form action="/make-test" method="post" id="make-test">
+            {%include "modules/test-topic-selector.html" %}
+            <input type="number" name="count" placeholder="Number of questions">
+            <button type="submit">Create test</button>
+        </form>
+        {% include "/modules/selector-script-test.html" %}
+    </div>
+    <script src="./static/makeTest.js" type="text/javascript"></script>
 {% endblock %}

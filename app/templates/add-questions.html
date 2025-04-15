@@ -1,46 +1,46 @@
 {% extends "layout.html" %}
 {% block header %}
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Add Questions
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Add Questions
+    </h1>
 {% endblock %}
 {% block main %}
 
-<div class="w-75 ml-auto mr-auto">
+    <div class="w-75 ml-auto mr-auto">
     <!--- Add new topics or subtopics -->
-    <form action="/add-questions" method="post">
-        {% include "modules/topic-selector.html" %}
-        <div class="row">
-            <div class="cell-md-third">
-                <label>Create new topic</label>
-                <input name="new-topic" type="text" placeholder="New topic" data-role="input" autocomplete="off">
-                <small>Press [Enter] to send.</small>
+        <form action="/add-questions" method="post">
+            {% include "modules/topic-selector.html" %}
+            <div class="row">
+                <div class="cell-md-third">
+                    <label>Create new topic</label>
+                    <input name="new-topic" type="text" placeholder="New topic" data-role="input" autocomplete="off">
+                    <small>Press [Enter] to send.</small>
+                </div>
+                <div class="cell-md-third">
+                    <label>Create new subtopic</label>
+                    <input name="new-subtopic" type="text" placeholder="Requires selected topic" data-role="input" autocomplete="off">
+                    <small>Press [Enter] to send.</small>
+                </div>
+
             </div>
-            <div class="cell-md-third">
-                <label>Create new subtopic</label>
-                <input name="new-subtopic" type="text" placeholder="Requires selected topic" data-role="input" autocomplete="off">
-                <small>Press [Enter] to send.</small>
+            <div class="form-group w-75">
+                <label>Question</label>
+                <input name="question" placeholeder="Question" data-role="input" autocomplete="off"></input>
+                <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
+                </small>
+                <p></p>
+                <label>Multiple Choice</label>
+                <input type="checkbox" name="isMultipleChoice" value="1">
+
             </div>
 
-        </div>
-        <div class="form-group w-75">
-            <label>Question</label>
-            <input name="question" placeholeder="Question" data-role="input" autocomplete="off"></input>
-            <small>Markdown supported for <strong>__bold__</strong>, <em>_italics_</em> and <code>`code`.</code>
-            </small>
-            <p></p>
-            <label>Multiple Choice</label>
-            <input type="checkbox" name="isMultipleChoice" value="1">
+            <button type="submit" class="button primary mt-5">Submit</button>
+        </form>
 
-        </div>
 
-        <button type="submit" class="button primary mt-5">Submit</button>
+        {% include "modules/selector-script.html" %}
+
+
+    </div>
     </form>
-
-
-    {% include "modules/selector-script.html" %}
-
-
-</div>
-</form>
 {% endblock %}

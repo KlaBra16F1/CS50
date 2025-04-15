@@ -1,203 +1,187 @@
 {% extends "layout.html" %}
 {% block header %}
 
-<h1 class="mt-20 w-75 ml-auto mr-auto">
-    Profile
-</h1>
+    <h1 class="mt-20 w-75 ml-auto mr-auto">
+        Profile
+    </h1>
 {% endblock %}
 {% block main %}
-{% set c = namespace(counter=0) %}
-{% set col = ['lime','emerald','cyan','cobalt','indigo','crimson','orange','olive','steel','terracotta','coral'] %}
+    {% set c = namespace(counter=0) %}
+    {% set col = ['lime','emerald','cyan','cobalt','indigo','crimson','orange','olive','steel','terracotta','coral'] %}
 <!-- Side-Navigation -->
-<ul class="sidenav-simple sidenav-simple-expand-lg float-right z-2"
-    style="position:sticky ; margin-top: -100px ;top: 50px; right: 0px; height:auto;  overflow: hidden;">
-    <li><a href="#stats">
-            <span class="mif-chart-dots icon" data-role="hint" data-hint-position="left"
-                data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Your stats"></span>
+    <ul class="sidenav-simple sidenav-simple-expand-lg float-right z-2" style="position:sticky ; margin-top: -100px ;top: 50px; right: 0px; height:auto;  overflow: hidden;">
+        <li><a href="#stats">
+            <span class="mif-chart-dots icon" data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Your stats"></span>
             <span class="title">Your stats</span></a></li>
-    <li><a href="#reset">
-            <span class="mif-undo icon" data-role="hint" data-hint-position="left"
-                data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Reset stats"></span>
+        <li><a href="#reset">
+            <span class="mif-undo icon" data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Reset stats"></span>
             <span class="title">Reset stats</span></a></li>
-    <li><a href="#tests">
-            <span class="mif-bookmarks icon" data-role="hint" data-hint-position="left"
-                data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Saved tests"></span>
+        <li><a href="#tests">
+            <span class="mif-bookmarks icon" data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Saved tests"></span>
             <span class="title">Saved tests</span></a></li>
-    <li><a href="#changePW">
-            <span class="mif-security icon" data-role="hint" data-hint-position="left"
-                data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Change password"></span>
+        <li><a href="#changePW">
+            <span class="mif-security icon" data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Change password"></span>
             <span class="title">Change password</span></a></li>
-    <li><a href="#delete">
-            <span class="mif-bin icon" data-role="hint" data-hint-position="left"
-                data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Delete account"></span>
+        <li><a href="#delete">
+            <span class="mif-bin icon" data-role="hint" data-hint-position="left" data-cls-hint="bg-grayWhite drop-shadow" data-hint-text="Delete account"></span>
             <span class="title">Delete account</span></a></li>
-</ul>
+    </ul>
 <!-- Page Start -->
-<div class="w-75 ml-auto mr-auto">
-    <section id="stats">
-        <h3>
-            Your statistics
-        </h3>
+    <div class="w-75 ml-auto mr-auto">
+        <section id="stats">
+            <h3>
+                Your statistics
+            </h3>
         <!-- Counters -->
-        {% if stats[0]["times"] %}
-        <span class="h5">You answered
-            <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].times}}" id="counter1">0</span>
-            questions out of
-            <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].topics}}" id="counter2">0</span>
-            topics and
-            <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].subtopics}}" id="counter3">00</span>
-            subtopics with an accuracy of
-            <span
-                class="h3 text-light" data-role="counter" data-value="{{ (stats[0].accuracy * 100) | round(1)}}" id="counter4">0</span>
-            &percnt;.
-        </span>
-        {% else %}
-        You have no stats yet. Make some test first.
-        {% endif %}
+            {% if stats[0]["times"] %}
+                <span class="h5">You answered
+                    <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].times}}" id="counter1">0</span>
+                    questions out of
+                    <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].topics}}" id="counter2">0</span>
+                    topics and
+                    <span class="h3 text-light" data-role="counter" data-value="{{ stats[0].subtopics}}" id="counter3">00</span>
+                    subtopics with an accuracy of
+                    <span class="h3 text-light" data-role="counter" data-value="{{ (stats[0].accuracy * 100) | round(1)}}" id="counter4">0</span>
+                    &percnt;.
+                </span>
+            {% else %}
+                You have no stats yet. Make some test first.
+            {% endif %}
         <!-- Topic Table-->
-        <h4>
-            By topic
-        </h4>
-        <div class="w-75">
-            <table class="table row-hover" data-role="table" data-rownum="false" data-sortable="true">
-                <thead>
-                    <tr>
-                        <th data-sortable="true" class="colL" data-sort-dir="asc">Topic</th>
-                        <th data-sortable="true" class="colS">Questions</th>
-                        <th data-sortable="true" class="colS">Attempts</th>
-                        <th data-sortable="true" class="colM">Completion</th>
-                        <th data-sortable="true" class="colS">Score</th>
-                        <th data-sortable="true" class="colS">Other users</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in stats[1] %}
-                    {% set m = namespace(col='') %}
-                    {% set o = namespace(col='') %}
-                    {% if (r["others"]) and (r["accuracy"] < r["others"]) %} {% set m.col='red' %} {% set o.col='green'
-                        %} {% elif (r["others"]) and (r["accuracy"]> r["others"]) %}
-                        {% set m.col = 'green' %}
-                        {% set o.col = 'red' %}
-                        {% endif %}
+            <h4>
+                By topic
+            </h4>
+            <div class="w-75">
+                <table class="table row-hover" data-role="table" data-rownum="false" data-sortable="true">
+                    <thead>
                         <tr>
-                            <td><a href="#" id="t{{ r.t_id }}" onclick="getDetails('{{ r.t_id }}');"
-                                    style="color: black; text-decoration: none;">{{ r.topic }}</a></td>
-                            <td>{{ r["questions"] }}</td>
-                            <td>{{ r["attempts"] }}</td>
-                            <td>
-                                <div class="place-left">{{ r.questions }}/{{ r.q_count }}</div>
-                                <div data-role="progress" data-value="{{ r.questions / r.q_count * 100 }}"></div>
-                            </td>
-                            <td><span class="fg-{{ m.col }}">{{ (r.accuracy * 100) |round(1) }} &percnt;</span></td>
-                            <td>{%if r["others"] %}
-                                <span class="fg-{{ o.col }}">{{ (r.others * 100) | round(1) }} &percnt;</span>
+                            <th data-sortable="true" class="colL" data-sort-dir="asc">Topic</th>
+                            <th data-sortable="true" class="colS">Questions</th>
+                            <th data-sortable="true" class="colS">Attempts</th>
+                            <th data-sortable="true" class="colM">Completion</th>
+                            <th data-sortable="true" class="colS">Score</th>
+                            <th data-sortable="true" class="colS">Other users</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in stats[1] %}
+                            {% set m = namespace(col='') %}
+                            {% set o = namespace(col='') %}
+                            {% if (r["others"]) and (r["accuracy"] < r["others"]) %} {% set m.col='red' %} {% set o.col='green'
+                                %} {% elif (r["others"]) and (r["accuracy"]> r["others"]) %}
+                                {% set m.col = 'green' %}
+                                {% set o.col = 'red' %}
+                            {% endif %}
+                            <tr>
+                                <td><a href="#" id="t{{ r.t_id }}" onclick="getDetails('{{ r.t_id }}');" style="color: black; text-decoration: none;">{{ r.topic }}</a></td>
+                                <td>{{ r["questions"] }}</td>
+                                <td>{{ r["attempts"] }}</td>
+                                <td>
+                                    <div class="place-left">{{ r.questions }}/{{ r.q_count }}</div>
+                                    <div data-role="progress" data-value="{{ r.questions / r.q_count * 100 }}"></div>
+                                </td>
+                                <td><span class="fg-{{ m.col }}">{{ (r.accuracy * 100) |round(1) }} &percnt;</span></td>
+                                <td>{%if r["others"] %}
+                                    <span class="fg-{{ o.col }}">{{ (r.others * 100) | round(1) }} &percnt;</span>
                                 {% else %} N/A
                                 {% endif %}
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
         <!-- Details Table -->
-        <h4 id="details">
-            Details
-        </h4>
-        <div class="w-75">
-            <table class="table" data-role="table" data-rownum="false" data-sortable="true">
-                <thead>
-                    <tr>
-                        <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
-                        <th data-sortable="true" class="colS">Questions</th>
-                        <th data-sortable="true" class="colS">Attempts</th>
-                        <th data-sortable="true" class="colM">Completion</th>
-                        <th data-sortable="true" class="colS">Score</th>
-                        <th data-sortable="true" class="colS">Other users</th>
-                    </tr>
-                </thead>
-                <tbody id="subtopics">
+            <h4 id="details">
+                Details
+            </h4>
+            <div class="w-75">
+                <table class="table" data-role="table" data-rownum="false" data-sortable="true">
+                    <thead>
+                        <tr>
+                            <th data-sortable="true" class="colL" data-sort-dir="asc">Subtopic</th>
+                            <th data-sortable="true" class="colS">Questions</th>
+                            <th data-sortable="true" class="colS">Attempts</th>
+                            <th data-sortable="true" class="colM">Completion</th>
+                            <th data-sortable="true" class="colS">Score</th>
+                            <th data-sortable="true" class="colS">Other users</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subtopics">
 
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
         <!-- Reset Stats -->
-        <form action="/profile" method="post">
-            <button class="button alert" type="submit" name="deleteStats" value="{{ session['user_id'] }}">Reset your
-                stats</button>
-        </form>
-    </section>
+            <form action="/profile" method="post">
+                <button class="button alert" type="submit" name="deleteStats" value="{{ session['user_id'] }}">Reset your
+                    stats</button>
+            </form>
+        </section>
     <!-- Test Tiles -->
-    <section id="tests">
-        <hr class="mt-10">
-        <h3>
-            Your saved tests
-        </h3>
-        {% if not tests %}
-        You have not saved a test yet.
-        {% else %}
-        <div class="tiles-grid tiles-group size-6">
-            {% for t in tests %}
-            {% set c.counter = c.counter + 1 %}
-            <div data-role="tile" data-size="wide" class="bg-{{ col[ range(col|length) | random ]}}">
-                <div class="ml-2">
-                    Test {{ c.counter }}
-                    <h4>{{ t.test_name}}</h4>
+        <section id="tests">
+            <hr class="mt-10">
+            <h3>
+                Your saved tests
+            </h3>
+            {% if not tests %}
+                You have not saved a test yet.
+            {% else %}
+                <div class="tiles-grid tiles-group size-6">
+                    {% for t in tests %}
+                        {% set c.counter = c.counter + 1 %}
+                        <div data-role="tile" data-size="wide" class="bg-{{ col[ range(col|length) | random ]}}">
+                            <div class="ml-2">
+                                Test {{ c.counter }}
+                                <h4>{{ t.test_name}}</h4>
+                            </div>
+                            <span class="branding-bar">
+                                <button id="{{ t.ut_id}}" value="{{ t.ut_id }}" class="button success" type="button" onclick="loadTest(event);return false;">Start again</button>
+                                <button id="d{{ t.ut_id}}" value="{{ t.ut_id }}" class="button alert" type="button" onclick="deleteTest(event); return false;">Delete</button></span>
+                        </div>
+                    {% endfor %}
                 </div>
-                <span class="branding-bar">
-                    <button id="{{ t.ut_id}}" value="{{ t.ut_id }}" class="button success" type="button"
-                        onclick="loadTest(event);return false;">Start again</button>
-                    <button id="d{{ t.ut_id}}" value="{{ t.ut_id }}" class="button alert" type="button"
-                        onclick="deleteTest(event); return false;">Delete</button></span>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+            {% endif %}
         <!-- Change Password -->
-    </section>
-    <hr class="mt-10">
-    <section id="changePW">
-        <h3>
-            Change password
-        </h3>
-        <form action="/change-password" method="post" data-role="validator" class="w-50">
-            <div class="form-group">
-                <input type="password" name="old-pw" id="old-pw" placeholder="Current password" autocomplete="off"
-                    data-role="input" data-prepend="Current password">
-            </div>
-            <div class="form-group">
+        </section>
+        <hr class="mt-10">
+        <section id="changePW">
+            <h3>
+                Change password
+            </h3>
+            <form action="/change-password" method="post" data-role="validator" class="w-50">
+                <div class="form-group">
+                    <input type="password" name="old-pw" id="old-pw" placeholder="Current password" autocomplete="off" data-role="input" data-prepend="Current password">
+                </div>
+                <div class="form-group">
 
-                <input type="password" name="password" id="password" placeholder="Password" autocomplete="off"
-                    data-validate=" required pattern=(?=.*\d)(?=.*[@#$%^&+=])(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                    data-role="input" data-prepend="Password" data-append="">
-                <small id="passwordInfo" class="fg-darkGrey">Must have 8+ characters (Upper-/lowercase), digits and
-                    symbols ( @ # $ % ^ & + =). </small>
-            </div>
-            <div class="form-group">
-                <input type="password" name="confirm" id="confirm" placeholder="Confirm your password"
-                    autocomplete="off" data-validate="required compare=password" data-role="input"
-                    data-prepend="Confirm" data-append="">
-                <small id="confirmInfo" class="fg-darkGrey">&nbsp;</small>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="button success">Change password</button>
-                <input type="reset" class="button" value="Reset">
-            </div>
-        </form>
-    </section>
-    <hr class="mt-10">
+                    <input type="password" name="password" id="password" placeholder="Password" autocomplete="off" data-validate=" required pattern=(?=.*\d)(?=.*[@#$%^&+=])(?=.*[a-z])(?=.*[A-Z]).{8,}" data-role="input" data-prepend="Password" data-append="">
+                    <small id="passwordInfo" class="fg-darkGrey">Must have 8+ characters (Upper-/lowercase), digits and
+                        symbols ( @ # $ % ^ & + =). </small>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="confirm" id="confirm" placeholder="Confirm your password" autocomplete="off" data-validate="required compare=password" data-role="input" data-prepend="Confirm" data-append="">
+                    <small id="confirmInfo" class="fg-darkGrey">&nbsp;</small>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="button success">Change password</button>
+                    <input type="reset" class="button" value="Reset">
+                </div>
+            </form>
+        </section>
+        <hr class="mt-10">
     <!-- Delete Account -->
-    <section id="delete" class="mt-5">
-        <h3>
-            Delete Account
-        </h3>
-        <form action="/delete-account" method="post" class="w-50">
-            <input type="password" data-role="input" name="password" placeholder="Confirm with your password"
-                data-prepend="Password">
-            <button class="button alert mt-5 mb-20" type="submit">Delete account</button>
-            <input type="reset" class="button mt-5 mb-20" value="Reset">
-        </form>
-    </section>
-</div>
-<script src="./static/pwConfirmMatch.js" type="text/javascript"></script>
-<script src="./static/profile.js" type="text/javascript"></script>
+        <section id="delete" class="mt-5">
+            <h3>
+                Delete Account
+            </h3>
+            <form action="/delete-account" method="post" class="w-50">
+                <input type="password" data-role="input" name="password" placeholder="Confirm with your password" data-prepend="Password">
+                <button class="button alert mt-5 mb-20" type="submit">Delete account</button>
+                <input type="reset" class="button mt-5 mb-20" value="Reset">
+            </form>
+        </section>
+    </div>
+    <script src="./static/pwConfirmMatch.js" type="text/javascript"></script>
+    <script src="./static/profile.js" type="text/javascript"></script>
 {% endblock %}
