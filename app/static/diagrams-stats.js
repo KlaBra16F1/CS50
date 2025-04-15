@@ -4,7 +4,9 @@ window.onload = function() {
     var chart1 = new CanvasJS.Chart("Chart1", {
         animationEnabled: true,
         title: {
-            text: "Available Questions"
+            text: "Available Questions",
+            fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Ubuntu, Helvetica Neue, sans-serif",
+            fontWeight: "normal"
         },
         data: [{
             type: "pie",
@@ -18,7 +20,9 @@ window.onload = function() {
     var chart2 = new CanvasJS.Chart("Chart2", {
         animationEnabled: true,
         title: {
-            text: "Users Choice"
+            text: "Users Choice",
+            fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Ubuntu, Helvetica Neue, sans-serif",
+            fontWeight: "normal"
         },
         data: [{
             type: "pie",
@@ -52,18 +56,18 @@ window.onload = function() {
         removeLink();
     }
 
-    function removeLink() {
-        let l = document.getElementsByClassName('canvasjs-chart-credit')
-        for (i of l) {
-            i.remove();
-        }
-    }
-
     $.json("/diagram-api?topic=true").then(function(response) {
         addDataOF(response);
     })
     $.json("/diagram-api?users=true").then(function(response) {
         addDataUF(response);
     })
-
+    
+    function removeLink() {
+        let l = document.getElementsByClassName('canvasjs-chart-credit')
+        for (i of l) {
+            i.remove();
+        }
+    }
+    window.addEventListener("resize", removeLink)
 }

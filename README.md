@@ -10,10 +10,14 @@ As a unregistered guest you can create a test from available topics, subtopics (
 Registered users have the option to save a finnished test, in case they want to repeat it later. Saved tests can be found on the users profile page, where you can find some statistics, track your progress and compare against other users. Here you also can change your password or delete your account.
 
 #### Maintainer:
-If you're promoted to maintaier, you can create new topics and suptopics, add questions and answers or delete a bunch of them. Of course there's also the option to edit all the items from the database. Sortable and searchable tables will be of great assistance when dealing with lots of entries. You also have acces to the site statistics, where you can track the test activity and if you have enough questions for your users demands.
+If you're promoted to maintaier, you can create new topics and suptopics, add questions, answers and helpful comments. Of course you can to edit or delete each item from the database. There'even a bit of markdown support so you can write __bold__, _italics_ and `code`. Sortable and searchable tables will be of great assistance when dealing with lots of entries. You also have access to the site statistics, where you can track the test activity and if you have enough questions for your users demands.
 
 #### Admin:
 As an admin you have acces to the users management. You can easily generate new accounts and are privileged to hand out _unsafe_ passwords (i.e. for test-accounts). You also can promote users to maintainer or admin and - if neccessary - delete user-accounts.
+
+> [!TIP]
+> 
+> To get you started, the database is filled with a bunch of questions from categories like 'Programming Languages' or 'Web Design'. Of course it's easy to delete whole topics, so a clean start is only six clicks away.
 
 ### Usage 
 
@@ -59,7 +63,10 @@ docker build -t TestForge/testforge:v1.0.0 -f docker/Dockerfile app
 ```
 3. Run the docker image
 ```bash
+# Everything inside docker
 docker run -p 8080:5000  --name TestForge TestForge/testforge:v1.0.0
+# Persistent database in your host-folder
+docker run -p 8080:5000  -v /host/path:/app/database --name TestForge TestForge/testforge:v1.0.0
 ```
 4. Open your browser and go to `http://localhost:5000`
 
@@ -67,7 +74,7 @@ docker run -p 8080:5000  --name TestForge TestForge/testforge:v1.0.0
 
 6. Enjoy
 
-> [!CAUTION]
+> [!WARNING]
 > This app is **NOT FOR PRODUCTION!!!**
 >
 > There is only minimal security and no HTTPS encryption, so it is strongly advised to use it only in your local network.
@@ -87,5 +94,9 @@ docker run -p 8080:5000  --name TestForge TestForge/testforge:v1.0.0
   - JavaScript
   - [Metro_UI](https://github.com/olton/metroui)
   - [CanvasJS](https://canvasjs.com)
+
+### Docs
+
+Visit the [Documentattion](/docs/documentation.md) for more information about the app.
 
 

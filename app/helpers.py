@@ -9,7 +9,7 @@ from markdown import markdown
 import re
 
 # Variables
-db = SQL("sqlite:///database/database_with_questions.db")
+db = SQL("sqlite:///database/database2.db")
 ROLES = ["admin", "maintainer", "user"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -149,7 +149,6 @@ def change_role(u_id, role):
 
 def get_userstats(u_id):
     stats = []
-    db.execute("BEGIN TRANSACTION;")
     overall = db.execute("SELECT COUNT(DISTINCT t.t_id) AS topics, COUNT(DISTINCT s.s_id) AS subtopics, "
                          "COUNT(uq.timesDone) AS times, AVG(accuracy) AS accuracy, (SELECT COUNT(*) FROM questions) AS total_questions "
                          "FROM user_questions uq INNER JOIN questions q USING (q_id) INNER JOIN subtopics s USING(s_id) INNER JOIN topics t USING(t_id) "
@@ -161,7 +160,6 @@ def get_userstats(u_id):
                                "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics s WHERE t.t_id = s.t_id AND s.s_id = q.s_id AND q.q_id = uq.q_id AND NOT uq.u_id = ?) as others, "
                                "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = t.t_id) as q_count "
                                "FROM user_questions uq, questions q, subtopics s, topics t WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id AND uq.u_id = ? GROUP BY t.t_id, t.topic;", u_id, u_id)
-    db.execute("COMMIT;")
     db._disconnect()
 
     stats.append(compareTopics)
@@ -171,9 +169,9 @@ def get_userstats(u_id):
 def get_userstats_details(t_id, u_id):
     subtopics = db.execute("SELECT s.s_id, s.subtopic, COUNT(uq.timesDone) AS questions, SUM(uq.timesDone) AS attempts, AVG(uq.accuracy) AS accuracy, "
                            "(SELECT AVG(uq.accuracy) FROM user_questions uq, questions q, subtopics st WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND st.t_id = s.t_id AND NOT uq.u_id = ?) as others, "
-                           "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = s.t_id) as q_count "
+                           "(SELECT COUNT(q_id) from questions qc, subtopics sc WHERE qc.s_id = sc.s_id AND sc.t_id = s.t_id AND s.s_id = qc.s_id) as q_count "
                            " FROM user_questions uq, questions q, subtopics s WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = ? AND uq.u_id = ? GROUP BY s.s_id, s.subtopic;",  u_id, t_id, u_id)
-
+    db._disconnect()
     return subtopics
 
 
@@ -193,7 +191,6 @@ def delete_stats(u_id):
 
 def get_sitestats():
     stats = []
-    db.execute("BEGIN TRANSACTION;")
     q_count = db.execute("SELECT COUNT(*) AS q_count FROM questions;")
     # Usage
     usage = db.execute("SELECT testsMade, forUser FROM teststats;")
@@ -205,7 +202,6 @@ def get_sitestats():
     stats_subtopics = db.execute("SELECT t.topic, s.subtopic, COUNT(distinct q.q_id) AS q_count, COUNT(a.a_id) AS a_count, "
                                  "(SELECT SUM(uq.timesDone) FROM user_questions uq, questions qq WHERE uq.q_id = qq.q_id and qq.s_id = s.s_id) as u_count "
                                  "FROM questions q INNER JOIN answers a USING (q_id) INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY t.topic, s.subtopic ORDER BY topic;")
-    db.execute("COMMIT")
     db._disconnect()
     topic_list = set(t['topic'] for t in stats_subtopics)
     stats_topics = []
@@ -227,17 +223,19 @@ def get_sitestats():
 
 def topics_diagramm():
     total = db.execute("SELECT COUNT(q_id) as total FROM questions;")
+    total = total[0].get("total") if total[0].get("total") > 0 else 1
     data = db.execute(
-        "SELECT ROUND((CAST(COUNT(q.q_id) AS real) / ? * 100),2) AS percent, t.topic AS topic FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY topic;", total[0].get("total"))
+        "SELECT ROUND((CAST(COUNT(q.q_id) AS real) / ? * 100),2) AS percent, t.topic AS topic FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY topic;", total)
     db._disconnect()
     return data
 
 
 def userTopics_diagram():
     total = db.execute("SELECT SUM(timesDone) AS total FROM user_questions;")
+    total = total[0].get("total") if total[0].get("total") > 0 else 1
     data = db.execute("SELECT t.topic, ROUND((CAST(SUM(uq.timesDone) AS real) / ? * 100),2) AS percent "
                       "FROM user_questions uq, questions q, subtopics s, topics t "
-                      "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id GROUP BY t.topic;", total[0].get("total"))
+                      "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id GROUP BY t.topic;", total) 
     db._disconnect()
     return data
 
