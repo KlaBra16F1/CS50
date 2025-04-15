@@ -1,9 +1,9 @@
 // Script for 'register.html'
 let username = document.querySelector('#username');
-   
+
 // Check if username already exists in db
-username.addEventListener('change', async function(){
-    let feedback1 = Metro.getPlugin('#username','append');
+username.addEventListener('change', async function() {
+    let feedback1 = Metro.getPlugin('#username', 'append');
     let req = await fetch('/register?username=' + username.value);
     let res = '';
     try {
@@ -17,6 +17,6 @@ username.addEventListener('change', async function(){
         } else {
             $('#userNameAlert').html("<span class='mif-more-horiz mif-2x fg-gray'></span>");
             $('#userNameInfo').html('4-16 characters or numbers. Must not contain whitespaces and special characters.');
-        }   
+        }
     }
 });

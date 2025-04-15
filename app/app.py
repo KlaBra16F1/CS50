@@ -13,12 +13,15 @@ app.config["SESSION_TYPE"] = "filesystem"
 # Cookies
 Session(app)
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 # Questions
-@app.route("/add-questions", methods=["GET","POST"])
+
+
+@app.route("/add-questions", methods=["GET", "POST"])
 @h.maintainer_required
 def add_questions():
     if request.method == "POST":
@@ -26,46 +29,47 @@ def add_questions():
             new_topic = request.form.get("new-topic")
             msg = h.add_topic(new_topic)
             if msg.get("error"):
-                flash(msg.get("error"),"Error")
+                flash(msg.get("error"), "Error")
                 return redirect("/add-questions")
             else:
-                flash(msg.get("success"),"Success")
+                flash(msg.get("success"), "Success")
                 return redirect("/add-questions")
-        
+
         if request.form.get("new-subtopic") != "":
             if not request.form.get("topic"):
                 error = "Select a topic first to create a subtopic."
-                flash(error,"Error")
+                flash(error, "Error")
                 return redirect("/add-questions")
             t_id = h.get_int(request.form.get("topic"))
             new_subtopic = request.form.get("new-subtopic", "")
             msg = h.add_subtopic(t_id, new_subtopic)
             if msg.get("error"):
-                flash(msg.get("error"),"Error")
+                flash(msg.get("error"), "Error")
                 return redirect("/add-questions")
             else:
-                flash(msg.get("success"),"Success")
+                flash(msg.get("success"), "Success")
                 return redirect("/add-questions")
-                
+
         if request.form.get("subtopic") == "":
-            flash("You must select a subtopic before adding a questions","Error")
+            flash("You must select a subtopic before adding a questions", "Error")
             return redirect("/add-questions")
         s_id = h.get_int(request.form.get("subtopic", None))
         question = request.form.get("question", None)
         difficulty = request.form.get("difficulty", None)
-        isMultipleChoice = request.form.get("isMultipleChoice",0)
+        isMultipleChoice = request.form.get("isMultipleChoice", 0)
         if question == "":
-            flash("Question can't be empty","Error")
+            flash("Question can't be empty", "Error")
             return redirect("/add-questions")
-            
+
         q_id = h.add_question(s_id, question, difficulty, isMultipleChoice)
         question = markdown(question)
 
         flash("Question successully added. Enter Answers now.")
-        return render_template("add-answers.html", q_id = q_id["q_id"], question = question)
-    
+        return render_template("add-answers.html", q_id=q_id["q_id"], question=question)
+
     topics = h.get_topics()
     return render_template("add-questions.html", rows_topics=topics)
+
 
 @app.route("/edit-questions")
 @h.maintainer_required
@@ -74,18 +78,17 @@ def edit_questions():
         q_id = h.get_int(request.args.get("delete"))
         msg = h.delete_question(q_id)
         return msg
-    ###TODO
     if request.args.get("delTopicSubtopic"):
         if request.args.get("delTopicSubtopic") == "t_id":
             t_id = h.get_int(request.args.get("id"))
             msg = h.delete_topic(t_id)
-            
+
             return msg
-        
+
         elif request.args.get("delTopicSubtopic") == "s_id":
             s_id = request.args.get("id")
             msg = h.delete_subtopic(s_id)
-            
+
         else:
             abort(400)
 
@@ -94,25 +97,26 @@ def edit_questions():
         question = request.args.get("question", None)
         multiple = request.args.get("multiple", None)
         if question == "":
-            return {"error": "Question can't be empty."} 
+            return {"error": "Question can't be empty."}
         msg = h.update_question(q_id, question, multiple)
         return msg
-        
+
     topics = h.get_topics()
     return render_template("edit-questions.html", rows_topics=topics)
 
 # Answers
 
-@app.route("/add-answers", methods=["GET","POST"])
+
+@app.route("/add-answers", methods=["GET", "POST"])
 @h.maintainer_required
 def add_answers():
     if request.method == "POST":
         form = request.form
         # Extract multiple answers from form
         answers = []
-        for i in range (1,len(form)//4+1):
+        for i in range(1, len(form)//4+1):
             answer = {}
-            answer["q_id"] =  h.get_int(form[f"answer[{i}][q_id]"])
+            answer["q_id"] = h.get_int(form[f"answer[{i}][q_id]"])
             answer["answer"] = form[f"answer[{i}][answer]"]
             if answer["answer"] == "":
                 continue
@@ -121,9 +125,9 @@ def add_answers():
             answers.append(answer)
 
         changes = h.add_answers(answers)
-        flash(f"Added {changes} questions.","Success")
+        flash(f"Added {changes} questions.", "Success")
         return redirect("/add-questions")
-    
+
     if request.args.get("q_id"):
         q_id = h.get_int(request.args.get("q_id", None))
         answer = request.args.get("answer", "")
@@ -136,7 +140,8 @@ def add_answers():
     else:
         return redirect("/add-questions")
 
-@app.route("/edit-answers",methods=["GET","POST"])
+
+@app.route("/edit-answers", methods=["GET", "POST"])
 @h.maintainer_required
 def edit_answers():
 
@@ -146,12 +151,12 @@ def edit_answers():
         question = h.get_selected_questions(q_id)
         if len(question) < 1:
             abort(400)
-        question = h.add_markdown(question,"question")
+        question = h.add_markdown(question, "question")
         return render_template("edit-answers.html", question=question[0])
-    
+
     if request.args.get("update_answer"):
         a_id = h.get_int(request.args.get("update_answer"))
-        answer = request.args.get("answer","")
+        answer = request.args.get("answer", "")
         is_true = request.args.get("is_true")
         comment = request.args.get("comment")
         q_id = h.get_int(request.args.get("q_id"))
@@ -159,7 +164,7 @@ def edit_answers():
             return {"error": "Answer can't be empty"}
         msg = h.update_answer(q_id, a_id, answer, is_true, comment)
         return msg
-    
+
     if request.args.get("delete"):
         a_id = h.get_int(request.args.get("delete"))
         q_id = h.get_int(request.args.get("q-id"))
@@ -170,15 +175,15 @@ def edit_answers():
 
 # Tests
 
-@app.route("/make-test", methods=["GET","POST"])
+@app.route("/make-test", methods=["GET", "POST"])
 def make_test():
-    
+
     session["q_order"] = ""
     session["a_order"] = ""
     if request.method == "POST":
         t_id = request.form.get("topic")
         s_id = request.form.get("subtopic")
-        count = request.form.get("count",0)
+        count = request.form.get("count", 0)
 
         if not session.get("user_id"):
             u_id = None
@@ -189,10 +194,10 @@ def make_test():
             s_id = s_id[1:-1]
             s_id = s_id.split(',')
             s_id = list(h.get_int(s) for s in s_id)
-        
-        questions, answers = h.create_test(u_id,t_id, s_id, count)
-        questions = h.add_markdown(questions,"question")
-        answers = h.add_markdown(answers,"answer","comment")
+
+        questions, answers = h.create_test(u_id, t_id, s_id, count)
+        questions = h.add_markdown(questions, "question")
+        answers = h.add_markdown(answers, "answer", "comment")
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
         return render_template("test.html", questions=questions, answers=answers)
@@ -205,19 +210,20 @@ def make_test():
         questions, answers = h.get_user_test(session["user_id"], ut_id)
         if questions is None or answers is None:
             abort(400)
-        questions = h.add_markdown(questions,"question")
-        answers = h.add_markdown(answers,"answer","comment")
+        questions = h.add_markdown(questions, "question")
+        answers = h.add_markdown(answers, "answer", "comment")
         session["q_order"] = [q["q_id"] for q in questions]
         session["a_order"] = [a["a_id"] for a in answers]
         return render_template("test.html", questions=questions, answers=answers)
 
     return render_template("make-test.html", rows_topics=topics)
 
+
 @app.route("/get-results", methods=["POST"])
 def get_results():
     test = {}
     # extract questions/answers dict
-    
+
     for r in request.form:
         if r.__contains__("."):
             rs = r.split(".")
@@ -230,7 +236,7 @@ def get_results():
 
     # send answers to users table
     u_id = None if session is None else session.get("user_id")
-    h.verify_test(u_id,test)
+    h.verify_test(u_id, test)
     questions = h.get_questions_result(session["q_order"])
     questions = h.add_markdown(questions, "question")
     answers = h.get_answers(session["q_order"])
@@ -254,12 +260,13 @@ def get_results():
 @h.login_required
 def save_test():
     if request.args.get("save") and h.get_int(request.args.get("save")) == session["user_id"]:
-        
+
         questions = session["q_order"]
         msg = h.save_test(session["user_id"], str(request.args.get("name")), questions)
         return msg
-    
+
     return redirect("/")
+
 
 @app.route("/delete-test")
 @h.login_required
@@ -271,6 +278,8 @@ def delete_test():
     abort(400)
 
 # Inforoutes
+
+
 @app.route("/get-subtopics")
 def get_subtopics():
     if request.args.get("t_id"):
@@ -279,7 +288,8 @@ def get_subtopics():
             t_id = h.get_int(t_id)
         subtopics = h.get_subtopics(t_id)
         return jsonify(subtopics)
-    return {"empty":200}
+    return {"empty": 200}
+
 
 @app.route("/get-questions")
 @h.maintainer_required
@@ -291,13 +301,14 @@ def get_questions():
     if s_id != "":
         s_id = h.get_int(s_id)
     questions = h.get_questions(t_id, s_id)
-    questions = h.add_markdown(questions,"question")
+    questions = h.add_markdown(questions, "question")
     q_ids = [q_id["q_id"] for q_id in questions]
     answers = h.get_answers(q_ids)
 
     # Markdown
-    answers = h.add_markdown(answers,"answer","comment")
-    return render_template("modules/questions.html", questions = questions, answers = answers)
+    answers = h.add_markdown(answers, "answer", "comment")
+    return render_template("modules/questions.html", questions=questions, answers=answers)
+
 
 @app.route("/get-answers")
 @h.maintainer_required
@@ -305,15 +316,18 @@ def get_answers():
     q_id = h.get_int(request.args.get("q_id"))
     answers = h.get_answers(q_id)
     answers = sorted(answers, key=lambda x: x["a_id"])
-    answers = h.add_markdown(answers, "answer","comment" )
-    return render_template("modules/answers.html", answers=answers) 
+    answers = h.add_markdown(answers, "answer", "comment")
+    return render_template("modules/answers.html", answers=answers)
 
-#Statistics
+# Statistics
+
+
 @app.route('/statistics')
 @h.maintainer_required
 def stats():
     stats = h.get_sitestats()
     return render_template("statistics.html", stats=stats)
+
 
 @app.route("/diagram-api")
 @h.maintainer_required
@@ -324,7 +338,7 @@ def diagram_api():
     if request.args.get("users"):
         data = h.userTopics_diagram()
         return jsonify(data)
-    
+
     abort(400)
 
 
@@ -337,7 +351,8 @@ def delete_site_stats():
 
 # Users
 
-@app.route("/register",methods=["GET","POST"])
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if session.get("user_id"):
         return redirect("/")
@@ -345,41 +360,45 @@ def register():
         if not (request.form.get("username") and request.form.get("password") and request.form.get("confirm")):
             abort(400)
         else:
-            msg = h.register_user(request.form.get('username'),request.form.get("password"),request.form.get("confirm"))
-        
+            msg = h.register_user(request.form.get('username'), request.form.get(
+                "password"), request.form.get("confirm"))
+
             if msg.get("error"):
-                flash(msg.get("error"),"Error")
+                flash(msg.get("error"), "Error")
                 return redirect("/register")
             else:
                 flash(msg.get("success"), "Success")
-                return redirect ("/login")
-    
+                return redirect("/login")
+
     if request.args.get("username"):
         username = request.args.get("username")
         ok = 'ok' if h.check_username(username) == 0 else 'error'
         return jsonify(ok)
-    
+
     return render_template("register.html")
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    
+
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         if not username or not password:
-            flash("User not found or password incorrect","Error")
+            flash("User not found or password incorrect", "Error")
             return redirect("/login")
-        session["user_name"], session["user_id"], session["role"], error_msg = h.login_user(username, password)
-        
+        session["user_name"], session["user_id"], session["role"], error_msg = h.login_user(
+            username, password)
+
         if not session["user_id"] or not session["role"]:
-            flash(error_msg,"Error")
+            flash(error_msg, "Error")
             return redirect("/login")
-        flash("User {} successfully logged in as {}".format(username, session["role"]),"Success")
+        flash("User {} successfully logged in as {}".format(username, session["role"]), "Success")
         return redirect("/profile")
     return render_template("login.html")
 
-@app.route("/users", methods=["GET","POST"])
+
+@app.route("/users", methods=["GET", "POST"])
 @h.admin_required
 def users():
     if request.method == "POST":
@@ -392,30 +411,31 @@ def users():
             else:
                 flash(msg.get("success"), "Success")
             return redirect("/users")
-        
+
         if request.form.get("change-role") != None:
             msg = h.change_role(request.form.get("change-role"), request.form.get("role"))
-        
+
             if msg.get("error"):
                 flash(msg.get("error"), "Error")
             else:
                 flash(msg.get("success"), "Success")
             return redirect("/users")
-        
+
         name = request.form.get("name")
         hash = generate_password_hash(request.form.get("password"))
         role = request.form.get("role")
         msg = h.add_user(name, hash, role)
         if msg.get("error"):
-                flash(msg.get("error"), "Error")
+            flash(msg.get("error"), "Error")
         else:
             flash(msg.get("success"), "Success")
         return redirect("/users")
 
     users = h.get_users()
-    return render_template("users.html", users = users, roles=h.ROLES)
+    return render_template("users.html", users=users, roles=h.ROLES)
 
-@app.route("/profile",methods=["GET","POST"])
+
+@app.route("/profile", methods=["GET", "POST"])
 @h.login_required
 def profile():
     u_id = session["user_id"]
@@ -426,23 +446,23 @@ def profile():
                 flash(msg.get("error"), "Error")
             else:
                 flash(msg.get("success"), "Success")
-            
+
             return redirect("/profile")
 
     if request.args.get("t_id"):
         t_id = h.get_int(request.args.get("t_id"))
         subtopics = h.get_userstats_details(t_id, u_id)
-        return render_template("modules/user-stats-subtopics.html", subtopics = subtopics)
+        return render_template("modules/user-stats-subtopics.html", subtopics=subtopics)
 
-        
     tests = h.get_saved_tests(u_id)
     stats = h.get_userstats(u_id)
     return render_template("profile.html", tests=tests, stats=stats)
 
+
 @app.route("/change-password", methods=["POST"])
 @h.login_required
 def change_password():
-    old_pw = request.form.get("old-pw",None)
+    old_pw = request.form.get("old-pw", None)
     pw = request.form.get("password", None)
     confirm = request.form.get("confirm", None)
     if old_pw and pw and confirm:
@@ -453,9 +473,9 @@ def change_password():
             flash(msg.get("success"), "Success")
     else:
         flash("Something is wrong with your input", "Error")
-        
 
     return redirect("/profile")
+
 
 @app.route("/delete-account", methods=["POST"])
 @h.login_required
@@ -466,8 +486,8 @@ def delete_account():
 
         msg = h.delete_account(session["user_id"], password)
         if msg.get("error"):
-                flash(msg.get("error"), "Error")
-                return redirect("/profile")
+            flash(msg.get("error"), "Error")
+            return redirect("/profile")
         else:
             flash(msg.get("success"), "Success")
             return redirect("/logout")
@@ -481,33 +501,32 @@ def logout():
 
 # ERRORS
 
+
 @app.errorhandler(werkzeug.exceptions.BadRequest)
 def handle_bad_request(e):
     err = str(e).split(":")
     return render_template("error.html", error=err), 400
+
 
 @app.errorhandler(werkzeug.exceptions.Unauthorized)
 def handle_unauthorized(e):
     err = str(e).split(":")
     return render_template("error.html", error=err), 401
 
+
 @app.errorhandler(werkzeug.exceptions.NotFound)
 def not_found(e):
     err = str(e).split(":")
     return render_template("error.html", error=err), 404
+
 
 @app.errorhandler(werkzeug.exceptions.MethodNotAllowed)
 def handle_method_not_allowed(e):
     err = str(e).split(":")
     return render_template("error.html", error=err), 405
 
+
 @app.errorhandler(500)
 def server_error(e):
     err = str(e).split(":")
     return render_template("error.html", error=err), 500
-
-
-
-
-
-

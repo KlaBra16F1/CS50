@@ -1,21 +1,24 @@
 /* Custom colum widths for Metro tables */
 .colS {
-    width: 60px!important; 
+    width: 60px !important;
 }
+
 .colM {
-    width: 20%!important;
+    width: 20% !important;
 }
 
 .colL {
-    width: 50%!important;
+    width: 50% !important;
 }
 td {
-    vertical-align:top!important;
+    vertical-align: top !important;
 }
+
 /* Align Login/Logout/Register/Userprofile right */
 .menu-right {
-    margin-left: auto!important;
+    margin-left: auto !important;
 }
+
 /* .sidenav-m3[dir=rtl] a {
     padding-left: 1rem;
     padding-right: 1rem;
