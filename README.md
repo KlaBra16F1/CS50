@@ -15,9 +15,11 @@ If you're promoted to maintaier, you can create new topics and suptopics, add qu
 #### Admin:
 As an admin you have acces to the users management. You can easily generate new accounts and are privileged to hand out _unsafe_ passwords (i.e. for test-accounts). You also can promote users to maintainer or admin and - if neccessary - delete user-accounts.
 
-### Usage
+### Usage 
 
-1. Clone the repository and `cd` into the `app` directory
+#### Run with Python
+
+1. Clone the repository and `cd` into the `CS50-Final_Project/app` directory
 ```bash
 git clone https://github.com/KlaBra16F1/CS50-Final_Project.git
 ```
@@ -25,12 +27,39 @@ git clone https://github.com/KlaBra16F1/CS50-Final_Project.git
 ```bash
 pip install -r requirements.txt
 ```
-3. Run the app
+3. Generate a secret
+```
+# Linux
+EXPORT FLASK_SECRET_KEY="$(openssl rand -base64 32)"
+# WINDOWS
+$env:FLASK_SECRET_KEY = -join([char[]](33..122) | Get-Random -Count 32)
+```
+4. Run the app
 ```bash
 # localhost only
 flask run
 # or in your local network
 flask run --host=0.0.0.0
+```
+5. Open your browser and go to `http://localhost:5000`
+
+6. Login as user: `admin` password: `admin`
+
+7. Enjoy
+
+#### Run with Docker
+
+1. Clone the repository and `cd` into the `CS50-Final_Project` directory
+```bash
+git clone https://github.com/KlaBra16F1/CS50-Final_Project.git
+```
+2. Build the docker image
+```bash
+docker build -t TestForge/testforge:v1.0.0 -f docker/Dockerfile app
+```
+3. Run the docker image
+```bash
+docker run -p 8080:5000  --name TestForge TestForge/testforge:v1.0.0
 ```
 4. Open your browser and go to `http://localhost:5000`
 
@@ -40,6 +69,7 @@ flask run --host=0.0.0.0
 
 > [!CAUTION]
 > This app is **NOT FOR PRODUCTION!!!**
+>
 > There is only minimal security and no HTTPS encryption, so it is strongly advised to use it only in your local network.
 
 ### Stack
@@ -58,6 +88,4 @@ flask run --host=0.0.0.0
   - [Metro_UI](https://github.com/olton/metroui)
   - [CanvasJS](https://canvasjs.com)
 
-> [!CAUTION]
-> Advises about risks or negative outcomes of certain actions.
->
+
