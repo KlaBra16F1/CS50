@@ -9,7 +9,7 @@ from markdown import markdown
 import re
 
 # Variables
-db = SQL("sqlite:///database2.db.bak")
+db = SQL("sqlite:///database/database_with_questions.db")
 ROLES = ["admin", "maintainer", "user"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
