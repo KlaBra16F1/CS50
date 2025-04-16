@@ -9,31 +9,14 @@ from markdown import markdown
 import re
 
 # Variables
-try:
-    db = SQL("sqlite:///database/database2.db")
-except RuntimeError as e:
-    print("Db says", e)
-    con = sqlite3.connect("./database/database2.db")
-    con.close
-    db = SQL("sqlite:///database/database2.db")
-    db.execute("BEGIN TRANSACTION;")
-    db.execute("CREATE TABLE IF NOT EXISTS users (u_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, name TEXT NOT NULL, hash TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'user');")
-    db.execute("CREATE TABLE IF NOT EXISTS topics (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, topic TEXT NOT NULL);")
-    db.execute("CREATE TABLE IF NOT EXISTS subtopics (s_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, t_id INTEGER, subtopic TEXT NOT NULL, FOREIGN KEY (t_id) REFERENCES topics(t_id));")
-    db.execute("CREATE TABLE IF NOT EXISTS questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id INTEGER NOT NULL, question TEXT NOT NULL, difficulty INTEGER DEFAULT 0, isMultipleChoice NUMERIC DEFAULT 0, FOREIGN KEY (s_id) REFERENCES subtopics(s_id));")
-    db.execute("CREATE TABLE IF NOT EXISTS answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL DEFAULT 0, FOREIGN KEY (q_id) REFERENCES questions(q_id));")
-    db.execute("CREATE TABLE IF NOT EXISTS user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, accuracy REAL GENERATED ALWAYS AS (ROUND(CAST(timesRight AS REAL) / CAST(timesDone AS REAL),2)),lastDate TEXT);")
-    db.execute("CREATE TABLE IF NOT EXISTS user_tests (ut_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));")
-    db.execute("CREATE TABLE IF NOT EXISTS teststats (testsMade integer, forUser integer);")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_uq ON user_questions (u_id, q_id);")
-    db.execute("INSERT INTO teststats VALUES (0, 0);")
-    db.execute("INSERT INTO users (name, hash, role) VALUES ('admin', ?, 'admin');", generate_password_hash('admin'))
-    db.execute("COMMIT;")
+db = SQL("sqlite:///database/database2.db")
+
 
 ROLES = ["admin", "maintainer", "user"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 DAY = dt.timedelta(days=1)
+
 
 
 # SQL Functions

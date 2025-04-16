@@ -7,7 +7,8 @@ import helpers as h
 
 # App Setting
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.config.from_prefixed_env()
+app.config["SECRET_KEY"]
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 # Cookies

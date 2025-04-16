@@ -8,7 +8,7 @@ _Test_**Forge** is a multiple choice test-generator with a variety of options, d
 As a unregistered guest you can create a test from available topics, subtopics (multiple selection) or a random set across all topics. After finishing your test, you get your results along with - if available - some helpful comments on wrong answers. If a question has multiple right answers and you missed one, there might be a comment, too. Visitors can also register as users.
 
 #### Users:
-Registered users have the option to save a finished test, in case they want to repeat it later. Saved tests can be found on the users profile page, where you can find some statistics, track your progress and compare against other users. Here you can also change your password or delete your account.
+For registered users the test results are stored per question the database. This way your next test will consist of questions you haven't answered, you haven't answered recently or you haven't answered right. You also have the option to save a finished test, in case you want to repeat it later. Saved tests can be found on the users profile page, where you can find some statistics, track your progress and compare against other users. Here you can also change your password or delete your account.
 
 #### Maintainer:
 If you're promoted to maintainer, you can create new topics and suptopics, add questions, answers and helpful comments. Of course you can edit or delete each item from the database, too. There's even markdown support so you can write __bold__, _italics_ and `code`. Sortable and searchable tables will be of great assistance when dealing with lots of entries. You also have access to the site statistics, where you can track the test activity and if you have enough questions for your users demands.
@@ -28,7 +28,7 @@ As an admin you have access to user management. You can easily generate new acco
 ```bash
 git clone https://github.com/KlaBra16F1/CS50-Final_Project.git
 ```
-2. Install requrirements (venv or conda reccomended)
+2. Install requrirements (Consider a virtual environment like Venv or Conda)
 ```bash
 pip install -r requirements.txt
 ```
@@ -67,7 +67,7 @@ docker build -t TestForge/testforge:v1.0.0 -f docker/Dockerfile app
 # Everything inside docker
 docker run -p 8080:5000  --name TestForge TestForge/testforge:v1.0.0
 # Persistent database in your host-folder
-docker run -p 8080:5000  -v /host/path:/app/database --name TestForge TestForge/testforge:v1.0.0
+docker run -p 8080:5000  -v /your/desired/path:/app/database --name TestForge TestForge/testforge:v1.0.0
 ```
 4. Open your browser and go to `http://localhost:5000`
 
