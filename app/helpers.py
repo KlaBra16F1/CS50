@@ -9,7 +9,7 @@ from markdown import markdown
 import re
 
 # Variables
-db = SQL("sqlite:///database/database2.db")
+db = SQL("sqlite:///database/database.db")
 
 
 ROLES = ["admin", "maintainer", "user"]
