@@ -711,7 +711,7 @@ def init_database():
     db.execute("CREATE TABLE IF NOT EXISTS answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL DEFAULT 0, FOREIGN KEY (q_id) REFERENCES questions(q_id));")
     db.execute("CREATE TABLE IF NOT EXISTS user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, accuracy REAL GENERATED ALWAYS AS (ROUND(CAST(timesRight AS REAL) / CAST(timesDone AS REAL),2)),lastDate TEXT);")
     db.execute("CREATE TABLE IF NOT EXISTS user_tests (ut_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));")
-    db.execute("CREATE TABLE IF NOT EXISTS teststats (testsMade integer, forUser integer); INSERT INTO teststats VALUES(0,0);")
+    db.execute("CREATE TABLE IF NOT EXISTS teststats (testsMade integer, forUser integer);")
     db.execute("CREATE INDEX IF NOT EXISTS idx_uq ON user_questions (u_id, q_id);")
     db.execute("INSERT INTO teststats VALUES (0, 0);")
     db.execute("INSERT INTO users (name, hash, role) VALUES ('admin', ?, 'admin');", generate_password_hash('admin'))

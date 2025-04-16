@@ -126,7 +126,7 @@ def add_answers():
             answers.append(answer)
 
         changes = h.add_answers(answers)
-        flash(f"Added {changes} answers.", "Success")
+        flash(f"Added {changes} answersl,k;..", "Success")
         return redirect("/add-questions")
 
     if request.args.get("q_id"):
