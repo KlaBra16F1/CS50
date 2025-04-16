@@ -9,7 +9,27 @@ from markdown import markdown
 import re
 
 # Variables
-db = SQL("sqlite:///database/database2.db")
+try:
+    db = SQL("sqlite:///database/database2.db")
+except RuntimeError as e:
+    print("Db says", e)
+    con = sqlite3.connect("./database/database2.db")
+    con.close
+    db = SQL("sqlite:///database/database2.db")
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("CREATE TABLE IF NOT EXISTS users (u_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, name TEXT NOT NULL, hash TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'user');")
+    db.execute("CREATE TABLE IF NOT EXISTS topics (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, topic TEXT NOT NULL);")
+    db.execute("CREATE TABLE IF NOT EXISTS subtopics (s_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, t_id INTEGER, subtopic TEXT NOT NULL, FOREIGN KEY (t_id) REFERENCES topics(t_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id INTEGER NOT NULL, question TEXT NOT NULL, difficulty INTEGER DEFAULT 0, isMultipleChoice NUMERIC DEFAULT 0, FOREIGN KEY (s_id) REFERENCES subtopics(s_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL DEFAULT 0, FOREIGN KEY (q_id) REFERENCES questions(q_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, accuracy REAL GENERATED ALWAYS AS (ROUND(CAST(timesRight AS REAL) / CAST(timesDone AS REAL),2)),lastDate TEXT);")
+    db.execute("CREATE TABLE IF NOT EXISTS user_tests (ut_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS teststats (testsMade integer, forUser integer);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_uq ON user_questions (u_id, q_id);")
+    db.execute("INSERT INTO teststats VALUES (0, 0);")
+    db.execute("INSERT INTO users (name, hash, role) VALUES ('admin', ?, 'admin');", generate_password_hash('admin'))
+    db.execute("COMMIT;")
+
 ROLES = ["admin", "maintainer", "user"]
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -223,7 +243,7 @@ def get_sitestats():
 
 def topics_diagramm():
     total = db.execute("SELECT COUNT(q_id) as total FROM questions;")
-    total = total[0].get("total") if total[0].get("total") > 0 else 1
+    total = total[0].get("total") if total[0].get("total") is not None and total[0].get("total") > 0 else 1
     data = db.execute(
         "SELECT ROUND((CAST(COUNT(q.q_id) AS real) / ? * 100),2) AS percent, t.topic AS topic FROM questions q INNER JOIN subtopics s USING (s_id) INNER JOIN topics t USING (t_id) GROUP BY topic;", total)
     db._disconnect()
@@ -232,7 +252,7 @@ def topics_diagramm():
 
 def userTopics_diagram():
     total = db.execute("SELECT SUM(timesDone) AS total FROM user_questions;")
-    total = total[0].get("total") if total[0].get("total") > 0 else 1
+    total = total[0].get("total") if total[0].get("total") is not None and total[0].get("total") > 0  else 1
     data = db.execute("SELECT t.topic, ROUND((CAST(SUM(uq.timesDone) AS real) / ? * 100),2) AS percent "
                       "FROM user_questions uq, questions q, subtopics s, topics t "
                       "WHERE uq.q_id = q.q_id AND q.s_id = s.s_id AND s.t_id = t.t_id GROUP BY t.topic;", total) 
@@ -698,3 +718,18 @@ def maintainer_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+def init_database():
+    db.execute("BEGIN TRANSACTION;")
+    db.execute("CREATE TABLE IF NOT EXISTS users (u_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, name TEXT NOT NULL, hash TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'user');")
+    db.execute("CREATE TABLE IF NOT EXISTS topics (t_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, topic TEXT NOT NULL);")
+    db.execute("CREATE TABLE IF NOT EXISTS subtopics (s_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, t_id INTEGER, subtopic TEXT NOT NULL, FOREIGN KEY (t_id) REFERENCES topics(t_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS questions (q_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, s_id INTEGER NOT NULL, question TEXT NOT NULL, difficulty INTEGER DEFAULT 0, isMultipleChoice NUMERIC DEFAULT 0, FOREIGN KEY (s_id) REFERENCES subtopics(s_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS answers (a_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, q_id INTEGER NOT NULL, answer TEXT NOT NULL, comment TEXT, is_true NUMERIC NOT NULL DEFAULT 0, FOREIGN KEY (q_id) REFERENCES questions(q_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS user_questions (u_id INTEGER NOT NULL, q_id INTEGER NOT NULL, timesDone INTEGER NOT NULL, timesRight INTEGER NOT NULL, accuracy REAL GENERATED ALWAYS AS (ROUND(CAST(timesRight AS REAL) / CAST(timesDone AS REAL),2)),lastDate TEXT);")
+    db.execute("CREATE TABLE IF NOT EXISTS user_tests (ut_id INTEGER PRIMARY KEY NOT NULL DEFAULT rowid, u_id INTEGER NOT NULL, test_name TEXT NOT NULL ,questions TEXT NOT NULL, FOREIGN KEY (u_id) REFERENCES users(u_id));")
+    db.execute("CREATE TABLE IF NOT EXISTS teststats (testsMade integer, forUser integer); INSERT INTO teststats VALUES(0,0);")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_uq ON user_questions (u_id, q_id);")
+    db.execute("INSERT INTO teststats VALUES (0, 0);")
+    db.execute("INSERT INTO users (name, hash, role) VALUES ('admin', ?, 'admin');", generate_password_hash('admin'))
+    db.execute("COMMIT;")

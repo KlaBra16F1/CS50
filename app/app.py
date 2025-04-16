@@ -334,9 +334,14 @@ def stats():
 def diagram_api():
     if request.args.get("topic"):
         data = h.topics_diagramm()
+        print(data)
+        if len(data) < 1:
+            return [{"percent": 0, "topic": ""}]
         return jsonify(data)
     if request.args.get("users"):
         data = h.userTopics_diagram()
+        if len(data) < 1:
+            return [{"percent": 0, "topic": ""}]
         return jsonify(data)
 
     abort(400)

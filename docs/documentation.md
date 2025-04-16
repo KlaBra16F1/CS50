@@ -1,41 +1,5 @@
 # Documentaation
 
-## Use cases
-```plantuml
-@startuml
-left to right direction
-actor Admin as a
-actor Maintainer as m
-actor User as u
-actor Guest as g
-package Website {
-    usecase "register" as uc0
-    usecase "Create test from topics/subtopics" as uc1
-    usecase "Take test" as uc2
-    usecase "Store statistics from tests" as uc3
-    usecase "View personal statistics" as uc4
-    usecase "CRUD topics/subtopics" as uc5
-    usecase "CRUD questions/answers" as uc6
-    usecase "See all statistics" as uc7
-    usecase "CRUD users" as uc8
-    (login)
-}
-g --> uc0
-g --> uc1
-g --> uc2
-g <|-- u
-u --> (login)
-u --> uc3 
-u --> uc4 
-u <|-- m 
-m --> uc5
-m --> uc6
-m --> uc7
-m <|-- a 
-a --> uc8
-@enduml
-```
-
 ## Database
 ```sql
 -- static tables
