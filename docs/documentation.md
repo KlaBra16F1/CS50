@@ -191,6 +191,7 @@ direction TB
         subgraph block main
             c[include topic-selector]
             d[placeholder]
+            c -- selection --> d
         end
         b[block header]
 
@@ -207,5 +208,13 @@ c -- GET request --> g
 g -- JSON response --> c
 d -- AJAX-request --> f
 f -- render_template --> e
-e -- XML response --> d
+e -- XML response<br>with Table --> d
 ```
+
+And this is how it looks in the browser, when all requests are done.
+
+![edit-questions.html](./images/edit-questions.png)
+
+----
+
+to be continued...
