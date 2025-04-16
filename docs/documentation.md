@@ -80,7 +80,10 @@ The table `user_tests` stores the tests in form of a comma-seperated string cont
 ### 1.3. teststats
 This table is just a simple counter, which is updated each time, a test is submitted for evaluation. It has just one row of data but if this row is missing, you'll get a server error each time you submit a test or visit `/statistics`
 
-### 1.4. Troubleshooting
+### 1.4. Unused columns
+Currently there is an additional but unused column `difficulty` in the questions table. Maybe this will get implemented in future releases. 
+
+### 1.5. Troubleshooting
 If you mess up your database in the docker version, simply delete the `database.db` file from `/app/database` or your mounted volume and restart the container.
 
 For a local flask instance you can create a new sqlite database with these commands:
@@ -166,4 +169,43 @@ c -- POST form --> d
 d -- GET --> e
 ```
 
-## 
+## 3. Modular HTML-Jinja layout
+
+The main Jinja layout is stored in `layout.html` and is broken down in three blocks. `<header>` is for titles and `<main>` for the content. There is an optional `<footer>` block for future use.
+
+Besides blocks, the website uses some `{% includes %}` to load different elements like the topic/subtopic selectors, which initially was only one selector used on three different pages. Also the `<head>` element is separated from the layout file because some page-elements dynamically are loaded into the page via AJAX requests.
+
+Heres a basic illustration how `edit-questions.html` is constructed.
+
+```mermaid
+---
+title: edit-questions.html 
+---
+flowchart TB
+
+subgraph edit-questions.html
+direction TB
+    subgraph extends layout.html
+    direction TB
+        a[include head.html]
+        subgraph block main
+            c[include topic-selector]
+            d[placeholder]
+        end
+        b[block header]
+
+    end
+end
+
+subgraph flask
+    direction TB
+    f["/get-questions"]
+    g["get-subtopics"]
+    e[questions.html]
+end
+c -- GET request --> g
+g -- JSON response --> c
+d -- AJAX-request --> f
+f -- render_template --> e
+e -- XML response --> d
+```
