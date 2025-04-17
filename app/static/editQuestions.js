@@ -83,7 +83,7 @@ function update(id) {
         if (td[4].querySelector('p') == undefined) {
             td[4].querySelector('div').appendChild(document.createElement('p'))
         }
-        let question = td[4].querySelector('p').innerHTML
+        let question = td[4].querySelector('p').innerHTML.replace("'","&#39;")
         console.log(question)
         let multiple = td[5].querySelector('input').value
         // Make pre-selection based on previous entry
