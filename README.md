@@ -66,7 +66,7 @@ docker build -t TestForge/testforge:v1.0.0 -f docker/Dockerfile app
 ```bash
 # Everything inside docker
 docker run -p 8080:5000  --name TestForge TestForge/testforge:v1.0.0
-# Persistent database in your host-folder
+# Persistent database in your host-folder (Reccomended)
 docker run -p 8080:5000  -v /your/desired/path:/app/database --name TestForge TestForge/testforge:v1.0.0
 ```
 4. Open your browser and go to `http://localhost:5000`
