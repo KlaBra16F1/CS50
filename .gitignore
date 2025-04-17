@@ -4,5 +4,7 @@
 ./app/flask_session/*
 **/app/test
 *.bak
+*.db
 **/.vscode
 
+app/database/database.db
