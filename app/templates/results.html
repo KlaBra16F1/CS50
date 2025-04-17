@@ -29,6 +29,7 @@
         {% set qr.right = True %}
         <div class="card w-75">
             <div class="card-header bg-blue fg-white">
+                <small><strong>{{ q.topic }}</strong> - {{ q.subtopic }}</small>
                 <h5>{{ q.question | safe }}</h5>
             </div>
             <div class="card-content p-2">
