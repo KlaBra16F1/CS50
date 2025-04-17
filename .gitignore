@@ -7,4 +7,3 @@
 *.db
 **/.vscode
 
-app/database/database.db
